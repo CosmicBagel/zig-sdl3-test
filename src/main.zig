@@ -18,7 +18,6 @@ const foreground_rate = "60";
 const background_rate = "waitevent";
 
 var window: ?*c.SDL_Window = null;
-var renderer: ?*c.SDL_Renderer = null;
 var gpu_device: ?*c.SDL_GPUDevice = null;
 
 pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?[*:0]u8) callconv(.c) c.SDL_AppResult {
@@ -33,10 +32,10 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         return c.SDL_APP_FAILURE;
     };
 
-    errorWrap(c.SDL_SetHint("SDL_RENDER_GPU_LOW_POWER", "1")) catch {
-        c.SDL_Log("SDL_SetHint failed: %s", c.SDL_GetError());
-        return c.SDL_APP_FAILURE;
-    };
+    // errorWrap(c.SDL_SetHint("SDL_RENDER_GPU_LOW_POWER", "1")) catch {
+    //     c.SDL_Log("SDL_SetHint failed: %s", c.SDL_GetError());
+    //     return c.SDL_APP_FAILURE;
+    // };
 
     errorWrap(c.SDL_SetAppMetadata(
         "zig-sdl3-test",
@@ -52,15 +51,13 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         return c.SDL_APP_FAILURE;
     };
 
-    errorWrap(c.SDL_CreateWindowAndRenderer(
+    window = errorWrap(c.SDL_CreateWindow(
         "zig-sdl3-test",
         640,
         480,
         c.SDL_WINDOW_RESIZABLE,
-        &window,
-        &renderer,
     )) catch {
-        c.SDL_Log("Couldn't create window/renderer: %s", c.SDL_GetError());
+        c.SDL_Log("Couldn't create window: %s", c.SDL_GetError());
         return c.SDL_APP_FAILURE;
     };
 
@@ -71,6 +68,11 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
     )) catch {
         c.SDL_Log("SDL_CreateGPUDevice failed: %s", c.SDL_GetError());
         return c.SDL_APP_FAILURE;
+    };
+
+    errorWrap(c.SDL_SetGPUAllowedFramesInFlight(gpu_device, 1)) catch {
+        c.SDL_Log("SDL_SetGPUAllowedFramesInFlight failed: %s", c.SDL_GetError());
+        _ = c.SDL_ClearError();
     };
 
     errorWrap(c.SDL_ClaimWindowForGPUDevice(gpu_device, window)) catch {
@@ -96,28 +98,60 @@ pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) c.SDL_AppResult
     const green: f32 = @floatCast(0.5 + 0.5 * c.SDL_sin(now + c.SDL_PI_D * 2 / 3));
     const blue: f32 = @floatCast(0.5 + 0.5 * c.SDL_sin(now + c.SDL_PI_D * 4 / 3));
 
-    // new color, full alpha.
-    errorWrap(c.SDL_SetRenderDrawColorFloat(
-        renderer,
-        red,
-        green,
-        blue,
-        c.SDL_ALPHA_OPAQUE_FLOAT,
+    // get command buffer (crash on null)
+    const command_buffer: ?*c.SDL_GPUCommandBuffer = errorWrap(c.SDL_AcquireGPUCommandBuffer(gpu_device)) catch {
+        c.SDL_Log("SDL_AcquireGPUCommandBuffer error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
+    };
+
+    // wait for swapchain texture (crash on fail, okay if null)
+    var swapchain_texture: ?*c.SDL_GPUTexture = null;
+    var swapchain_texture_width: u32 = undefined;
+    var swapchain_texture_height: u32 = undefined;
+    errorWrap(c.SDL_WaitAndAcquireGPUSwapchainTexture(
+        command_buffer,
+        window,
+        &swapchain_texture,
+        &swapchain_texture_width,
+        &swapchain_texture_height,
     )) catch {
-        c.SDL_Log("SetRenderDrawColorFloat %s", c.SDL_GetError());
-        _ = c.SDL_ClearError();
+        c.SDL_Log("SDL_AcquireGPUCommandBuffer error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
     };
 
-    // clear the window to the draw color.
-    errorWrap(c.SDL_RenderClear(renderer)) catch {
-        c.SDL_Log("RenderClear %s", c.SDL_GetError());
-        _ = c.SDL_ClearError();
-    };
+    if (swapchain_texture != null) {
+        // render pass with colortarget info configured for clear color
+        const render_pass: ?*c.SDL_GPURenderPass = errorWrap(c.SDL_BeginGPURenderPass(
+            command_buffer,
+            &[1]c.SDL_GPUColorTargetInfo{
+                c.SDL_GPUColorTargetInfo{
+                    // new color, full alpha.
+                    .clear_color = .{
+                        .r = red,
+                        .g = green,
+                        .b = blue,
+                        .a = 1.0,
+                    },
+                    .texture = swapchain_texture,
+                    .load_op = c.SDL_GPU_LOADOP_CLEAR,
+                    .store_op = c.SDL_GPU_STOREOP_STORE,
+                    .cycle = false,
+                },
+            },
+            1,
+            null,
+        )) catch {
+            c.SDL_Log("SDL_BeginGPURenderPass error: %s", c.SDL_GetError());
+            return c.SDL_APP_FAILURE;
+        };
+        // empty render pass
+        c.SDL_EndGPURenderPass(render_pass);
+    }
 
-    // put the newly-cleared rendering on the screen.
-    errorWrap(c.SDL_RenderPresent(renderer)) catch {
-        c.SDL_Log("RenderPresent %s", c.SDL_GetError());
-        _ = c.SDL_ClearError();
+    // submit command buffer (always submit, even if swapchain texture null)
+    errorWrap(c.SDL_SubmitGPUCommandBuffer(command_buffer)) catch {
+        c.SDL_Log("SDL_SubmitGPUCommandBuffer error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
     };
 
     const error_check = c.SDL_GetError();
@@ -172,6 +206,5 @@ pub export fn SDL_AppQuit(appstate: ?*anyopaque, result: c.SDL_AppResult) callco
 
     // is best to destroy things in reverse order of creation
     c.SDL_DestroyGPUDevice(gpu_device);
-    c.SDL_DestroyRenderer(renderer);
     c.SDL_DestroyWindow(window);
 }
