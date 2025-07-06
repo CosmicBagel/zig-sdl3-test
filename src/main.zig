@@ -1,32 +1,3 @@
-//#region notes
-
-// note: @cimport and @cinclude will be deprecated in favour of c-translate
-// library that extends the build system, this way the c-translate can be
-// developed and released independently of the compiler
-// https://github.com/ziglang/zig/issues/20630
-// https://github.com/ziglang/translate-c
-// at some point I'll have to change this over, I suspect @cimport and @cinclude
-
-// note: currently using https://github.com/castholm/SDL/
-// a port of SDL to the zig build system, should be a reasonably stable
-// approach.
-// alternative library:
-// https://github.com/ikskuh/SDL.zig to work
-// SDL is looking at generating API bindings which would allow ikskuh's library
-// to progress in development for sdl3.
-// see: https://github.com/libsdl-org/SDL/issues/6337
-// Once this library was working, it may be preferable to the build system
-// port, or used in conjunction with build system port
-
-// todo: reads
-// - https://moonside.games/posts/sdl-gpu-sprite-batcher/
-// - https://moonside.games/posts/sdl-gpu-concepts-cycling/
-// - https://moonside.games/posts/introducing-sdl-shadercross/
-// - https://examples.libsdl.org/SDL3/
-// - https://hamdy-elzanqali.medium.com/let-there-be-triangles-sdl-gpu-edition-bd82cf2ef615
-
-//#endregion notes
-
 const c = @cImport({
     @cInclude("SDL3/SDL.h");
     @cInclude("SDL3/SDL_revision.h");
