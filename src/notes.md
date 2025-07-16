@@ -48,8 +48,10 @@ todo: tasks
     - upload uniforms (or potentially storage buffers)
       - time
 - quad (just need sprites for now)
-- can move quad with wasd (uniform upload or storage buffer)
+- textured quad
+- can move textured quad with wasd (uniform upload or storage buffer)
 - many sprites, resize, scaling, rotation
+- batched rendering
 - dynamically link sdl3 lib
 - cross-platform shaders using slang or SDL_shadercross
   - slang is a c++ lib, so working with it will be tricky
@@ -91,3 +93,10 @@ To summarize some generally useful best practices:
  - For textures used in render passes and overwritten every frame, cycle on the first render pass usage of the frame.
  - Upload all dynamic buffer data early in the frame before you do any render or compute passes.
  - Do not cycle when you care about the existing contents of a resource.
+
+ Using slangc to crosscompile hlsl to metal shaders
+
+slangc -stage vertex -entry vert_shader -target metal -o vert.msl vert.hlsl
+slangc -stage fragment -entry frag_shader -target metal -o frag.msl frag.hlsl
+
+Note: you can't use `main` with metal shaders as the entry point
