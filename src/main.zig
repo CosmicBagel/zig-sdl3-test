@@ -147,7 +147,7 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
                     .slot = 0,
                     .input_rate = c.SDL_GPU_VERTEXINPUTRATE_VERTEX,
                     .instance_step_rate = 0,
-                    .pitch = triangle_verticies.len * @sizeOf(VertexColored),
+                    .pitch = @sizeOf(VertexColored),
                 },
                 .num_vertex_attributes = 2,
                 .vertex_attributes = &[_]c.SDL_GPUVertexAttribute{
