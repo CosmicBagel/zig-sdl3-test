@@ -22,8 +22,28 @@ const background_rate = "waitevent";
 // calls SDL_DelayNS)
 const target_frame_time_ns = 16 * 1_000_000;
 
+// extern might not be necessary here, but wanted to be sure zig doesn't
+// reorder any members
+const VertexColored = extern struct {
+    x: f32,
+    y: f32,
+    z: f32,
+    r: f32,
+    g: f32,
+    b: f32,
+    a: f32,
+};
+
+const triangle_verticies = [_]VertexColored{
+    VertexColored{ .x = 0, .y = 1, .z = 0, .r = 1, .g = 0, .b = 0, .a = 1 }, // top-red
+    VertexColored{ .x = -1, .y = -1, .z = 0, .r = 1, .g = 1, .b = 0, .a = 1 }, //left-yellow
+    VertexColored{ .x = 1, .y = -1, .z = 0, .r = 1, .g = 0, .b = 1, .a = 1 }, // right-purple
+};
+
 var window: ?*c.SDL_Window = null;
 var gpu_device: ?*c.SDL_GPUDevice = null;
+var graphics_pipeline: ?*c.SDL_GPUGraphicsPipeline = null;
+var vertex_buffer: ?*c.SDL_GPUBuffer = null;
 
 pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?[*:0]u8) callconv(.c) c.SDL_AppResult {
     _ = appstate;
@@ -108,7 +128,7 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         .num_uniform_buffers = 0,
     });
 
-    _ = c.SDL_CreateGPUGraphicsPipeline(
+    graphics_pipeline = c.SDL_CreateGPUGraphicsPipeline(
         gpu_device,
         &c.SDL_GPUGraphicsPipelineCreateInfo{
             .vertex_shader = vertex_shader,
@@ -127,7 +147,7 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
                     .slot = 0,
                     .input_rate = c.SDL_GPU_VERTEXINPUTRATE_VERTEX,
                     .instance_step_rate = 0,
-                    .pitch = 36,
+                    .pitch = triangle_verticies.len * @sizeOf(VertexColored),
                 },
                 .num_vertex_attributes = 2,
                 .vertex_attributes = &[_]c.SDL_GPUVertexAttribute{
@@ -149,12 +169,79 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
             },
         },
     );
+    graphics_pipeline = errorWrap(graphics_pipeline) catch {
+        c.SDL_Log("SDL_CreateGPUGraphicsPipeline error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
+    };
 
     // we don't need to store the shaders after creating the pipeline
     c.SDL_ReleaseGPUShader(gpu_device, vertex_shader);
     c.SDL_ReleaseGPUShader(gpu_device, fragment_shader);
 
     // create verticies, create vertex buffer, create transfer buffer, memcpy, unmap
+
+    // create gpu buffer (this buffer exists gpu side I think)
+    // we will use a transfer buffer and a copy pass to upload veticies to it
+    vertex_buffer = c.SDL_CreateGPUBuffer(gpu_device, &c.SDL_GPUBufferCreateInfo{
+        .usage = c.SDL_GPU_BUFFERUSAGE_VERTEX,
+        .size = triangle_verticies.len * @sizeOf(VertexColored),
+        .props = 0,
+    });
+    vertex_buffer = errorWrap(vertex_buffer) catch {
+        c.SDL_Log("SDL_CreateGPUBuffer error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
+    };
+
+    const transfer_buffer = c.SDL_CreateGPUTransferBuffer(gpu_device, &c.SDL_GPUTransferBufferCreateInfo{
+        .size = triangle_verticies.len * @sizeOf(VertexColored),
+        .usage = c.SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+        .props = 0,
+    });
+    _ = errorWrap(transfer_buffer) catch {
+        c.SDL_Log("SDL_CreateGPUTransferBuffer error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
+    };
+
+    const outbound_data = c.SDL_MapGPUTransferBuffer(gpu_device, transfer_buffer, false);
+    // copy in data to be uploaded in copy pass
+    _ = c.SDL_memcpy(outbound_data, &triangle_verticies, triangle_verticies.len * @sizeOf(VertexColored));
+    c.SDL_UnmapGPUTransferBuffer(gpu_device, transfer_buffer);
+
+    // copy pass
+
+    // get command buffer (crash on null)
+    const command_buffer: ?*c.SDL_GPUCommandBuffer = errorWrap(c.SDL_AcquireGPUCommandBuffer(gpu_device)) catch {
+        c.SDL_Log("SDL_AcquireGPUCommandBuffer error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
+    };
+
+    const copy_pass: ?*c.SDL_GPUCopyPass = errorWrap(c.SDL_BeginGPUCopyPass(command_buffer)) catch {
+        c.SDL_Log("SDL_BeginGPUCopyPass error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
+    };
+
+    // upload verticies
+    c.SDL_UploadToGPUBuffer(
+        copy_pass,
+        &c.SDL_GPUTransferBufferLocation{
+            .offset = 0,
+            .transfer_buffer = transfer_buffer,
+        },
+        &c.SDL_GPUBufferRegion{
+            .buffer = vertex_buffer,
+            .offset = 0,
+            .size = triangle_verticies.len * @sizeOf(VertexColored),
+        },
+        false,
+    );
+
+    c.SDL_EndGPUCopyPass(copy_pass);
+
+    // submit command buffer (always submit)
+    errorWrap(c.SDL_SubmitGPUCommandBuffer(command_buffer)) catch {
+        c.SDL_Log("SDL_SubmitGPUCommandBuffer error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
+    };
 
     const error_check = c.SDL_GetError();
     if (c.strlen(error_check) > 0) {
@@ -164,16 +251,6 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
 
     return c.SDL_APP_CONTINUE;
 }
-
-// draw triangle?
-// - build graphics pipeline
-//   - shaders (vert and frag)
-// - upload colored verts to a buffer
-//   - vert buffer, transfer buffer, cpu side copy
-//   - copy pass to upload
-// - render pass
-//   - bind vert buf and pipeline
-//   - draw
 
 pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) c.SDL_AppResult {
     _ = appstate;
@@ -233,7 +310,26 @@ pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) c.SDL_AppResult
             return c.SDL_APP_FAILURE;
         };
 
-        // empty render pass
+        c.SDL_BindGPUGraphicsPipeline(render_pass, graphics_pipeline);
+        c.SDL_BindGPUVertexBuffers(
+            render_pass,
+            0,
+            &c.SDL_GPUBufferBinding{
+                .buffer = vertex_buffer,
+                .offset = 0,
+            },
+            1,
+        );
+
+        // draw 4 realz (well put the draw call in the command buffer)
+        c.SDL_DrawGPUPrimitives(
+            render_pass,
+            3,
+            1,
+            0,
+            0,
+        );
+
         c.SDL_EndGPURenderPass(render_pass);
     }
 
@@ -301,6 +397,8 @@ pub export fn SDL_AppQuit(appstate: ?*anyopaque, result: c.SDL_AppResult) callco
     _ = result;
 
     // is best to destroy things in reverse order of creation
+    c.SDL_ReleaseGPUGraphicsPipeline(gpu_device, graphics_pipeline);
+    c.SDL_ReleaseGPUBuffer(gpu_device, vertex_buffer);
     c.SDL_DestroyGPUDevice(gpu_device);
     c.SDL_DestroyWindow(window);
 }
