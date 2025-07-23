@@ -3,25 +3,36 @@
 #include <metal_texture>
 using namespace metal;
 
-#line 6 "frag.hlsl"
+#line 11 "src/frag.hlsl"
 struct FragOutput_0
 {
     float4 color_0 [[user(COLOR)]];
 };
 
 
-#line 6
+#line 11
 struct pixelInput_0
 {
     float4 color_1 [[user(COLOR)]];
 };
 
-[[fragment]] FragOutput_0 frag_shader(pixelInput_0 _S1 [[stage_in]])
+
+#line 1
+struct SLANG_ParameterGroup_TimeCB_0
+{
+    float time_0;
+};
+
+
+#line 16
+[[fragment]] FragOutput_0 frag_shader(pixelInput_0 _S1 [[stage_in]], SLANG_ParameterGroup_TimeCB_0 constant* TimeCB_0 [[buffer(0)]])
 {
 
-#line 12
+#line 17
     thread FragOutput_0 output_0;
-    (&output_0)->color_0 = _S1.color_1;
+
+
+    (&output_0)->color_0 = _S1.color_1 * float4((sin(TimeCB_0->time_0 * 2.0) * 0.5 + 0.5)) ;
 
     return output_0;
 }

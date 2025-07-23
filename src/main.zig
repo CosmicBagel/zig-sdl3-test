@@ -40,6 +40,14 @@ const triangle_verticies = [_]VertexColored{
     VertexColored{ .x = 1, .y = -1, .z = 0, .r = 1, .g = 0, .b = 1, .a = 1 }, // right-purple
 };
 
+const UniformBuffer = struct {
+    time: f32,
+};
+
+var triangle_uniform = UniformBuffer{
+    .time = 0,
+};
+
 var window: ?*c.SDL_Window = null;
 var gpu_device: ?*c.SDL_GPUDevice = null;
 var graphics_pipeline: ?*c.SDL_GPUGraphicsPipeline = null;
@@ -125,7 +133,7 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         .num_samplers = 0,
         .num_storage_buffers = 0,
         .num_storage_textures = 0,
-        .num_uniform_buffers = 0,
+        .num_uniform_buffers = 1,
     });
 
     graphics_pipeline = c.SDL_CreateGPUGraphicsPipeline(
@@ -137,7 +145,9 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
                 .num_color_targets = 1,
                 .color_target_descriptions = &c.SDL_GPUColorTargetDescription{
                     .format = c.SDL_GetGPUSwapchainTextureFormat(gpu_device, window),
-                    // .blend_state = .{ .enable_blend =  }
+                    // .blend_state = c.SDL_GPUColorTargetBlendState{
+                    //     .enable_blend = false,
+                    // },
                 },
             },
             .primitive_type = c.SDL_GPU_PRIMITIVETYPE_TRIANGLESTRIP,
@@ -319,6 +329,14 @@ pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) c.SDL_AppResult
                 .offset = 0,
             },
             1,
+        );
+
+        triangle_uniform.time = @as(f32, @floatFromInt(c.SDL_GetTicksNS())) / @as(f32, 1e9) ; // the time since the app started in seconds
+        c.SDL_PushGPUFragmentUniformData(
+            command_buffer,
+            0,
+            &triangle_uniform,
+            @sizeOf(UniformBuffer),
         );
 
         // draw 4 realz (well put the draw call in the command buffer)

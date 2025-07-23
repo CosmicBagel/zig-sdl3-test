@@ -37,16 +37,17 @@ todo: tasks
   - DONE turn sdl errors into zig errors
   - misc sdl error check func
 - DONE clearing screen with gpu api, rendering api calls removed
-- triangle (HUGE WIN IF DO!)
-  - setup gpu debugging for macos
-  - graphics pipeline
-    - rewrite example glsl shaders as shader-lang (aka slang: basically hlsl with some extra bits)
-    - gpu vertex shader (metal bytecode from slang)
-    - gpu frag shader (metal bytecode from slang)
-  - upload verts
-  - render pass
-    - upload uniforms (or potentially storage buffers)
-      - time
+- DONE triangle (HUGE WIN IF DO!)
+  - DONE setup gpu debugging for macos
+  - DONE graphics pipeline
+    - DONE rewrite example glsl shaders as shader-lang (aka slang: basically hlsl with some extra bits)
+    - DONE gpu vertex shader ~~(metal bytecode from slang)~~ just used msl
+   - DONE gpu frag shader ~~(metal bytecode from slang)~~ just used msl
+  - DONE upload verts
+  - DONE render pass
+- upload uniforms (or potentially storage buffers)
+  - DONE time
+  - position?
 - quad (just need sprites for now)
 - textured quad
 - can move textured quad with wasd (uniform upload or storage buffer)
@@ -96,7 +97,7 @@ To summarize some generally useful best practices:
 
  Using slangc to crosscompile hlsl to metal shaders
 
-slangc -stage vertex -entry vert_shader -target metal -o vert.msl vert.hlsl
-slangc -stage fragment -entry frag_shader -target metal -o frag.msl frag.hlsl
+slangc -stage vertex -entry vert_shader -target metal -o src/vert.msl src/vert.hlsl
+slangc -stage fragment -entry frag_shader -target metal -o src/frag.msl src/frag.hlsl
 
-Note: you can't use `main` with metal shaders as the entry point
+Note: you can't use `main` as the entry point with metal shaders
