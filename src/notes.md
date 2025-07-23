@@ -101,3 +101,9 @@ slangc -stage vertex -entry vert_shader -target metal -o src/vert.msl src/vert.h
 slangc -stage fragment -entry frag_shader -target metal -o src/frag.msl src/frag.hlsl
 
 Note: you can't use `main` as the entry point with metal shaders
+
+my fav hlsl materials
+- https://alain.xyz/blog/a-review-of-shader-languages#hlsl
+- https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-semantics?source=recommendations
+- https://vfxdoc.readthedocs.io/en/latest/shaders/hlsl/
+- https://learn.microsoft.com/en-us/windows/uwp/gaming/glsl-to-hlsl-reference#porting-glsl-pre-defined-global-variables-to-hlsl
