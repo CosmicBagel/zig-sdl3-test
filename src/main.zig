@@ -36,8 +36,8 @@ const VertexColored = extern struct {
 
 const triangle_verticies = [_]VertexColored{
     VertexColored{ .x = 0, .y = 1, .z = 0, .r = 1, .g = 0, .b = 0, .a = 1 }, // top-red
-    VertexColored{ .x = -1, .y = -1, .z = 0, .r = 1, .g = 1, .b = 0, .a = 1 }, //left-yellow
-    VertexColored{ .x = 1, .y = -1, .z = 0, .r = 1, .g = 0, .b = 1, .a = 1 }, // right-purple
+    VertexColored{ .x = -1, .y = -1, .z = 0, .r = 0, .g = 1, .b = 0, .a = 1 }, //left-yellow
+    VertexColored{ .x = 1, .y = -1, .z = 0, .r = 0, .g = 0, .b = 1, .a = 1 }, // right-purple
 };
 
 const UniformBuffer = struct {
@@ -145,9 +145,15 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
                 .num_color_targets = 1,
                 .color_target_descriptions = &c.SDL_GPUColorTargetDescription{
                     .format = c.SDL_GetGPUSwapchainTextureFormat(gpu_device, window),
-                    // .blend_state = c.SDL_GPUColorTargetBlendState{
-                    //     .enable_blend = false,
-                    // },
+                    .blend_state = c.SDL_GPUColorTargetBlendState{
+                        .enable_blend = true,
+                        .color_blend_op = c.SDL_GPU_BLENDOP_ADD,
+                        .alpha_blend_op = c.SDL_GPU_BLENDOP_ADD,
+                        .src_color_blendfactor = c.SDL_GPU_BLENDFACTOR_SRC_ALPHA,
+                        .dst_color_blendfactor = c.SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+                        .src_alpha_blendfactor = c.SDL_GPU_BLENDFACTOR_SRC_ALPHA,
+                        .dst_alpha_blendfactor = c.SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+                    },
                 },
             },
             .primitive_type = c.SDL_GPU_PRIMITIVETYPE_TRIANGLESTRIP,

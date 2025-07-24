@@ -32,7 +32,19 @@ struct SLANG_ParameterGroup_TimeCB_0
     thread FragOutput_0 output_0;
 
 
-    (&output_0)->color_0 = _S1.color_1 * float4((sin(TimeCB_0->time_0 * 2.0) * 0.5 + 0.5)) ;
+    float _S2 = _S1.color_1.x;
+
+#line 20
+    (&output_0)->color_0.x = 0.5 + 0.5 * sin(TimeCB_0->time_0 + 3.14159274101257324 * _S2);
+    float _S3 = _S1.color_1.y;
+
+#line 21
+    (&output_0)->color_0.y = 0.5 + 0.5 * sin(TimeCB_0->time_0 + 3.14159274101257324 * _S3);
+    float _S4 = _S1.color_1.z;
+
+#line 22
+    (&output_0)->color_0.z = 0.5 + 0.5 * sin(TimeCB_0->time_0 + 3.14159274101257324 * (1.0 + _S4));
+    (&output_0)->color_0.w = _S2 / 3.0 + _S3 / 3.0 + _S4 / 3.0;
 
     return output_0;
 }

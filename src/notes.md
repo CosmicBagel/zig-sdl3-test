@@ -47,7 +47,10 @@ todo: tasks
   - DONE render pass
 - upload uniforms (or potentially storage buffers)
   - DONE time
-  - position?
+  - DONE Make the shader do cool color lerping thing lol
+  - position
+  - scale
+  - rotation
 - quad (just need sprites for now)
 - textured quad
 - can move textured quad with wasd (uniform upload or storage buffer)
