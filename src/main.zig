@@ -203,6 +203,7 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         .size = triangle_verticies.len * @sizeOf(VertexColored),
         .props = 0,
     });
+
     vertex_buffer = errorWrap(vertex_buffer) catch {
         c.SDL_Log("SDL_CreateGPUBuffer error: %s", c.SDL_GetError());
         return c.SDL_APP_FAILURE;
@@ -273,7 +274,8 @@ pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) c.SDL_AppResult
 
     const app_iterate_start = c.SDL_GetTicksNS();
 
-    const now: f64 = @as(f64, @floatFromInt(c.SDL_GetTicks())) / 1000.0; // convert from milliseconds to seconds.
+    var now: f64 = @floatFromInt(c.SDL_GetTicks());
+    now /= 1000.0; // convert from milliseconds to seconds.
     // choose the color for the frame we will draw. The sine wave trick makes it fade between colors smoothly.
     const red: f32 = @floatCast(0.5 + 0.5 * c.SDL_sin(now));
     const green: f32 = @floatCast(0.5 + 0.5 * c.SDL_sin(now + c.SDL_PI_D * 2 / 3));
@@ -337,7 +339,7 @@ pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) c.SDL_AppResult
             1,
         );
 
-        triangle_uniform.time = @as(f32, @floatFromInt(c.SDL_GetTicksNS())) / @as(f32, 1e9) ; // the time since the app started in seconds
+        triangle_uniform.time = @as(f32, @floatFromInt(c.SDL_GetTicksNS())) / @as(f32, 1e9); // the time since the app started in seconds
         c.SDL_PushGPUFragmentUniformData(
             command_buffer,
             0,
