@@ -43,6 +43,13 @@ pub fn build(b: *std.Build) void {
     // const sdl_mod = sdl_dep.module("SDL3");
     // const sdl_test_lib = sdl_dep.artifact("SDL3_test");
 
+    const translate_c = b.addTranslateC(.{
+        .root_source_file = b.path("src/c.h"),
+        .target = target,
+        .optimize = optimize,
+    });
+    translate_c.addIncludePath(sdl_dep.path("include"));
+
     // We will also create a module for our other entry point, 'main.zig'.
     const exe_mod = b.createModule(.{
         // `root_source_file` is the Zig "entry point" of the module. If a module
@@ -52,6 +59,12 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
+        .imports = &.{
+            .{
+                .name = "c",
+                .module = translate_c.createModule(),
+            },
+        },
     });
     // exe_mod.addImport("SDL3", sdl_mod);
     exe_mod.linkLibrary(sdl_lib);

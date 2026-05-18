@@ -1,10 +1,4 @@
-const c = @cImport({
-    @cInclude("SDL3/SDL.h");
-    @cInclude("SDL3/SDL_revision.h");
-    @cDefine("SDL_MAIN_USE_CALLBACKS", {}); // We are providing our own entry point
-    @cInclude("SDL3/SDL_main.h");
-});
-
+const c = @import("c");
 const std = @import("std");
 
 const SDLHelpers = @import("SDLHelpers.zig");
