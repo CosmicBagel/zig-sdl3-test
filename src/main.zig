@@ -1,8 +1,8 @@
 const c = @import("c");
 const std = @import("std");
 
-const SDLHelpers = @import("SDLHelpers.zig");
-const errorWrap = SDLHelpers.errorWrap;
+const sdl_helpers = @import("sdl_helpers.zig");
+const errorWrap = sdl_helpers.errorWrap;
 
 // SDL3 is handling the main func
 pub const main = c.main;
