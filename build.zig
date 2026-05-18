@@ -134,4 +134,11 @@ pub fn build(b: *std.Build) void {
     // const test_step = b.step("test", "Run unit tests");
     // test_step.dependOn(&run_lib_unit_tests.step);
     // test_step.dependOn(&run_exe_unit_tests.step);
+
+    const check_step = b.step("check", "");
+    const exe_check = b.addExecutable(.{
+        .name = "zig-sdl3-test",
+        .root_module = exe_mod,
+    });
+    check_step.dependOn(&exe_check.step);
 }
