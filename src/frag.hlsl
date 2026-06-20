@@ -1,3 +1,4 @@
+[[vk::binding(0, 3)]]
 cbuffer TimeCB : register(b0, space3)
 {
     float time : packoffset(c0);
