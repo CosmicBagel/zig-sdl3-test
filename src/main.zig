@@ -84,7 +84,8 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
     };
 
     gpu_device = errorWrap(c.SDL_CreateGPUDevice(
-        c.SDL_GPU_SHADERFORMAT_MSL,
+        // c.SDL_GPU_SHADERFORMAT_MSL,
+        c.SDL_GPU_SHADERFORMAT_SPIRV,
         false,
         null,
     )) catch {
@@ -102,33 +103,45 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         return c.SDL_APP_FAILURE;
     };
 
-    const vertex_shader_msl_code = @embedFile("vert.msl");
+    // const vertex_shader_msl_code = @embedFile("vert.msl");
+    const vertex_shader_msl_code = @embedFile("vert.spirv");
 
-    const vertex_shader = c.SDL_CreateGPUShader(gpu_device, &c.SDL_GPUShaderCreateInfo{
+    const vertex_shader = errorWrap(c.SDL_CreateGPUShader(gpu_device, &c.SDL_GPUShaderCreateInfo{
         .code = vertex_shader_msl_code,
         .code_size = vertex_shader_msl_code.len,
-        .entrypoint = "vert_shader",
-        .format = c.SDL_GPU_SHADERFORMAT_MSL,
+        .entrypoint = "main",
+        // .entrypoint = "vert_shader",
+        // .format = c.SDL_GPU_SHADERFORMAT_MSL,
+        .format = c.SDL_GPU_SHADERFORMAT_SPIRV,
         .stage = c.SDL_GPU_SHADERSTAGE_VERTEX,
         .num_samplers = 0,
         .num_storage_buffers = 0,
         .num_storage_textures = 0,
         .num_uniform_buffers = 0,
-    });
+    })) catch {
+        c.SDL_Log("SDL_CreateGPUShader (vertex) error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
+    };
 
-    const frag_shader_msl_code = @embedFile("frag.msl");
+    // const frag_shader_msl_code = @embedFile("frag.msl");
+    const frag_shader_msl_code = @embedFile("frag.spirv");
 
-    const fragment_shader = c.SDL_CreateGPUShader(gpu_device, &c.SDL_GPUShaderCreateInfo{
+    const fragment_shader = errorWrap(c.SDL_CreateGPUShader(gpu_device, &c.SDL_GPUShaderCreateInfo{
         .code = frag_shader_msl_code,
         .code_size = frag_shader_msl_code.len,
-        .entrypoint = "frag_shader",
-        .format = c.SDL_GPU_SHADERFORMAT_MSL,
+        .entrypoint = "main",
+        // .entrypoint = "frag_shader",
+        // .format = c.SDL_GPU_SHADERFORMAT_MSL,
+        .format = c.SDL_GPU_SHADERFORMAT_SPIRV,
         .stage = c.SDL_GPU_SHADERSTAGE_FRAGMENT,
         .num_samplers = 0,
         .num_storage_buffers = 0,
         .num_storage_textures = 0,
         .num_uniform_buffers = 1,
-    });
+    })) catch {
+        c.SDL_Log("SDL_CreateGPUShader (fragment) error: %s", c.SDL_GetError());
+        return c.SDL_APP_FAILURE;
+    };
 
     graphics_pipeline = c.SDL_CreateGPUGraphicsPipeline(
         gpu_device,
@@ -197,7 +210,6 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         .size = triangle_verticies.len * @sizeOf(VertexColored),
         .props = 0,
     });
-
     vertex_buffer = errorWrap(vertex_buffer) catch {
         c.SDL_Log("SDL_CreateGPUBuffer error: %s", c.SDL_GetError());
         return c.SDL_APP_FAILURE;
@@ -268,8 +280,7 @@ pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) c.SDL_AppResult
 
     const app_iterate_start = c.SDL_GetTicksNS();
 
-    var now: f64 = @floatFromInt(c.SDL_GetTicks());
-    now /= 1000.0; // convert from milliseconds to seconds.
+    const now: f64 = @as(f64, @floatFromInt(c.SDL_GetTicks())) / 1000.0; // convert from milliseconds to seconds.
     // choose the color for the frame we will draw. The sine wave trick makes it fade between colors smoothly.
     const red: f32 = @floatCast(0.5 + 0.5 * c.SDL_sin(now));
     const green: f32 = @floatCast(0.5 + 0.5 * c.SDL_sin(now + c.SDL_PI_D * 2 / 3));
