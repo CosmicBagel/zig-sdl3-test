@@ -280,11 +280,13 @@ pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) c.SDL_AppResult
 
     const app_iterate_start = c.SDL_GetTicksNS();
 
-    const now: f64 = @as(f64, @floatFromInt(c.SDL_GetTicks())) / 1000.0; // convert from milliseconds to seconds.
+    var now: f32 = @floatFromInt(c.SDL_GetTicks());
+    now /= 1000;
+
     // choose the color for the frame we will draw. The sine wave trick makes it fade between colors smoothly.
-    const red: f32 = @floatCast(0.5 + 0.5 * c.SDL_sin(now));
-    const green: f32 = @floatCast(0.5 + 0.5 * c.SDL_sin(now + c.SDL_PI_D * 2 / 3));
-    const blue: f32 = @floatCast(0.5 + 0.5 * c.SDL_sin(now + c.SDL_PI_D * 4 / 3));
+    const red: f32 = 0.5 + 0.5 * @sin(now);
+    const green: f32 = 0.5 + 0.5 * @sin(now + c.SDL_PI_F * 2 / 3);
+    const blue: f32 = 0.5 + 0.5 * @sin(now + c.SDL_PI_F * 4 / 3);
 
     // get command buffer (crash on null)
     const command_buffer: ?*c.SDL_GPUCommandBuffer = errorWrap(c.SDL_AcquireGPUCommandBuffer(gpu_device)) catch {
