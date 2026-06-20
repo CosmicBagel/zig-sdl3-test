@@ -20,6 +20,7 @@ Once this library was working, it may be preferable to the build system
 port, or used in conjunction with build system port
 
 todo: reads
+
 - DONE https://moonside.games/posts/introducing-sdl-shadercross/
 - DONE https://hamdy-elzanqali.medium.com/let-there-be-triangles-sdl-gpu-edition-bd82cf2ef615
 - https://moonside.games/posts/sdl-gpu-sprite-batcher/
@@ -33,6 +34,7 @@ opengl, which is losing platform support), and opens up avenues to move into
 3d rendering using modern graphics pipelines and command buffers
 
 todo: tasks
+
 - error helper functions
   - DONE turn sdl errors into zig errors
   - misc sdl error check func
@@ -42,7 +44,7 @@ todo: tasks
   - DONE graphics pipeline
     - DONE rewrite example glsl shaders as shader-lang (aka slang: basically hlsl with some extra bits)
     - DONE gpu vertex shader ~~(metal bytecode from slang)~~ just used msl
-   - DONE gpu frag shader ~~(metal bytecode from slang)~~ just used msl
+  - DONE gpu frag shader ~~(metal bytecode from slang)~~ just used msl
   - DONE upload verts
   - DONE render pass
 - upload uniforms (or potentially storage buffers)
@@ -62,6 +64,7 @@ todo: tasks
   - SDL_shadercross might be easier to integrate, but limited to HLSL, no shader-lang
 
 todo: cross-platform checklist
+
 - dynamically compiling shaders per-platform
 - cross-compilation via zig from macos or linux (arm and x64, many OSes)
 - windows (x64) 11 via dx12
@@ -71,6 +74,7 @@ todo: cross-platform checklist
 - bonus: android - pixel 7a
 
 todo: bonus
+
 - imgui (via cimgui) or another immediate mode UI lib
 - hot-reload ui (imgui) -> reload on dll/so/dylib file change
 - hot-reload shaders (using slang)
@@ -91,14 +95,19 @@ Cycling Best Practices:
 
 To summarize some generally useful best practices:
 
- - For transfer buffers that are used every frame, cycle on the first Map call of the frame.
- - Cycle transfer buffers whenever they might be overwriting in-flight data.
- - For buffers that are overwritten every frame, cycle on the first upload of the frame.
- - For textures used in render passes and overwritten every frame, cycle on the first render pass usage of the frame.
- - Upload all dynamic buffer data early in the frame before you do any render or compute passes.
- - Do not cycle when you care about the existing contents of a resource.
+- For transfer buffers that are used every frame, cycle on the first Map call of the frame.
+- Cycle transfer buffers whenever they might be overwriting in-flight data.
+- For buffers that are overwritten every frame, cycle on the first upload of the frame.
+- For textures used in render passes and overwritten every frame, cycle on the first render pass usage of the frame.
+- Upload all dynamic buffer data early in the frame before you do any render or compute passes.
+- Do not cycle when you care about the existing contents of a resource.
 
- Using slangc to crosscompile hlsl to metal shaders
+Using slangc to crosscompile hlsl to spirv shaders
+
+slangc -stage vertex -entry vert_shader -target spirv -o src/vert.spirv src/vert.hlsl
+slangc -stage fragment -entry frag_shader -target spirv -o src/frag.spirv src/frag.hlsl
+
+Using slangc to crosscompile hlsl to metal shaders
 
 slangc -stage vertex -entry vert_shader -target metal -o src/vert.msl src/vert.hlsl
 slangc -stage fragment -entry frag_shader -target metal -o src/frag.msl src/frag.hlsl
@@ -106,6 +115,7 @@ slangc -stage fragment -entry frag_shader -target metal -o src/frag.msl src/frag
 Note: you can't use `main` as the entry point with metal shaders
 
 my fav hlsl materials
+
 - https://alain.xyz/blog/a-review-of-shader-languages#hlsl
 - https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-semantics?source=recommendations
 - https://vfxdoc.readthedocs.io/en/latest/shaders/hlsl/
