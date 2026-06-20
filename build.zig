@@ -93,6 +93,9 @@ pub fn build(b: *std.Build) void {
     const exe = b.addExecutable(.{
         .name = "zig_sdl3_test",
         .root_module = exe_mod,
+
+        // temporary workaround until https://codeberg.org/ziglang/zig/issues/31272 is fixed
+        .use_llvm = true,
     });
 
     if (no_bin) {
