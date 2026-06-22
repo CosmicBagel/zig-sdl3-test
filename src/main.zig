@@ -1,5 +1,34 @@
 const c = @import("c");
 const std = @import("std");
+const build_options = @import("build_options");
+
+const ShaderConfig = struct {
+    const shader_format = switch (build_options.graphics_api) {
+        .Metal => c.SDL_GPU_SHADERFORMAT_MSL,
+        .DirectX, .Vulkan => c.SDL_GPU_SHADERFORMAT_SPIRV,
+    };
+    const vertex_shader_code = switch (build_options.graphics_api) {
+        .Metal => @embedFile("vert.msl"),
+        .DirectX, .Vulkan => @embedFile("vert.spirv"),
+    };
+    const vertex_entrypoint = switch (build_options.graphics_api) {
+        .Metal => "vert_shader",
+        .DirectX, .Vulkan => "main",
+    };
+    const frag_shader_code = switch (build_options.graphics_api) {
+        .Metal => @embedFile("frag.msl"),
+        .DirectX, .Vulkan => @embedFile("frag.spirv"),
+    };
+    const frag_entrypoint = switch (build_options.graphics_api) {
+        .Metal => "frag_shader",
+        .DirectX, .Vulkan => "main",
+    };
+    const gpu_driver = switch (build_options.graphics_api) {
+        .Metal => "metal",
+        .Vulkan => "vulkan",
+        .DirectX => "direct3d12",
+    };
+};
 
 const sdl_helpers = @import("sdl_helpers.zig");
 const errorWrap = sdl_helpers.errorWrap;
@@ -18,15 +47,7 @@ const target_frame_time_ns = 16 * 1_000_000;
 
 // extern might not be necessary here, but wanted to be sure zig doesn't
 // reorder any members
-const VertexColored = extern struct {
-    x: f32,
-    y: f32,
-    z: f32,
-    r: f32,
-    g: f32,
-    b: f32,
-    a: f32,
-};
+const VertexColored = extern struct { x: f32, y: f32, z: f32, r: f32, g: f32, b: f32, a: f32 };
 
 const triangle_verticies = [_]VertexColored{
     VertexColored{ .x = 0, .y = 1, .z = 0, .r = 1, .g = 0, .b = 0, .a = 1 }, // top-red
@@ -84,10 +105,9 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
     };
 
     gpu_device = errorWrap(c.SDL_CreateGPUDevice(
-        // c.SDL_GPU_SHADERFORMAT_MSL,
-        c.SDL_GPU_SHADERFORMAT_SPIRV,
+        ShaderConfig.shader_format,
         false,
-        null,
+        ShaderConfig.gpu_driver,
     )) catch {
         c.SDL_Log("SDL_CreateGPUDevice failed: %s", c.SDL_GetError());
         return c.SDL_APP_FAILURE;
@@ -103,16 +123,11 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         return c.SDL_APP_FAILURE;
     };
 
-    // const vertex_shader_msl_code = @embedFile("vert.msl");
-    const vertex_shader_msl_code = @embedFile("vert.spirv");
-
     const vertex_shader = errorWrap(c.SDL_CreateGPUShader(gpu_device, &c.SDL_GPUShaderCreateInfo{
-        .code = vertex_shader_msl_code,
-        .code_size = vertex_shader_msl_code.len,
-        .entrypoint = "main",
-        // .entrypoint = "vert_shader",
-        // .format = c.SDL_GPU_SHADERFORMAT_MSL,
-        .format = c.SDL_GPU_SHADERFORMAT_SPIRV,
+        .code = ShaderConfig.vertex_shader_code,
+        .code_size = ShaderConfig.vertex_shader_code.len,
+        .entrypoint = ShaderConfig.vertex_entrypoint,
+        .format = ShaderConfig.shader_format,
         .stage = c.SDL_GPU_SHADERSTAGE_VERTEX,
         .num_samplers = 0,
         .num_storage_buffers = 0,
@@ -123,16 +138,11 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         return c.SDL_APP_FAILURE;
     };
 
-    // const frag_shader_msl_code = @embedFile("frag.msl");
-    const frag_shader_msl_code = @embedFile("frag.spirv");
-
     const fragment_shader = errorWrap(c.SDL_CreateGPUShader(gpu_device, &c.SDL_GPUShaderCreateInfo{
-        .code = frag_shader_msl_code,
-        .code_size = frag_shader_msl_code.len,
-        .entrypoint = "main",
-        // .entrypoint = "frag_shader",
-        // .format = c.SDL_GPU_SHADERFORMAT_MSL,
-        .format = c.SDL_GPU_SHADERFORMAT_SPIRV,
+        .code = ShaderConfig.frag_shader_code,
+        .code_size = ShaderConfig.frag_shader_code.len,
+        .entrypoint = ShaderConfig.frag_entrypoint,
+        .format = ShaderConfig.shader_format,
         .stage = c.SDL_GPU_SHADERSTAGE_FRAGMENT,
         .num_samplers = 0,
         .num_storage_buffers = 0,

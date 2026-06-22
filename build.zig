@@ -1,4 +1,5 @@
 const std = @import("std");
+const build_option_types = @import("src/build_options_types.zig");
 
 // Although this function looks imperative, note that its job is to
 // declaratively construct a build graph that will be executed by an external
@@ -9,6 +10,14 @@ pub fn build(b: *std.Build) void {
     // means any target is allowed, and the default is native. Other options
     // for restricting supported target set are available.
     const target = b.standardTargetOptions(.{});
+
+    switch (target.result.os.tag) {
+        .windows, .linux, .macos => {},
+        else => |tag| fatal(
+            "{any} OS not supported, only windows, linux, and macos",
+            .{tag},
+        ),
+    }
 
     // Standard optimization options allow the person running `zig build` to select
     // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
@@ -50,6 +59,20 @@ pub fn build(b: *std.Build) void {
     });
     translate_c.addIncludePath(sdl_dep.path("include"));
 
+    const graphics_api_default: build_option_types.GraphicsApi = switch (target.result.os.tag) {
+        .macos => .Metal,
+        .windows, .linux => .Vulkan,
+        else => unreachable,
+    };
+    const graphics_api_option = b.option(
+        build_option_types.GraphicsApi,
+        "graphics_api",
+        "Vulkan (Linux and Windows default), DirectX, Metal (MacOS default)",
+    ) orelse graphics_api_default;
+
+    const options = b.addOptions();
+    options.addOption(build_option_types.GraphicsApi, "graphics_api", graphics_api_option);
+
     // We will also create a module for our other entry point, 'main.zig'.
     const exe_mod = b.createModule(.{
         // `root_source_file` is the Zig "entry point" of the module. If a module
@@ -68,6 +91,7 @@ pub fn build(b: *std.Build) void {
     });
     // exe_mod.addImport("SDL3", sdl_mod);
     exe_mod.linkLibrary(sdl_lib);
+    exe_mod.addOptions("build_options", options);
 
     // Modules can depend on one another using the `std.Build.Module.addImport` function.
     // This is what allows Zig source code to use `@import("foo")` where 'foo' is not a
@@ -157,4 +181,9 @@ pub fn build(b: *std.Build) void {
         .root_module = exe_mod,
     });
     check_step.dependOn(&exe_check.step);
+}
+
+fn fatal(comptime format: []const u8, args: anytype) noreturn {
+    std.debug.print(format, args);
+    std.process.exit(1);
 }
