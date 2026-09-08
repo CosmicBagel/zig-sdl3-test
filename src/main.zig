@@ -225,19 +225,30 @@ pub export fn SDL_AppInit(appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?
         return c.SDL_APP_FAILURE;
     };
 
-    const transfer_buffer = c.SDL_CreateGPUTransferBuffer(gpu_device, &c.SDL_GPUTransferBufferCreateInfo{
-        .size = triangle_verticies.len * @sizeOf(VertexColored),
-        .usage = c.SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-        .props = 0,
-    });
+    const transfer_buffer = c.SDL_CreateGPUTransferBuffer(
+        gpu_device,
+        &c.SDL_GPUTransferBufferCreateInfo{
+            .size = triangle_verticies.len * @sizeOf(VertexColored),
+            .usage = c.SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+            .props = 0,
+        },
+    );
     _ = errorWrap(transfer_buffer) catch {
         c.SDL_Log("SDL_CreateGPUTransferBuffer error: %s", c.SDL_GetError());
         return c.SDL_APP_FAILURE;
     };
 
-    const outbound_data = c.SDL_MapGPUTransferBuffer(gpu_device, transfer_buffer, false);
+    const outbound_data = c.SDL_MapGPUTransferBuffer(
+        gpu_device,
+        transfer_buffer,
+        false,
+    );
     // copy in data to be uploaded in copy pass
-    _ = c.SDL_memcpy(outbound_data, &triangle_verticies, triangle_verticies.len * @sizeOf(VertexColored));
+    _ = c.SDL_memcpy(
+        outbound_data,
+        &triangle_verticies,
+        triangle_verticies.len * @sizeOf(VertexColored),
+    );
     c.SDL_UnmapGPUTransferBuffer(gpu_device, transfer_buffer);
 
     // copy pass
