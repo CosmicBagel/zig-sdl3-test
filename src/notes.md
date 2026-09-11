@@ -47,6 +47,7 @@ todo: tasks
   - DONE gpu frag shader ~~(metal bytecode from slang)~~ just used msl
   - DONE upload verts
   - DONE render pass
+- multiple triangles
 - upload uniforms (or potentially storage buffers)
   - DONE time
   - DONE Make the shader do cool color lerping thing lol
@@ -62,6 +63,7 @@ todo: tasks
 - cross-platform shaders using slang or SDL_shadercross
   - slang is a c++ lib, so working with it will be tricky
   - SDL_shadercross might be easier to integrate, but limited to HLSL, no shader-lang
+- wrap all SDL calls
 
 todo: cross-platform checklist
 

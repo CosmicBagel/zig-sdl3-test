@@ -1,6 +1,8 @@
 struct VertexInput
 {
     float3 position : POSITION;
+    float3 scale: SCALE;
+    float4 rotation: ROTATION;
     float4 color: COLOR;
 };
 
