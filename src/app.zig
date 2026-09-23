@@ -1,6 +1,9 @@
 const c = @import("c");
 const std = @import("std");
 
+const sdl_helpers = @import("sdl_helpers.zig");
+const errorWrap = sdl_helpers.errorWrap;
+
 const build_options = @import("build_options");
 
 const ShaderConfig = struct {
@@ -30,9 +33,6 @@ const ShaderConfig = struct {
         .DirectX => "direct3d12",
     };
 };
-
-const sdl_helpers = @import("sdl_helpers.zig");
-const errorWrap = sdl_helpers.errorWrap;
 
 // 0 = uncapped, we'll use SDL_Delay to control the framerate
 const foreground_rate = "0";
@@ -65,15 +65,15 @@ const FragUniform = extern struct {
     time: f32,
 };
 
+var frag_uniform = FragUniform{
+    .time = 0,
+};
+
 // uniforms must follow std140, which means vec3 and vec4 fields must be 16byte aligned
 const VertUniform = extern struct {
     world_position: [2]f32,
     scale: [2]f32,
     rotation: f32,
-};
-
-var frag_uniform = FragUniform{
-    .time = 0,
 };
 
 var vert_uniform_a = VertUniform{
