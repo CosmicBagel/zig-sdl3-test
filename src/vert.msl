@@ -18,6 +18,14 @@ struct vertexInput_0
     float4 color_1 [[attribute(1)]];
 };
 
+
+struct SLANG_ParameterGroup_VertexUniform_0
+{
+    float2 world_position_0;
+    float2 scale_0;
+    float rotation_0;
+};
+
 struct VertexOutput_0
 {
     float4 position_2;
@@ -25,25 +33,33 @@ struct VertexOutput_0
 };
 
 
-#line 7
-[[vertex]] vert_shader_Result_0 vert_shader(vertexInput_0 _S1 [[stage_in]])
+#line 15
+[[vertex]] vert_shader_Result_0 vert_shader(vertexInput_0 _S1 [[stage_in]], SLANG_ParameterGroup_VertexUniform_0 constant* VertexUniform_0 [[buffer(0)]])
 {
 
-#line 14
+#line 24
+    float c_0 = cos(VertexUniform_0->rotation_0);
+    float s_0 = sin(VertexUniform_0->rotation_0);
+
+#line 22
     thread VertexOutput_0 output_0;
-    (&output_0)->position_2 = float4(_S1.position_1, 1.0);
+
+#line 32
+    (&output_0)->position_2 = float4(((((_S1.position_1.xy) * (matrix<float,int(2),int(2)> (c_0, s_0, - s_0, c_0)))) * VertexUniform_0->scale_0).xy, _S1.position_1.z, 1.0) + float4(VertexUniform_0->world_position_0, 0.0, 0.0);
+
+
     (&output_0)->color_2 = _S1.color_1;
 
-#line 16
+#line 35
     thread vert_shader_Result_0 _S2;
 
-#line 16
+#line 35
     (&_S2)->position_0 = output_0.position_2;
 
-#line 16
+#line 35
     (&_S2)->color_0 = output_0.color_2;
 
-#line 16
+#line 35
     return _S2;
 }
 
