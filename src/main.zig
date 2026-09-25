@@ -6,8 +6,8 @@ const std = @import("std");
 const app = @import("app.zig");
 const sdl = @import("sdl/sdl.zig");
 
-pub export fn main(argc: c_int, argv: [*c][*c]u8) c_int {
-    return sdl.SDL_RunApp(argc, argv, RunAppCallback, null);
+pub fn main() u8 {
+    return @intCast(sdl.SDL_RunApp(0, null, RunAppCallback, null));
 }
 
 pub export fn RunAppCallback(argc: c_int, argv: [*c][*c]u8) c_int {
@@ -53,7 +53,7 @@ fn unwrapWithTrace(result: anytype) sdl.SDL_AppResult {
     const unwrapped_result = result catch |err| {
         if (@errorReturnTrace()) |trace| std.debug.dumpErrorReturnTrace(trace);
         std.log.err("{t}", .{err});
-        sdl.SDL_LogError( .error_category, "%s", sdl.SDL_GetError());
+        sdl.SDL_LogError(.error_category, "%s", sdl.SDL_GetError());
         return sdl.SDL_AppResult.app_failure;
     };
 
