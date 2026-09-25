@@ -6,15 +6,15 @@ pub const wchar_t = c_int;
 
 const __root = @This();
 pub const main_func = ?*const fn (argc: c_int, argv: [*c][*c]u8) callconv(.c) c_int;
-pub const AppInit_func = ?*const fn (appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?[*:0]u8) callconv(.c) AppResult;
-pub const AppIterate_func = ?*const fn (appstate: ?*anyopaque) callconv(.c) AppResult;
-pub const AppEvent_func = ?*const fn (appstate: ?*anyopaque, event: [*c]SDL_Event) callconv(.c) AppResult;
-pub const AppQuit_func = ?*const fn (appstate: ?*anyopaque, result: AppResult) callconv(.c) void;
+pub const AppInit_func = ?*const fn (appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?[*:0]u8) callconv(.c) SDL_AppResult;
+pub const AppIterate_func = ?*const fn (appstate: ?*anyopaque) callconv(.c) SDL_AppResult;
+pub const AppEvent_func = ?*const fn (appstate: ?*anyopaque, event: [*c]SDL_Event) callconv(.c) SDL_AppResult;
+pub const AppQuit_func = ?*const fn (appstate: ?*anyopaque, result: SDL_AppResult) callconv(.c) void;
 
 pub extern fn SDL_RunApp(argc: c_int, argv: [*c][*c]u8, mainFunction: main_func, reserved: ?*anyopaque) c_int;
 pub extern fn SDL_EnterAppMainCallbacks(argc: c_int, argv: [*c][*c]u8, appinit: AppInit_func, appiter: AppIterate_func, appevent: AppEvent_func, appquit: AppQuit_func) c_int;
 
-pub const AppResult = enum(c_uint) {
+pub const SDL_AppResult = enum(c_uint) {
     app_continue = 0,
     app_success = 1,
     app_failure = 2,
@@ -2376,6 +2376,37 @@ pub extern fn SDL_GetDesktopDisplayMode(displayID: SDL_DisplayID) [*c]const SDL_
 pub extern fn SDL_GetCurrentDisplayMode(displayID: SDL_DisplayID) [*c]const SDL_DisplayMode;
 pub extern fn SDL_GetDisplayForPoint(point: [*c]const SDL_Point) SDL_DisplayID;
 pub extern fn SDL_GetDisplayForRect(rect: [*c]const SDL_Rect) SDL_DisplayID;
+
+pub const SDL_GLContextState = opaque {
+    pub const SDL_GL_DestroyContext = __root.SDL_GL_DestroyContext;
+    pub const DestroyContext = __root.SDL_GL_DestroyContext;
+};
+pub const SDL_GLContext = ?*SDL_GLContextState;
+pub const SDL_EGLSurface = ?*anyopaque;
+
+pub extern fn SDL_GL_CreateContext(window: ?*SDL_Window) SDL_GLContext;
+pub extern fn SDL_GL_MakeCurrent(window: ?*SDL_Window, context: SDL_GLContext) bool;
+pub extern fn SDL_EGL_GetWindowSurface(window: ?*SDL_Window) SDL_EGLSurface;
+pub extern fn SDL_GL_SwapWindow(window: ?*SDL_Window) bool;
+pub extern fn SDL_StartTextInput(window: ?*SDL_Window) bool;
+pub extern fn SDL_StartTextInputWithProperties(window: ?*SDL_Window, props: SDL_PropertiesID) bool;
+pub extern fn SDL_TextInputActive(window: ?*SDL_Window) bool;
+pub extern fn SDL_StopTextInput(window: ?*SDL_Window) bool;
+pub extern fn SDL_ClearComposition(window: ?*SDL_Window) bool;
+pub extern fn SDL_SetTextInputArea(window: ?*SDL_Window, rect: [*c]const SDL_Rect, cursor: c_int) bool;
+pub extern fn SDL_GetTextInputArea(window: ?*SDL_Window, rect: [*c]SDL_Rect, cursor: [*c]c_int) bool;
+
+pub extern fn SDL_ScreenKeyboardShown(window: ?*SDL_Window) bool;
+pub extern fn SDL_WarpMouseInWindow(window: ?*SDL_Window, x: f32, y: f32) void;
+pub extern fn SDL_SetWindowRelativeMouseMode(window: ?*SDL_Window, enabled: bool) bool;
+pub extern fn SDL_GetWindowRelativeMouseMode(window: ?*SDL_Window) bool;
+pub extern fn SDL_Metal_CreateView(window: ?*SDL_Window) SDL_MetalView;
+pub extern fn SDL_CreateRenderer(window: ?*SDL_Window, name: [*c]const u8) ?*SDL_Renderer;
+pub extern fn SDL_GetRenderer(window: ?*SDL_Window) ?*SDL_Renderer;
+
+pub const SDL_MetalView = ?*anyopaque;
+pub const SDL_Renderer = opaque {};
+
 pub extern fn SDL_GetDisplayForWindow(window: ?*SDL_Window) SDL_DisplayID;
 pub extern fn SDL_GetWindowPixelDensity(window: ?*SDL_Window) f32;
 pub extern fn SDL_GetWindowDisplayScale(window: ?*SDL_Window) f32;

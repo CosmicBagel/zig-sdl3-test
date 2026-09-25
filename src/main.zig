@@ -21,22 +21,22 @@ pub export fn RunAppCallback(argc: c_int, argv: [*c][*c]u8) c_int {
     );
 }
 
-pub export fn SDL_AppInit(appstate: ?*?*anyopaque, c_argc: c_int, c_argv: ?[*:null]?[*:0]u8) callconv(.c) sdl.AppResult {
+pub export fn SDL_AppInit(appstate: ?*?*anyopaque, c_argc: c_int, c_argv: ?[*:null]?[*:0]u8) callconv(.c) sdl.SDL_AppResult {
     const argc = @as(usize, @intCast(c_argc));
     const argv = @as([*][*:0]u8, @ptrCast(c_argv));
 
     return unwrapWithTrace(app.AppInit(appstate, argv[0..argc]));
 }
 
-pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) sdl.AppResult {
+pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) sdl.SDL_AppResult {
     return unwrapWithTrace(app.AppIterate(appstate));
 }
 
-pub export fn SDL_AppEvent(appstate: ?*anyopaque, event: ?*sdl.SDL_Event) callconv(.c) sdl.AppResult {
+pub export fn SDL_AppEvent(appstate: ?*anyopaque, event: ?*sdl.SDL_Event) callconv(.c) sdl.SDL_AppResult {
     return unwrapWithTrace(app.AppEvent(appstate, event));
 }
 
-pub export fn SDL_AppQuit(appstate: ?*anyopaque, app_result: sdl.AppResult) callconv(.c) void {
+pub export fn SDL_AppQuit(appstate: ?*anyopaque, app_result: sdl.SDL_AppResult) callconv(.c) void {
     app.AppQuit(appstate, app_result) catch |err| {
         if (@errorReturnTrace()) |trace| std.debug.dumpErrorReturnTrace(trace);
         std.log.err("{t}", .{err});
@@ -46,15 +46,15 @@ pub export fn SDL_AppQuit(appstate: ?*anyopaque, app_result: sdl.AppResult) call
 
 /// unwraps error union, dumps error trace if error
 /// result needs to be !c.SDL_AppResult error union type
-fn unwrapWithTrace(result: anytype) sdl.AppResult {
-    if (@typeInfo(@TypeOf(result)).error_union.payload != sdl.AppResult) {
+fn unwrapWithTrace(result: anytype) sdl.SDL_AppResult {
+    if (@typeInfo(@TypeOf(result)).error_union.payload != sdl.SDL_AppResult) {
         @compileError("expecting !sdl.AppResult error union type");
     }
     const unwrapped_result = result catch |err| {
         if (@errorReturnTrace()) |trace| std.debug.dumpErrorReturnTrace(trace);
         std.log.err("{t}", .{err});
         sdl.SDL_LogError( .error_category, "%s", sdl.SDL_GetError());
-        return sdl.AppResult.app_failure;
+        return sdl.SDL_AppResult.app_failure;
     };
 
     return unwrapped_result;

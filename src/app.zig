@@ -117,7 +117,7 @@ var sdl_handles = SDLHandles{};
 /// parameter. This allows you to avoid global variables, but is totally
 /// optional. If you don't set this, the pointer will be NULL in later function
 /// calls.
-pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.AppResult {
+pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.SDL_AppResult {
     _ = appstate;
     _ = args;
 
@@ -326,7 +326,7 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.AppR
 /// may choose to run this more or less (perhaps less in the background, etc),
 /// or it might just call this function in a loop as fast as possible. You do
 /// not check the event queue in this function (SDL_AppEvent exists for that).
-pub fn AppIterate(appstate: ?*anyopaque) !sdl.AppResult {
+pub fn AppIterate(appstate: ?*anyopaque) !sdl.SDL_AppResult {
     _ = appstate;
 
     const app_iterate_start = sdl.SDL_GetTicksNS();
@@ -477,7 +477,7 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.AppResult {
 /// SDL_PollEvent, SDL_PumpEvent, etc, as SDL will manage all this for you.
 /// Return values are the same as from SDL_AppIterate(), so you can terminate
 /// in response to SDL_EVENT_QUIT, etc.
-pub fn AppEvent(appstate: ?*anyopaque, event: ?*sdl.SDL_Event) !sdl.AppResult {
+pub fn AppEvent(appstate: ?*anyopaque, event: ?*sdl.SDL_Event) !sdl.SDL_AppResult {
     _ = appstate;
 
     if (event.?.type == .quit) {
@@ -520,7 +520,7 @@ pub fn AppEvent(appstate: ?*anyopaque, event: ?*sdl.SDL_Event) !sdl.AppResult {
 ///
 /// The SDL_AppResult value that terminated the app is provided here, in case
 /// it's useful to know if this was a successful or failing run of the app.
-pub fn AppQuit(appstate: ?*anyopaque, app_result: sdl.AppResult) !void {
+pub fn AppQuit(appstate: ?*anyopaque, app_result: sdl.SDL_AppResult) !void {
     _ = appstate;
     _ = app_result;
 
