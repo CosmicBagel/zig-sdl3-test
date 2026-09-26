@@ -9,7 +9,7 @@ const build_options = @import("build_options");
 const ShaderConfig = struct {
     const shader_format = switch (build_options.graphics_api) {
         .Metal => sdl.SDL_GPUShaderFormat.msl,
-        .DirectX, .Vulkan =>  sdl.SDL_GPUShaderFormat.spirv,
+        .DirectX, .Vulkan => sdl.SDL_GPUShaderFormat.spirv,
     };
     const vertex_shader_code = switch (build_options.graphics_api) {
         .Metal => @embedFile("vert.msl"),
@@ -132,7 +132,7 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.SDL_
         "com.cosmicbagel.zig-sdl3-test",
     ));
 
-    try errorWrap(sdl.SDL_Init(sdl.SDL_INIT_VIDEO));
+    try errorWrap(sdl.SDL_Init(.{ .video = true }));
 
     sdl_handles.window = try errorWrap(sdl.SDL_CreateWindow(
         "zig-sdl3-test",

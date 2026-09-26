@@ -6,6 +6,7 @@ const std = @import("std");
 const app = @import("app.zig");
 const sdl = @import("sdl/sdl.zig");
 
+
 pub fn main() u8 {
     return @intCast(sdl.SDL_RunApp(0, null, RunAppCallback, null));
 }
