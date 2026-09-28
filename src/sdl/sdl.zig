@@ -55,125 +55,8 @@ pub const touch = @import("touch.zig");
 pub const version = @import("version.zig");
 pub const video = @import("video.zig");
 
+const std = @import("std");
 const __helpers = std.zig.c_translation.helpers;
-
-pub const SDL_FColor = extern struct {
-    r: f32 = 0,
-    g: f32 = 0,
-    b: f32 = 0,
-    a: f32 = 0,
-};
-
-pub const SDL_Rect = extern struct {
-    x: c_int = 0,
-    y: c_int = 0,
-    w: c_int = 0,
-    h: c_int = 0,
-};
-
-// surface
-pub const SDL_FlipMode = enum(c_uint) {
-    none = 0,
-    horizontal = 1,
-    vertical = 2,
-    horizontal_and_vertical = 3,
-};
-
-pub const SDL_PixelFormat = enum(c_uint) {
-    unknown = 0,
-    index1lsb = 286261504,
-    index1msb = 287310080,
-    index2lsb = 470811136,
-    index2msb = 471859712,
-    index4lsb = 303039488,
-    index4msb = 304088064,
-    index8 = 318769153,
-    rgb332 = 336660481,
-    xrgb4444 = 353504258,
-    xbgr4444 = 357698562,
-    xrgb1555 = 353570562,
-    xbgr1555 = 357764866,
-    argb4444 = 355602434,
-    rgba4444 = 356651010,
-    abgr4444 = 359796738,
-    bgra4444 = 360845314,
-    argb1555 = 355667970,
-    rgba5551 = 356782082,
-    abgr1555 = 359862274,
-    bgra5551 = 360976386,
-    rgb565 = 353701890,
-    bgr565 = 357896194,
-    rgb24 = 386930691,
-    bgr24 = 390076419,
-    xrgb8888 = 370546692,
-    rgbx8888 = 371595268,
-    xbgr8888 = 374740996,
-    bgrx8888 = 375789572,
-    argb8888 = 372645892,
-    rgba8888 = 373694468,
-    abgr8888 = 376840196,
-    bgra8888 = 377888772,
-    xrgb2101010 = 370614276,
-    xbgr2101010 = 374808580,
-    argb2101010 = 372711428,
-    abgr2101010 = 376905732,
-    rgb48 = 403714054,
-    bgr48 = 406859782,
-    rgba64 = 404766728,
-    argb64 = 405815304,
-    bgra64 = 407912456,
-    abgr64 = 408961032,
-    rgb48_float = 437268486,
-    bgr48_float = 440414214,
-    rgba64_float = 438321160,
-    argb64_float = 439369736,
-    bgra64_float = 441466888,
-    abgr64_float = 442515464,
-    rgb96_float = 454057996,
-    bgr96_float = 457203724,
-    rgba128_float = 455114768,
-    argb128_float = 456163344,
-    bgra128_float = 458260496,
-    abgr128_float = 459309072,
-    yv12 = 842094169,
-    iyuv = 1448433993,
-    yuy2 = 844715353,
-    uyvy = 1498831189,
-    yvyu = 1431918169,
-    nv12 = 842094158,
-    nv21 = 825382478,
-    p010 = 808530000,
-    external_oes = 542328143,
-    mjpg = 1196444237,
-    rgba32 = 376840196,
-    argb32 = 377888772,
-    bgra32 = 372645892,
-    abgr32 = 373694468,
-    rgbx32 = 374740996,
-    xrgb32 = 375789572,
-    bgrx32 = 370546692,
-    xbgr32 = 371595268,
-};
-
-pub const SDL_HintPriority = enum(c_uint) {
-    default = 0,
-    normal = 1,
-    override = 2,
-};
-
-pub extern fn SDL_SetHintWithPriority(name: [*c]const u8, value: [*c]const u8, priority: SDL_HintPriority) bool;
-pub extern fn SDL_SetHint(name: [*c]const u8, value: [*c]const u8) bool;
-pub extern fn SDL_ResetHint(name: [*c]const u8) bool;
-pub extern fn SDL_ResetHints() void;
-pub extern fn SDL_GetHint(name: [*c]const u8) [*c]const u8;
-pub extern fn SDL_GetHintBoolean(name: [*c]const u8, default_value: bool) bool;
-pub const SDL_HintCallback = ?*const fn (userdata: ?*anyopaque, name: [*c]const u8, oldValue: [*c]const u8, newValue: [*c]const u8) callconv(.c) void;
-pub extern fn SDL_AddHintCallback(name: [*c]const u8, callback: SDL_HintCallback, userdata: ?*anyopaque) bool;
-pub extern fn SDL_RemoveHintCallback(name: [*c]const u8, callback: SDL_HintCallback, userdata: ?*anyopaque) void;
-
-pub extern fn SDL_SetAppMetadata(appname: [*c]const u8, appversion: [*c]const u8, appidentifier: [*c]const u8) bool;
-pub extern fn SDL_SetAppMetadataProperty(name: [*c]const u8, value: [*c]const u8) bool;
-pub extern fn SDL_GetAppMetadataProperty(name: [*c]const u8) [*c]const u8;
 
 pub const SDL_SystemTheme = enum(c_uint) {
     unknown = 0,
@@ -206,12 +89,6 @@ pub const SDL_DisplayMode = extern struct {
 pub const SDL_Point = extern struct {
     x: c_int = 0,
     y: c_int = 0,
-    pub const SDL_PointInRect = __root.SDL_PointInRect;
-    pub const SDL_GetRectEnclosingPoints = __root.SDL_GetRectEnclosingPoints;
-    pub const SDL_GetDisplayForPoint = __root.SDL_GetDisplayForPoint;
-    pub const PointInRect = __root.SDL_PointInRect;
-    pub const GetRectEnclosingPoints = __root.SDL_GetRectEnclosingPoints;
-    pub const GetDisplayForPoint = __root.SDL_GetDisplayForPoint;
 };
 
 pub const SDL_WindowFlags = u64;
@@ -248,10 +125,7 @@ pub extern fn SDL_GetCurrentDisplayMode(displayID: SDL_DisplayID) [*c]const SDL_
 pub extern fn SDL_GetDisplayForPoint(point: [*c]const SDL_Point) SDL_DisplayID;
 pub extern fn SDL_GetDisplayForRect(rect: [*c]const SDL_Rect) SDL_DisplayID;
 
-pub const SDL_GLContextState = opaque {
-    pub const SDL_GL_DestroyContext = __root.SDL_GL_DestroyContext;
-    pub const DestroyContext = __root.SDL_GL_DestroyContext;
-};
+pub const SDL_GLContextState = opaque {};
 pub const SDL_GLContext = ?*SDL_GLContextState;
 pub const SDL_EGLSurface = ?*anyopaque;
 
