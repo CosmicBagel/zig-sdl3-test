@@ -968,3 +968,4 @@ pub extern fn SDL_GetWindowFromEvent(event: [*c]const SDL_Event) ?*video.SDL_Win
 ///
 /// \since This function is available since SDL 3.4.0.
 pub extern fn SDL_GetEventDescription(event: [*c]const SDL_Event, buf: [*c]u8, buflen: c_int) c_int;
+
