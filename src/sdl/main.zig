@@ -65,5 +65,11 @@ pub extern fn SDL_RunApp(argc: c_int, argv: ?[*:null]?[*:0]u8, mainFunction: SDL
 ///               function call in SDL_main.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_EnterAppMainCallbacks(argc: c_int, argv: [*c][*c]u8, appinit: init.AppInit_func, appiter: AppIterate_func, appevent: AppEvent_func, appquit: AppQuit_func) callconv(.c) c_int;
-
+pub extern fn SDL_EnterAppMainCallbacks(
+    argc: c_int,
+    argv: [*c][*c]u8,
+    appinit: init.AppInit_func,
+    appiter: init.AppIterate_func,
+    appevent: init.AppEvent_func,
+    appquit: init.AppQuit_func,
+) callconv(.c) c_int;
