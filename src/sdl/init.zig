@@ -127,24 +127,23 @@ pub const AppEvent_func = ?*const fn (appstate: ?*anyopaque, event: [*c]events.S
 /// \since This datatype is available since SDL 3.2.0.
 pub const AppQuit_func = ?*const fn (appstate: ?*anyopaque, result: SDL_AppResult) callconv(.c) void;
 
-
 /// Initialize the SDL library.
-/// 
+///
 /// SDL_Init() simply forwards to calling SDL_InitSubSystem(). Therefore, the
 /// two may be used interchangeably. Though for readability of your code
 /// SDL_InitSubSystem() might be preferred.
-/// 
+///
 /// The file I/O (for example: SDL_IOFromFile) and threading (SDL_CreateThread)
 /// subsystems are initialized by default. Message boxes
 /// (SDL_ShowSimpleMessageBox) also attempt to work without initializing the
 /// video subsystem, in hopes of being useful in showing an error dialog when
 /// SDL_Init fails. You must specifically initialize other subsystems if you
 /// use them in your application.
-/// 
+///
 /// Logging (such as SDL_Log) works without initialization, too.
-/// 
+///
 /// `flags` may be any of the following OR'd together:
-/// 
+///
 /// - `SDL_INIT_AUDIO`: audio subsystem; automatically initializes the events
 ///   subsystem
 /// - `SDL_INIT_VIDEO`: video subsystem; automatically initializes the events
@@ -159,24 +158,24 @@ pub const AppQuit_func = ?*const fn (appstate: ?*anyopaque, result: SDL_AppResul
 ///   subsystem
 /// - `SDL_INIT_CAMERA`: camera subsystem; automatically initializes the events
 ///   subsystem
-/// 
+///
 /// Subsystem initialization is ref-counted, you must call SDL_QuitSubSystem()
 /// for each SDL_InitSubSystem() to correctly shutdown a subsystem manually (or
 /// call SDL_Quit() to force shutdown). If a subsystem is already loaded then
 /// this call will increase the ref-count and return.
-/// 
+///
 /// Consider reporting some basic metadata about your application before
 /// calling SDL_Init, using either SDL_SetAppMetadata() or
 /// SDL_SetAppMetadataProperty().
-/// 
+///
 /// \param flags subsystem initialization flags.
 /// \returns true on success or false on failure; call SDL_GetError() for more
 ///          information.
-/// 
+///
 /// \threadsafety This function should only be called on the main thread.
-/// 
+///
 /// \since This function is available since SDL 3.2.0.
-/// 
+///
 /// \sa SDL_SetAppMetadata
 /// \sa SDL_SetAppMetadataProperty
 /// \sa SDL_InitSubSystem
@@ -300,7 +299,6 @@ pub const SDL_MainThreadCallback = ?*const fn (userdata: ?*anyopaque) callconv(.
 /// \sa SDL_IsMainThread
 pub extern fn SDL_RunOnMainThread(callback: SDL_MainThreadCallback, userdata: ?*anyopaque, wait_complete: bool) bool;
 
-
 /// Specify basic metadata about your app.
 ///
 /// You can optionally provide metadata about your app to SDL. This is not
@@ -398,13 +396,13 @@ pub extern fn SDL_SetAppMetadata(appname: [*c]const u8, appversion: [*c]const u8
 /// \sa SDL_SetAppMetadata
 pub extern fn SDL_SetAppMetadataProperty(name: [*c]const u8, value: [*c]const u8) bool;
 
-pub const SDL_PROP_APP_METADATA_NAME_STRING =         "SDL.app.metadata.name";
-pub const SDL_PROP_APP_METADATA_VERSION_STRING =      "SDL.app.metadata.version";
-pub const SDL_PROP_APP_METADATA_IDENTIFIER_STRING =   "SDL.app.metadata.identifier";
-pub const SDL_PROP_APP_METADATA_CREATOR_STRING =      "SDL.app.metadata.creator";
-pub const SDL_PROP_APP_METADATA_COPYRIGHT_STRING =    "SDL.app.metadata.copyright";
-pub const SDL_PROP_APP_METADATA_URL_STRING =          "SDL.app.metadata.url";
-pub const SDL_PROP_APP_METADATA_TYPE_STRING =         "SDL.app.metadata.type";
+pub const SDL_PROP_APP_METADATA_NAME_STRING = "SDL.app.metadata.name";
+pub const SDL_PROP_APP_METADATA_VERSION_STRING = "SDL.app.metadata.version";
+pub const SDL_PROP_APP_METADATA_IDENTIFIER_STRING = "SDL.app.metadata.identifier";
+pub const SDL_PROP_APP_METADATA_CREATOR_STRING = "SDL.app.metadata.creator";
+pub const SDL_PROP_APP_METADATA_COPYRIGHT_STRING = "SDL.app.metadata.copyright";
+pub const SDL_PROP_APP_METADATA_URL_STRING = "SDL.app.metadata.url";
+pub const SDL_PROP_APP_METADATA_TYPE_STRING = "SDL.app.metadata.type";
 
 /// Get metadata about your app.
 ///
@@ -426,5 +424,3 @@ pub const SDL_PROP_APP_METADATA_TYPE_STRING =         "SDL.app.metadata.type";
 /// \sa SDL_SetAppMetadata
 /// \sa SDL_SetAppMetadataProperty
 pub extern fn SDL_GetAppMetadataProperty(name: [*c]const u8) [*c]const u8;
-
-
