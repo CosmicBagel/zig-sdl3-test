@@ -51,3 +51,18 @@ pub inline fn SDL_FOURCC(
     // bitshift each component into place and combine
     return a_casted << 0 | b_casted << 8 | c_casted << 16 | d_casted << 24;
 }
+
+/// A generic function pointer.
+///
+/// In theory, generic function pointers should use this, instead of `void *`,
+/// since some platforms could treat code addresses differently than data
+/// addresses. Although in current times no popular platforms make this
+/// distinction, it is more correct and portable to use the correct type for a
+/// generic pointer.
+///
+/// If for some reason you need to force this typedef to be an actual `void *`,
+/// perhaps to work around a compiler or existing code, you can define
+/// `SDL_FUNCTION_POINTER_IS_VOID_POINTER` before including any SDL headers.
+///
+/// \since This datatype is available since SDL 3.2.0.
+pub const SDL_FunctionPointer = ?*const fn () callconv(.c) void;

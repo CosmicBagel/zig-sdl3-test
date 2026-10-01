@@ -1,3 +1,19 @@
+// # CategoryRect
+//
+// Some helper functions for managing rectangles and 2D points, in both
+// integer and floating point versions.
+
+/// The structure that defines a point (using integers).
+///
+/// \since This struct is available since SDL 3.2.0.
+///
+/// \sa SDL_GetRectEnclosingPoints
+/// \sa SDL_PointInRect
+pub const SDL_Point = struct {
+    x: c_int,
+    y: c_int,
+};
+
 /// A rectangle, with the origin at the upper left (using integers).
 ///
 /// \since This struct is available since SDL 3.2.0.
