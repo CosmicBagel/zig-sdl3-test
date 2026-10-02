@@ -58,11 +58,9 @@ pub const video = @import("video.zig");
 const std = @import("std");
 const __helpers = std.zig.c_translation.helpers;
 
-pub extern fn SDL_Metal_CreateView(window: ?*SDL_Window) SDL_MetalView;
 pub extern fn SDL_CreateRenderer(window: ?*SDL_Window, name: [*c]const u8) ?*SDL_Renderer;
 pub extern fn SDL_GetRenderer(window: ?*SDL_Window) ?*SDL_Renderer;
 
-pub const SDL_MetalView = ?*anyopaque;
 pub const SDL_Renderer = opaque {};
 
 pub const UINT64_C = __helpers.ULL_SUFFIX;
