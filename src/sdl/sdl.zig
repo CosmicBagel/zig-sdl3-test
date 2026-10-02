@@ -58,22 +58,6 @@ pub const video = @import("video.zig");
 const std = @import("std");
 const __helpers = std.zig.c_translation.helpers;
 
-pub const SDL_SurfaceFlags = u32;
-
-pub const SDL_Surface = extern struct {
-    flags: SDL_SurfaceFlags = 0,
-    format: pixels.SDL_PixelFormat = @import("std").mem.zeroes(pixels.SDL_PixelFormat),
-    w: c_int = 0,
-    h: c_int = 0,
-    pitch: c_int = 0,
-    pixels: ?*anyopaque = null,
-    refcount: c_int = 0,
-    reserved: ?*anyopaque = null,
-};
-
-pub extern fn SDL_WarpMouseInWindow(window: ?*SDL_Window, x: f32, y: f32) void;
-pub extern fn SDL_SetWindowRelativeMouseMode(window: ?*SDL_Window, enabled: bool) bool;
-pub extern fn SDL_GetWindowRelativeMouseMode(window: ?*SDL_Window) bool;
 pub extern fn SDL_Metal_CreateView(window: ?*SDL_Window) SDL_MetalView;
 pub extern fn SDL_CreateRenderer(window: ?*SDL_Window, name: [*c]const u8) ?*SDL_Renderer;
 pub extern fn SDL_GetRenderer(window: ?*SDL_Window) ?*SDL_Renderer;
