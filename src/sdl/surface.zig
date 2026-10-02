@@ -18,8 +18,6 @@
 // different threads with different surfaces. You should not try to modify any
 // surface from two threads simultaneously.
 
-const stdinc = @import("stdinc.zig");
-const @"error" = @import("error.zig");
 const blendmode = @import("blendmode.zig");
 const pixels = @import("pixels.zig");
 const properties = @import("properties.zig");

@@ -7,8 +7,6 @@
 //
 // https://wiki.libsdl.org/SDL3/BestKeyboardPractices
 
-const stdinc = @import("stdinc.zig");
-const @"error" = @import("error.zig");
 const keycode = @import("keycode.zig");
 const properties = @import("properties.zig");
 const rect = @import("rect.zig");

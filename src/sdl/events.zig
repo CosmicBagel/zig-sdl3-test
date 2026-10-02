@@ -28,7 +28,6 @@
 
 const audio = @import("audio.zig");
 const camera = @import("camera.zig");
-const sdl_error = @import("error.zig");
 const gamepad = @import("gamepad.zig");
 const joystick = @import("joystick.zig");
 const keyboard = @import("keyboard.zig");

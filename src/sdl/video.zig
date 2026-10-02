@@ -24,7 +24,6 @@
 // events, so start with SDL_CreateWindow() and SDL_PollEvent().
 
 const stdinc = @import("stdinc.zig");
-const @"error" = @import("error.zig");
 const pixels = @import("pixels.zig");
 const properties = @import("properties.zig");
 const rect = @import("rect.zig");
