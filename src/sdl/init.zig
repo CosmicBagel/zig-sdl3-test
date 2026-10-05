@@ -1,4 +1,31 @@
+// # CategoryInit
+//
+// All SDL programs need to initialize the library before starting to work
+// with it.
+//
+// Almost everything can simply call SDL_Init() near startup, with a handful
+// of flags to specify subsystems to touch. These are here to make sure SDL
+// does not even attempt to touch low-level pieces of the operating system
+// that you don't intend to use. For example, you might be using SDL for video
+// and input but chose an external library for audio, and in this case you
+// would just need to leave off the `SDL_INIT_AUDIO` flag to make sure that
+// external library has complete control.
+//
+// Most apps, when terminating, should call SDL_Quit(). This will clean up
+// (nearly) everything that SDL might have allocated, and crucially, it'll
+// make sure that the display's resolution is back to what the user expects if
+// you had previously changed it for your game.
+//
+// SDL3 apps are strongly encouraged to call SDL_SetAppMetadata() at startup
+// to fill in details about the program. This is completely optional, but it
+// helps in small ways (we can provide an About dialog box for the macOS menu,
+// we can name the app in the system's audio mixer, etc). Those that want to
+// provide a _lot_ of information should look at the more-detailed
+// SDL_SetAppMetadataProperty().
+
 const events = @import("events.zig");
+
+// As of version 0.5, SDL is loaded dynamically into the application
 
 /// Initialization flags for SDL_Init and/or SDL_InitSubSystem
 ///
@@ -43,6 +70,21 @@ pub const SDL_InitFlags = packed struct(u32) {
     camera: bool, // bit 16
 };
 
+/// `SDL_INIT_AUDIO` implies `SDL_INIT_EVENTS`
+pub const SDL_INIT_AUDIO = 0x00000010;
+/// `SDL_INIT_VIDEO` implies `SDL_INIT_EVENTS`, should be initialized on the main thread
+pub const SDL_INIT_VIDEO = 0x00000020;
+/// `SDL_INIT_JOYSTICK` implies `SDL_INIT_EVENTS`
+pub const SDL_INIT_JOYSTICK = 0x00000200;
+pub const SDL_INIT_HAPTIC = 0x00001000;
+/// `SDL_INIT_GAMEPAD` implies `SDL_INIT_JOYSTICK`
+pub const SDL_INIT_GAMEPAD = 0x00002000;
+pub const SDL_INIT_EVENTS = 0x00004000;
+/// `SDL_INIT_SENSOR` implies `SDL_INIT_EVENTS`
+pub const SDL_INIT_SENSOR = 0x00008000;
+/// `SDL_INIT_CAMERA` implies `SDL_INIT_EVENTS`
+pub const SDL_INIT_CAMERA = 0x00010000;
+
 /// Return values for optional main callbacks.
 ///
 /// Returning SDL_APP_SUCCESS or SDL_APP_FAILURE from SDL_AppInit,
@@ -86,7 +128,11 @@ pub const SDL_AppResult = enum(c_uint) {
 ///          terminate with success, SDL_APP_CONTINUE to continue.
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const AppInit_func = ?*const fn (appstate: ?*?*anyopaque, argc: c_int, argv: ?[*:null]?[*:0]u8) callconv(.c) SDL_AppResult;
+pub const AppInit_func = ?*const fn (
+    appstate: ?*?*anyopaque,
+    argc: c_int,
+    argv: ?[*:0]?[*:0]u8,
+) callconv(.c) SDL_AppResult;
 
 /// Function pointer typedef for SDL_AppIterate.
 ///
@@ -113,7 +159,10 @@ pub const AppIterate_func = ?*const fn (appstate: ?*anyopaque) callconv(.c) SDL_
 ///          terminate with success, SDL_APP_CONTINUE to continue.
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const AppEvent_func = ?*const fn (appstate: ?*anyopaque, event: [*c]events.SDL_Event) callconv(.c) SDL_AppResult;
+pub const AppEvent_func = ?*const fn (
+    appstate: ?*anyopaque,
+    event: *events.SDL_Event,
+) callconv(.c) SDL_AppResult;
 
 /// Function pointer typedef for SDL_AppQuit.
 ///
@@ -125,7 +174,10 @@ pub const AppEvent_func = ?*const fn (appstate: ?*anyopaque, event: [*c]events.S
 /// \param result the result code that terminated the app (success or failure).
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const AppQuit_func = ?*const fn (appstate: ?*anyopaque, result: SDL_AppResult) callconv(.c) void;
+pub const AppQuit_func = ?*const fn (
+    appstate: ?*anyopaque,
+    result: SDL_AppResult,
+) callconv(.c) void;
 
 /// Initialize the SDL library.
 ///
@@ -297,7 +349,11 @@ pub const SDL_MainThreadCallback = ?*const fn (userdata: ?*anyopaque) callconv(.
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_IsMainThread
-pub extern fn SDL_RunOnMainThread(callback: SDL_MainThreadCallback, userdata: ?*anyopaque, wait_complete: bool) bool;
+pub extern fn SDL_RunOnMainThread(
+    callback: SDL_MainThreadCallback,
+    userdata: ?*anyopaque,
+    wait_complete: bool,
+) bool;
 
 /// Specify basic metadata about your app.
 ///
@@ -333,7 +389,7 @@ pub extern fn SDL_RunOnMainThread(callback: SDL_MainThreadCallback, userdata: ?*
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetAppMetadataProperty
-pub extern fn SDL_SetAppMetadata(appname: [*c]const u8, appversion: [*c]const u8, appidentifier: [*c]const u8) bool;
+pub extern fn SDL_SetAppMetadata(appname: [*:0]const u8, appversion: [*:0]const u8, appidentifier: [*:0]const u8) bool;
 
 /// Specify metadata about your app through a set of properties.
 ///
@@ -394,7 +450,7 @@ pub extern fn SDL_SetAppMetadata(appname: [*c]const u8, appversion: [*c]const u8
 ///
 /// \sa SDL_GetAppMetadataProperty
 /// \sa SDL_SetAppMetadata
-pub extern fn SDL_SetAppMetadataProperty(name: [*c]const u8, value: [*c]const u8) bool;
+pub extern fn SDL_SetAppMetadataProperty(name: [*:0]const u8, value: [*:0]const u8) bool;
 
 pub const SDL_PROP_APP_METADATA_NAME_STRING = "SDL.app.metadata.name";
 pub const SDL_PROP_APP_METADATA_VERSION_STRING = "SDL.app.metadata.version";
@@ -423,4 +479,4 @@ pub const SDL_PROP_APP_METADATA_TYPE_STRING = "SDL.app.metadata.type";
 ///
 /// \sa SDL_SetAppMetadata
 /// \sa SDL_SetAppMetadataProperty
-pub extern fn SDL_GetAppMetadataProperty(name: [*c]const u8) [*c]const u8;
+pub extern fn SDL_GetAppMetadataProperty(name: [*:0]const u8) [*:0]const u8;
