@@ -31,13 +31,14 @@ const iostream = @import("iostream.zig");
 /// \since This datatype is available since SDL 3.2.0.
 pub const SDL_SurfaceFlags = packed struct(u32) {
     /// Surface uses preallocated pixel memory
-    preallocated: bool,
+    preallocated: bool = false,
     /// Surface needs to be locked to access pixels
-    lock_needed: bool,
+    lock_needed: bool = false,
     /// Surface is currently locked
-    locked: bool,
+    locked: bool = false,
     /// Surface uses pixel memory allocated with SDL_aligned_alloc()
-    simd_aligned: bool,
+    simd_aligned: bool = false,
+    _unused: u28 = 0,
 };
 pub const SDL_SURFACE_PREALLOCATED = SDL_SurfaceFlags{ .preallocated = true };
 pub const SDL_SURFACE_LOCK_NEEDED = SDL_SurfaceFlags{ .lock_needed = true };
