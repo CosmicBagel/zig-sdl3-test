@@ -191,7 +191,7 @@ pub extern fn SDL_SetLogPriorityPrefix(priority: SDL_LogPriority, prefix: [*c]co
 /// \sa SDL_LogTrace
 /// \sa SDL_LogVerbose
 /// \sa SDL_LogWarn
-extern fn SDL_Log(fmt: [*c]const u8, ...) void;
+pub extern fn SDL_Log(fmt: [*c]const u8, ...) void;
 
 /// Log a message with SDL_LOG_PRIORITY_TRACE.
 ///
