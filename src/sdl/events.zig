@@ -430,7 +430,7 @@ pub const SDL_KeyboardDeviceEvent = extern struct {
     /// In nanoseconds, populated using SDL_GetTicksNS()
     timestamp: u64 = 0,
     /// The keyboard instance id
-    which: video.SDL_KeyboardID = 0,
+    which: keyboard.SDL_KeyboardID = 0,
 };
 
 /// Keyboard button event structure (event.key.*)
@@ -458,9 +458,9 @@ pub const SDL_KeyboardEvent = extern struct {
     /// SDL physical key code
     scancode: scancode.SDL_Scancode = @import("std").mem.zeroes(scancode.SDL_Scancode),
     /// SDL virtual key code
-    key: keycode.SDL_Keycode = 0,
+    key: keycode.SDL_Keycode = @enumFromInt(0),
     /// current key modifiers
-    mod: keycode.SDL_Keymod = 0,
+    mod: keycode.SDL_Keymod = @enumFromInt(0),
     /// The platform dependent scancode for this event
     raw: u16 = 0,
     /// true if the key is pressed
@@ -485,7 +485,7 @@ pub const SDL_TextEditingEvent = extern struct {
     /// The window with keyboard focus, if any
     windowID: video.SDL_WindowID = 0,
     /// The editing text
-    text: [*]const u8 = null,
+    text: ?[*]const u8 = null,
     /// The start cursor of selected editing text, or -1 if not set
     start: i32 = 0,
     /// The length of selected editing text, or -1 if not set
@@ -534,7 +534,7 @@ pub const SDL_TextInputEvent = extern struct {
     /// The window with keyboard focus, if any
     windowID: video.SDL_WindowID = 0,
     /// The input text, UTF-8 encoded
-    text: [*:0]const u8 = null,
+    text: ?[*:0]const u8 = null,
 };
 
 /// Mouse device event structure (event.mdevice.*)
@@ -564,7 +564,7 @@ pub const SDL_MouseMotionEvent = extern struct {
     /// The mouse instance id in relative mode, SDL_TOUCH_MOUSEID for touch events, or 0
     which: mouse.SDL_MouseID = 0,
     /// The current button state
-    state: mouse.SDL_MouseButtonFlags = 0,
+    state: mouse.SDL_MouseButtonFlags = .{},
     /// X coordinate, relative to window
     x: f32 = 0,
     /// Y coordinate, relative to window
@@ -1015,7 +1015,7 @@ pub const SDL_PenMotionEvent = extern struct {
     /// The pen instance id
     which: pen.SDL_PenID = 0,
     /// Complete pen input state at time of event
-    pen_state: pen.SDL_PenInputFlags = 0,
+    pen_state: pen.SDL_PenInputFlags = .{},
     /// X coordinate, relative to window
     x: f32 = 0,
     /// Y coordinate, relative to window
@@ -1039,7 +1039,7 @@ pub const SDL_PenTouchEvent = extern struct {
     /// The pen instance id
     which: pen.SDL_PenID = 0,
     /// Complete pen input state at time of event
-    pen_state: pen.SDL_PenInputFlags = 0,
+    pen_state: pen.SDL_PenInputFlags = .{},
     /// X coordinate, relative to window
     x: f32 = 0,
     /// Y coordinate, relative to window
@@ -1067,7 +1067,7 @@ pub const SDL_PenButtonEvent = extern struct {
     /// The pen instance id
     which: pen.SDL_PenID = 0,
     /// Complete pen input state at time of event
-    pen_state: pen.SDL_PenInputFlags = 0,
+    pen_state: pen.SDL_PenInputFlags = .{},
     /// X coordinate, relative to window
     x: f32 = 0,
     /// Y coordinate, relative to window
@@ -1095,7 +1095,7 @@ pub const SDL_PenAxisEvent = extern struct {
     /// The pen instance id
     which: pen.SDL_PenID = 0,
     /// Complete pen input state at time of event
-    pen_state: pen.SDL_PenInputFlags = 0,
+    pen_state: pen.SDL_PenInputFlags = .{},
     /// X coordinate, relative to window
     x: f32 = 0,
     /// Y coordinate, relative to window
@@ -1124,10 +1124,10 @@ pub const SDL_DropEvent = extern struct {
     /// Y coordinate, relative to window (not on begin)
     y: f32 = 0,
     /// The source app that sent this drop event, or NULL if that isn't available
-    source: [*:0]const u8 = null,
+    source: ?[*:0]const u8 = null,
     /// The text for SDL_EVENT_DROP_TEXT and the file name for
     /// SDL_EVENT_DROP_FILE, NULL for other events
-    data: [*:0]const u8 = null,
+    data: ?[*:0]const u8 = null,
 };
 
 /// An event triggered when the clipboard contents have changed
@@ -1145,7 +1145,7 @@ pub const SDL_ClipboardEvent = extern struct {
     /// number of mime types
     num_mime_types: i32 = 0,
     /// current mime types
-    mime_types: [*c][*c]const u8 = null,
+    mime_types: ?[*][*:0]const u8 = null,
 };
 
 /// Sensor event structure (event.sensor.*)
