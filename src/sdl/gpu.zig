@@ -847,21 +847,29 @@ pub const SDL_GPUTextureFormat = enum(c_uint) {
 /// \sa SDL_CreateGPUTexture
 pub const SDL_GPUTextureUsageFlags = packed struct(u32) {
     /// Texture supports sampling.
-    sampler: bool, // bit 0
+    sampler: bool = false, // bit 0
     /// Texture is a color render target.
-    color_target: bool, // bit 1
+    color_target: bool = false, // bit 1
     /// Texture is a depth stencil target.
-    depth_stencil_target: bool, // bit 2
+    depth_stencil_target: bool = false, // bit 2
     /// Texture supports storage reads in graphics stages.
-    graphics_storage_read: bool, // bit 3
+    graphics_storage_read: bool = false, // bit 3
     /// Texture supports storage reads in the compute stage.
-    compute_storage_read: bool, // bit 4
+    compute_storage_read: bool = false, // bit 4
     /// Texture supports storage writes in the compute stage.
-    compute_storage_write: bool, // bit 5
+    compute_storage_write: bool = false, // bit 5
     /// Texture supports reads and writes in the same compute shader. This is
     /// NOT equivalent to READ | WRITE.
-    compute_storage_simultaneous_read_write: bool, // bit 6
+    compute_storage_simultaneous_read_write: bool = false, // bit 6
+    _unused: u25 = 0,
 };
+pub const SDL_GPU_TEXTUREUSAGE_SAMPLER: SDL_GPUTextureUsageFlags = .{ .sampler = true };
+pub const SDL_GPU_TEXTUREUSAGE_COLOR_TARGET: SDL_GPUTextureUsageFlags = .{ .color_target = true };
+pub const SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET: SDL_GPUTextureUsageFlags = .{ .depth_stencil_target = true };
+pub const SDL_GPU_TEXTUREUSAGE_GRAPHICS_STORAGE_READ: SDL_GPUTextureUsageFlags = .{ .graphics_storage_read = true };
+pub const SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ: SDL_GPUTextureUsageFlags = .{ .compute_storage_read = true };
+pub const SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE: SDL_GPUTextureUsageFlags = .{ .compute_storage_write = true };
+pub const SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE: SDL_GPUTextureUsageFlags = .{ .compute_storage_simultaneous_read_write = true };
 
 /// Specifies the type of a texture.
 ///
@@ -932,18 +940,32 @@ pub const SDL_GPUCubeMapFace = enum(c_uint) {
 /// \sa SDL_CreateGPUBuffer
 pub const SDL_GPUBufferUsageFlags = packed struct(u32) {
     /// Buffer is a vertex buffer.
-    vertex: bool,
+    vertex: bool = false,
     /// Buffer is an index buffer.
-    index: bool,
+    index: bool = false,
     /// Buffer is an indirect buffer.
-    indirect: bool,
+    indirect: bool = false,
     /// Buffer supports storage reads in graphics stages.
-    graphics_storage_read: bool,
+    graphics_storage_read: bool = false,
     /// Buffer supports storage reads in the compute stage.
-    compute_storage_read: bool,
+    compute_storage_read: bool = false,
     /// Buffer supports storage writes in the compute stage.
-    compute_storage_write: bool,
+    compute_storage_write: bool = false,
+    _unused: u26 = 0,
 };
+
+/// Buffer is a vertex buffer.
+pub const SDL_GPU_BUFFERUSAGE_VERTEX: SDL_GPUBufferUsageFlags = .{ .vertex = true };
+/// Buffer is an index buffer.
+pub const SDL_GPU_BUFFERUSAGE_INDEX: SDL_GPUBufferUsageFlags = .{ .index = true };
+/// Buffer is an indirect buffer.
+pub const SDL_GPU_BUFFERUSAGE_INDIRECT: SDL_GPUBufferUsageFlags = .{ .indirect = true };
+/// Buffer supports storage reads in graphics stages.
+pub const SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ: SDL_GPUBufferUsageFlags = .{ .graphics_storage_read = true };
+/// Buffer supports storage reads in the compute stage.
+pub const SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_READ: SDL_GPUBufferUsageFlags = .{ .compute_storage_read = true };
+/// Buffer supports storage writes in the compute stage.
+pub const SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_WRITE: SDL_GPUBufferUsageFlags = .{ .compute_storage_write = true };
 
 /// Specifies how a transfer buffer is intended to be used by the client.
 ///
@@ -1214,14 +1236,20 @@ pub const SDL_GPUBlendFactor = enum(c_uint) {
 /// \sa SDL_CreateGPUGraphicsPipeline
 pub const SDL_GPUColorComponentFlags = packed struct(u8) {
     /// the red component
-    R: bool, // bit 0
+    R: bool = false, // bit 0
     /// the green component
-    G: bool, // bit 1
+    G: bool = false, // bit 1
     /// the blue component */
-    B: bool, // bit 2
+    B: bool = false, // bit 2
     /// the alpha component */
-    A: bool, // bit 3
+    A: bool = false, // bit 3
+    _unused: u4 = 0,
 };
+
+pub const SDL_GPU_COLORCOMPONENT_R: SDL_GPUColorComponentFlags = .{ .R = true };
+pub const SDL_GPU_COLORCOMPONENT_G: SDL_GPUColorComponentFlags = .{ .G = true };
+pub const SDL_GPU_COLORCOMPONENT_B: SDL_GPUColorComponentFlags = .{ .B = true };
+pub const SDL_GPU_COLORCOMPONENT_A: SDL_GPUColorComponentFlags = .{ .A = true };
 
 /// Specifies a filter operation used by a sampler.
 ///
@@ -1713,7 +1741,7 @@ pub const SDL_GPUColorTargetBlendState = extern struct {
     alpha_blend_op: SDL_GPUBlendOp = @import("std").mem.zeroes(SDL_GPUBlendOp),
     /// A bitmask specifying which of the RGBA components are enabled for
     /// writing. Writes to all channels if enable_color_write_mask is false.
-    color_write_mask: SDL_GPUColorComponentFlags = 0,
+    color_write_mask: SDL_GPUColorComponentFlags = .{},
     // Whether blending is enabled for the color target.
     enable_blend: bool = false,
     /// Whether the color write mask is enabled.
@@ -1799,7 +1827,7 @@ pub const SDL_GPUTextureCreateInfo = extern struct {
 /// \sa SDL_GPUBufferUsageFlags
 pub const SDL_GPUBufferCreateInfo = extern struct {
     /// How the buffer is intended to be used by the client.
-    usage: SDL_GPUBufferUsageFlags = 0,
+    usage: SDL_GPUBufferUsageFlags = .{},
     /// The size in bytes of the buffer.
     size: u32 = 0,
     /// A properties ID for extensions. Should be 0 if no extensions are needed.
@@ -2057,7 +2085,7 @@ pub const SDL_GPUColorTargetInfo = extern struct {
     layer_or_depth_plane: u32 = 0,
     /// The color to clear the color target to at the start of the render pass.
     /// Ignored if SDL_GPULoadOp.clear is not used.
-    clear_color: pixels.SDL_FColor = @import("std").mem.zeroes(pixels.DL_FColor),
+    clear_color: pixels.SDL_FColor = @import("std").mem.zeroes(pixels.SDL_FColor),
     /// What is done with the contents of the color target at the beginning of the render pass.
     load_op: SDL_GPULoadOp = @import("std").mem.zeroes(SDL_GPULoadOp),
     /// What is done with the results of the render pass.
