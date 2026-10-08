@@ -51,23 +51,24 @@ pub const SDL_InitFlags = packed struct(u32) {
 
     // BitField 0000_0000_0000_000C_SEGH_00J0_00VA_0000
 
-    _reserved0: u4, // bits 0-5
+    _reserved0: u4 = 0, // bits 0-5
     /// `SDL_INIT_AUDIO` implies `SDL_INIT_EVENTS`
-    audio: bool, // bit 4
+    audio: bool = false, // bit 4
     /// `SDL_INIT_VIDEO` implies `SDL_INIT_EVENTS`, should be initialized on the main thread
-    video: bool, // bit 5
-    _reserved1: u3, // bits 6-10
+    video: bool = false, // bit 5
+    _reserved1: u3 = 0, // bits 6-10
     /// `SDL_INIT_JOYSTICK` implies `SDL_INIT_EVENTS`
-    joystick: bool, // bit 9
-    _reserved2: u2, // bits 10-13
-    haptic: bool, // bit 12
+    joystick: bool = false, // bit 9
+    _reserved2: u2 = 0, // bits 10-13
+    haptic: bool = false, // bit 12
     /// `SDL_INIT_GAMEPAD` implies `SDL_INIT_JOYSTICK`
-    gamepad: bool, // bit 13
-    events: bool, // bit 14
+    gamepad: bool = false, // bit 13
+    events: bool = false, // bit 14
     /// `SDL_INIT_SENSOR` implies `SDL_INIT_EVENTS`
-    sensor: bool, // bit 15
+    sensor: bool = false, // bit 15
     /// `SDL_INIT_CAMERA` implies `SDL_INIT_EVENTS`
-    camera: bool, // bit 16
+    camera: bool = false, // bit 16
+    _unused: u15 = 0,
 };
 
 /// `SDL_INIT_AUDIO` implies `SDL_INIT_EVENTS`
