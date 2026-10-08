@@ -132,11 +132,12 @@ pub const SDL_CursorFrameInfo = extern struct {
 /// \sa SDL_GetGlobalMouseState
 /// \sa SDL_GetRelativeMouseState
 pub const SDL_MouseButtonFlags = packed struct(u32) {
-    left: bool, // bit 0
-    middle: bool, // bit 1
-    right: bool, // bit 2
-    side_1: bool, // bit 3
-    side_2: bool, // bit 4
+    left: bool = false, // bit 0
+    middle: bool = false, // bit 1
+    right: bool = false, // bit 2
+    side_1: bool = false, // bit 3
+    side_2: bool = false, // bit 4
+    _unused: u27 = 0,
 };
 
 pub const SDL_BUTTON_LEFT = SDL_MouseButtonFlags{ .left = true };
