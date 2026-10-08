@@ -575,12 +575,12 @@ pub const SDL_Keymod = enum(u16) {
     mode = 0x4000,
     /// the Scroll Lock key is down.
     scroll = 0x8000,
-    /// Any Ctrl key is down.
-    ctrl = (SDL_Keymod.lctrl | SDL_Keymod.rctrl),
-    /// Any Shift key is down.
-    shift = (SDL_Keymod.lshift | SDL_Keymod.rshift),
-    /// Any Alt key is down.
-    alt = (SDL_Keymod.lalt | SDL_Keymod.ralt),
-    /// Any GUI key is down.
-    gui = (SDL_Keymod.lgui | SDL_Keymod.rgui),
+    /// Any Ctrl key is down. (SDL_Keymod.lctrl | SDL_Keymod.rctrl)
+    ctrl = 0x00C0,
+    /// Any Shift key is down. (SDL_Keymod.lshift | SDL_Keymod.rshift)
+    shift = 0x0003,
+    /// Any Alt key is down. (SDL_Keymod.lalt | SDL_Keymod.ralt)
+    alt = 0x0300,
+    /// Any GUI key is down. (SDL_Keymod.lgui | SDL_Keymod.rgui)
+    gui = 0x0C00,
 };
