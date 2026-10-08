@@ -12,7 +12,7 @@ pub const cpuinfo = @import("cpuinfo.zig");
 pub const dialog = @import("dialog.zig");
 pub const dlopennote = @import("dlopennote.zig");
 pub const endian = @import("endian.zig");
-pub const @"error" = @import("error.zig");
+pub const sdl_error = @import("sdl_error.zig");
 pub const events = @import("events.zig");
 pub const filesystem = @import("filesystem.zig");
 pub const gamepad = @import("gamepad.zig");
@@ -56,18 +56,7 @@ pub const version = @import("version.zig");
 pub const video = @import("video.zig");
 
 const std = @import("std");
-const __helpers = std.zig.c_translation.helpers;
 
-pub extern fn SDL_CreateRenderer(window: ?*SDL_Window, name: [*c]const u8) ?*SDL_Renderer;
-pub extern fn SDL_GetRenderer(window: ?*SDL_Window) ?*SDL_Renderer;
-
-pub const SDL_Renderer = opaque {};
-
-pub const UINT64_C = __helpers.ULL_SUFFIX;
-pub inline fn SDL_UINT64_C(c: anytype) @TypeOf(UINT64_C(c)) {
-    _ = &c;
-    return UINT64_C(c);
-}
 pub const SDL_Time = i64;
 
 pub const SDL_DateTime = extern struct {
