@@ -21,22 +21,22 @@ pub const SDL_PenInputFlags = packed struct(u32) {
     // BitField IE00_0000_0000_0000_0000_0000_0054_321D
 
     /// pen is pressed down
-    down: bool, // bit 0
+    down: bool = false, // bit 0
     /// button 1 is pressed
-    button_1: bool, // bit 1
+    button_1: bool = false, // bit 1
     /// button 2 is pressed
-    button_2: bool, // bit 2
+    button_2: bool = false, // bit 2
     /// button 3 is pressed
-    button_3: bool, // bit 3
+    button_3: bool = false, // bit 3
     /// button 4 is pressed
-    button_4: bool, // bit 4
+    button_4: bool = false, // bit 4
     /// button 5 is pressed
-    button_5: bool, // bit 5
-    _reserved: u24, // bit 6 - 29
+    button_5: bool = false, // bit 5
+    _reserved: u24 = 0, // bit 6 - 29
     /// eraser tip is used
-    eraser_tip: bool, // bit 30
+    eraser_tip: bool = false, // bit 30
     /// pen is in proximity (since SDL 3.4.0)
-    in_proximity: bool, // bit 31
+    in_proximity: bool = false, // bit 31
 };
 
 /// Pen axis indices.
