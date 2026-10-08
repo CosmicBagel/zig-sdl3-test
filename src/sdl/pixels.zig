@@ -1118,7 +1118,7 @@ pub const SDL_Color = extern struct {
 /// color which uses the SDL_PIXELFORMAT_RGBA128_FLOAT format
 ///
 /// \since This struct is available since SDL 3.2.0.
-pub const SDL_FColor = struct {
+pub const SDL_FColor = extern struct {
     r: f32,
     g: f32,
     b: f32,
