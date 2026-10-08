@@ -129,10 +129,10 @@ pub const SDL_AppResult = enum(c_uint) {
 ///          terminate with success, SDL_APP_CONTINUE to continue.
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const AppInit_func = ?*const fn (
+pub const AppInit_func = *const fn (
     appstate: ?*?*anyopaque,
     argc: c_int,
-    argv: ?[*:0]?[*:0]u8,
+    argv: ?[*][*:0]u8,
 ) callconv(.c) SDL_AppResult;
 
 /// Function pointer typedef for SDL_AppIterate.
@@ -146,7 +146,7 @@ pub const AppInit_func = ?*const fn (
 ///          terminate with success, SDL_APP_CONTINUE to continue.
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const AppIterate_func = ?*const fn (appstate: ?*anyopaque) callconv(.c) SDL_AppResult;
+pub const AppIterate_func = *const fn (appstate: ?*anyopaque) callconv(.c) SDL_AppResult;
 
 /// Function pointer typedef for SDL_AppEvent.
 ///
@@ -160,9 +160,9 @@ pub const AppIterate_func = ?*const fn (appstate: ?*anyopaque) callconv(.c) SDL_
 ///          terminate with success, SDL_APP_CONTINUE to continue.
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const AppEvent_func = ?*const fn (
+pub const AppEvent_func = *const fn (
     appstate: ?*anyopaque,
-    event: *events.SDL_Event,
+    event: ?*events.SDL_Event,
 ) callconv(.c) SDL_AppResult;
 
 /// Function pointer typedef for SDL_AppQuit.
@@ -175,7 +175,7 @@ pub const AppEvent_func = ?*const fn (
 /// \param result the result code that terminated the app (success or failure).
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const AppQuit_func = ?*const fn (
+pub const AppQuit_func = *const fn (
     appstate: ?*anyopaque,
     result: SDL_AppResult,
 ) callconv(.c) void;
