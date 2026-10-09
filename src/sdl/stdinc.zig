@@ -65,4 +65,4 @@ pub inline fn SDL_FOURCC(
 /// `SDL_FUNCTION_POINTER_IS_VOID_POINTER` before including any SDL headers.
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const SDL_FunctionPointer = ?*const fn () callconv(.c) void;
+pub const SDL_FunctionPointer = *const fn () callconv(.c) void;

@@ -477,7 +477,7 @@ pub extern fn SDL_UnlockSurface(surface: *SDL_Surface) void;
 ///
 /// \sa SDL_DestroySurface
 /// \sa SDL_LoadSurface
-pub extern fn SDL_LoadSurface_IO(src: ?*iostream.SDL_IOStream, closeio: bool) ?*SDL_Surface;
+pub extern fn SDL_LoadSurface_IO(src: *iostream.SDL_IOStream, closeio: bool) ?*SDL_Surface;
 
 /// Load a BMP or PNG image from a file.
 ///
@@ -494,7 +494,7 @@ pub extern fn SDL_LoadSurface_IO(src: ?*iostream.SDL_IOStream, closeio: bool) ?*
 ///
 /// \sa SDL_DestroySurface
 /// \sa SDL_LoadSurface_IO
-pub extern fn SDL_LoadSurface(file: [*]const u8) ?*SDL_Surface;
+pub extern fn SDL_LoadSurface(file: [*:0]const u8) ?*SDL_Surface;
 
 /// Load a BMP image from a seekable SDL data stream.
 ///
@@ -514,7 +514,7 @@ pub extern fn SDL_LoadSurface(file: [*]const u8) ?*SDL_Surface;
 /// \sa SDL_DestroySurface
 /// \sa SDL_LoadBMP
 /// \sa SDL_SaveBMP_IO
-pub extern fn SDL_LoadBMP_IO(src: ?*iostream.SDL_IOStream, closeio: bool) ?*SDL_Surface;
+pub extern fn SDL_LoadBMP_IO(src: *iostream.SDL_IOStream, closeio: bool) ?*SDL_Surface;
 
 /// Load a BMP image from a file.
 ///
@@ -532,7 +532,7 @@ pub extern fn SDL_LoadBMP_IO(src: ?*iostream.SDL_IOStream, closeio: bool) ?*SDL_
 /// \sa SDL_DestroySurface
 /// \sa SDL_LoadBMP_IO
 /// \sa SDL_SaveBMP
-pub extern fn SDL_LoadBMP(file: [*]const u8) ?*SDL_Surface;
+pub extern fn SDL_LoadBMP(file: [*:0]const u8) ?*SDL_Surface;
 
 /// Save a surface to a seekable SDL data stream in BMP format.
 ///
@@ -558,7 +558,7 @@ pub extern fn SDL_LoadBMP(file: [*]const u8) ?*SDL_Surface;
 /// \sa SDL_SaveBMP
 pub extern fn SDL_SaveBMP_IO(
     surface: *SDL_Surface,
-    dst: ?*iostream.SDL_IOStream,
+    dst: *iostream.SDL_IOStream,
     closeio: bool,
 ) bool;
 
@@ -582,7 +582,7 @@ pub extern fn SDL_SaveBMP_IO(
 ///
 /// \sa SDL_LoadBMP
 /// \sa SDL_SaveBMP_IO
-pub extern fn SDL_SaveBMP(surface: *SDL_Surface, file: [*]const u8) bool;
+pub extern fn SDL_SaveBMP(surface: *SDL_Surface, file: [*:0]const u8) bool;
 
 /// Load a PNG image from a seekable SDL data stream.
 ///
@@ -606,7 +606,7 @@ pub extern fn SDL_SaveBMP(surface: *SDL_Surface, file: [*]const u8) bool;
 /// \sa SDL_DestroySurface
 /// \sa SDL_LoadPNG
 /// \sa SDL_SavePNG_IO
-pub extern fn SDL_LoadPNG_IO(src: ?*iostream.SDL_IOStream, closeio: bool) ?*SDL_Surface;
+pub extern fn SDL_LoadPNG_IO(src: *iostream.SDL_IOStream, closeio: bool) ?*SDL_Surface;
 
 /// Load a PNG image from a file.
 ///
@@ -628,7 +628,7 @@ pub extern fn SDL_LoadPNG_IO(src: ?*iostream.SDL_IOStream, closeio: bool) ?*SDL_
 /// \sa SDL_DestroySurface
 /// \sa SDL_LoadPNG_IO
 /// \sa SDL_SavePNG
-pub extern fn SDL_LoadPNG(file: [*]const u8) ?*SDL_Surface;
+pub extern fn SDL_LoadPNG(file: [*:0]const u8) ?*SDL_Surface;
 
 /// Save a surface to a seekable SDL data stream in PNG format.
 ///
@@ -648,7 +648,7 @@ pub extern fn SDL_LoadPNG(file: [*]const u8) ?*SDL_Surface;
 /// \sa SDL_SavePNG
 pub extern fn SDL_SavePNG_IO(
     surface: *SDL_Surface,
-    dst: ?*iostream.SDL_IOStream,
+    dst: *iostream.SDL_IOStream,
     closeio: bool,
 ) bool;
 
@@ -666,7 +666,7 @@ pub extern fn SDL_SavePNG_IO(
 ///
 /// \sa SDL_LoadPNG
 /// \sa SDL_SavePNG_IO
-pub extern fn SDL_SavePNG(surface: *SDL_Surface, file: [*]const u8) bool;
+pub extern fn SDL_SavePNG(surface: *SDL_Surface, file: [*:0]const u8) bool;
 
 /// Set the RLE acceleration hint for a surface.
 ///
@@ -740,7 +740,7 @@ pub extern fn SDL_SetSurfaceColorKey(surface: *SDL_Surface, enabled: bool, key: 
 ///
 /// \sa SDL_SetSurfaceColorKey
 /// \sa SDL_GetSurfaceColorKey
-pub extern fn SDL_SurfaceHasColorKey(surface: ?*SDL_Surface) bool;
+pub extern fn SDL_SurfaceHasColorKey(surface: *SDL_Surface) bool;
 
 /// Get the color key (transparent pixel) for a surface.
 ///
@@ -899,7 +899,7 @@ pub extern fn SDL_GetSurfaceBlendMode(
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetSurfaceClipRect
-pub extern fn SDL_SetSurfaceClipRect(surface: *SDL_Surface, rect: *const rect.SDL_Rect) bool;
+pub extern fn SDL_SetSurfaceClipRect(surface: *SDL_Surface, rect: ?*const rect.SDL_Rect) bool;
 
 /// Get the clipping rectangle for a surface.
 ///
@@ -999,7 +999,7 @@ pub extern fn SDL_DuplicateSurface(surface: *SDL_Surface) ?*SDL_Surface;
 ///
 /// \sa SDL_DestroySurface
 pub extern fn SDL_ScaleSurface(
-    surface: ?*SDL_Surface,
+    surface: *SDL_Surface,
     width: c_int,
     height: c_int,
     scaleMode: SDL_ScaleMode,
@@ -1092,10 +1092,10 @@ pub extern fn SDL_ConvertPixels(
     width: c_int,
     height: c_int,
     src_format: pixels.SDL_PixelFormat,
-    src: ?*const anyopaque,
+    src: *const anyopaque,
     src_pitch: c_int,
     dst_format: pixels.SDL_PixelFormat,
-    dst: ?*anyopaque,
+    dst: *anyopaque,
     dst_pitch: c_int,
 ) bool;
 
@@ -1132,14 +1132,14 @@ pub extern fn SDL_ConvertPixelsAndColorspace(
     width: c_int,
     height: c_int,
     src_format: pixels.SDL_PixelFormat,
-    src_colorspace: pixels.DL_Colorspace,
+    src_colorspace: pixels.SDL_Colorspace,
     src_properties: properties.SDL_PropertiesID,
-    src: ?*const anyopaque,
+    src: *const anyopaque,
     src_pitch: c_int,
     dst_format: pixels.SDL_PixelFormat,
     dst_colorspace: pixels.SDL_Colorspace,
     dst_properties: properties.SDL_PropertiesID,
-    dst: ?*anyopaque,
+    dst: *anyopaque,
     dst_pitch: c_int,
 ) bool;
 
@@ -1169,10 +1169,10 @@ pub extern fn SDL_PremultiplyAlpha(
     width: c_int,
     height: c_int,
     src_format: pixels.SDL_PixelFormat,
-    src: ?*const anyopaque,
+    src: *const anyopaque,
     src_pitch: c_int,
     dst_format: pixels.SDL_PixelFormat,
-    dst: ?*anyopaque,
+    dst: *anyopaque,
     dst_pitch: c_int,
     linear: bool,
 ) bool;
@@ -1240,7 +1240,7 @@ pub extern fn SDL_ClearSurface(surface: *SDL_Surface, r: f32, g: f32, b: f32, a:
 /// \sa SDL_FillSurfaceRects
 pub extern fn SDL_FillSurfaceRect(
     dst: *SDL_Surface,
-    rect: *const rect.SDL_Rect,
+    rect: ?*const rect.SDL_Rect,
     color: u32,
 ) bool;
 

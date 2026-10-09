@@ -57,7 +57,7 @@ pub extern fn SDL_HasKeyboard() bool;
 ///
 /// \sa SDL_GetKeyboardNameForID
 /// \sa SDL_HasKeyboard
-pub extern fn SDL_GetKeyboards(count: [*c]c_int) [*c]SDL_KeyboardID;
+pub extern fn SDL_GetKeyboards(count: ?*c_int) ?[*:0]SDL_KeyboardID;
 
 /// Get the name of a keyboard.
 ///
@@ -72,7 +72,7 @@ pub extern fn SDL_GetKeyboards(count: [*c]c_int) [*c]SDL_KeyboardID;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetKeyboards
-pub extern fn SDL_GetKeyboardNameForID(instance_id: SDL_KeyboardID) [*c]const u8;
+pub extern fn SDL_GetKeyboardNameForID(instance_id: SDL_KeyboardID) ?[*:0]const u8;
 
 /// Query the window which currently has keyboard focus.
 ///
@@ -81,7 +81,7 @@ pub extern fn SDL_GetKeyboardNameForID(instance_id: SDL_KeyboardID) [*c]const u8
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetKeyboardFocus() ?*video.SDL_Window;
+pub extern fn SDL_GetKeyboardFocus() *video.SDL_Window;
 
 /// Get a snapshot of the current state of the keyboard.
 ///
@@ -112,7 +112,7 @@ pub extern fn SDL_GetKeyboardFocus() ?*video.SDL_Window;
 ///
 /// \sa SDL_PumpEvents
 /// \sa SDL_ResetKeyboard
-pub extern fn SDL_GetKeyboardState(numkeys: [*c]c_int) [*c]const bool;
+pub extern fn SDL_GetKeyboardState(numkeys: ?*c_int) ?[*:0]const bool;
 
 /// Clear the state of the keyboard.
 ///
@@ -201,7 +201,7 @@ pub extern fn SDL_GetKeyFromScancode(
 /// \sa SDL_GetScancodeName
 pub extern fn SDL_GetScancodeFromKey(
     key: keycode.SDL_Keycode,
-    modstate: [*c]keycode.SDL_Keymod,
+    modstate: ?*keycode.SDL_Keymod,
 ) scancode.SDL_Scancode;
 
 /// Set a human-readable name for a scancode.
@@ -218,7 +218,7 @@ pub extern fn SDL_GetScancodeFromKey(
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetScancodeName
-pub extern fn SDL_SetScancodeName(scancode: scancode.SDL_Scancode, name: [*c]const u8) bool;
+pub extern fn SDL_SetScancodeName(scancode: scancode.SDL_Scancode, name: [*:0]const u8) bool;
 
 /// Get a human-readable name for a scancode.
 ///
@@ -242,7 +242,7 @@ pub extern fn SDL_SetScancodeName(scancode: scancode.SDL_Scancode, name: [*c]con
 /// \sa SDL_GetScancodeFromKey
 /// \sa SDL_GetScancodeFromName
 /// \sa SDL_SetScancodeName
-pub extern fn SDL_GetScancodeName(scancode: scancode.SDL_Scancode) [*c]const u8;
+pub extern fn SDL_GetScancodeName(scancode: scancode.SDL_Scancode) [*:0]const u8;
 
 /// Get a scancode from a human-readable name.
 ///
@@ -257,7 +257,7 @@ pub extern fn SDL_GetScancodeName(scancode: scancode.SDL_Scancode) [*c]const u8;
 /// \sa SDL_GetKeyFromName
 /// \sa SDL_GetScancodeFromKey
 /// \sa SDL_GetScancodeName
-pub extern fn SDL_GetScancodeFromName(name: [*c]const u8) scancode.SDL_Scancode;
+pub extern fn SDL_GetScancodeFromName(name: [*:0]const u8) scancode.SDL_Scancode;
 
 /// Get a human-readable name for a key.
 ///
@@ -275,7 +275,7 @@ pub extern fn SDL_GetScancodeFromName(name: [*c]const u8) scancode.SDL_Scancode;
 /// \sa SDL_GetKeyFromName
 /// \sa SDL_GetKeyFromScancode
 /// \sa SDL_GetScancodeFromKey
-pub extern fn SDL_GetKeyName(key: keycode.SDL_Keycode) [*c]const u8;
+pub extern fn SDL_GetKeyName(key: keycode.SDL_Keycode) [*:0]const u8;
 
 /// Get a key code from a human-readable name.
 ///
@@ -290,7 +290,7 @@ pub extern fn SDL_GetKeyName(key: keycode.SDL_Keycode) [*c]const u8;
 /// \sa SDL_GetKeyFromScancode
 /// \sa SDL_GetKeyName
 /// \sa SDL_GetScancodeFromName
-pub extern fn SDL_GetKeyFromName(name: [*c]const u8) keycode.SDL_Keycode;
+pub extern fn SDL_GetKeyFromName(name: [*:0]const u8) keycode.SDL_Keycode;
 
 /// Start accepting Unicode text input events in a window.
 ///
@@ -316,7 +316,7 @@ pub extern fn SDL_GetKeyFromName(name: [*c]const u8) keycode.SDL_Keycode;
 /// \sa SDL_StartTextInputWithProperties
 /// \sa SDL_StopTextInput
 /// \sa SDL_TextInputActive
-pub extern fn SDL_StartTextInput(window: ?*video.SDL_Window) bool;
+pub extern fn SDL_StartTextInput(window: *video.SDL_Window) bool;
 
 /// Text input type.
 ///
@@ -417,7 +417,7 @@ pub const SDL_Capitalization = enum(c_uint) {
 /// \sa SDL_StopTextInput
 /// \sa SDL_TextInputActive
 pub extern fn SDL_StartTextInputWithProperties(
-    window: ?*video.SDL_Window,
+    window: *video.SDL_Window,
     props: properties.SDL_PropertiesID,
 ) bool;
 
@@ -437,7 +437,7 @@ pub const SDL_PROP_TEXTINPUT_ANDROID_INPUTTYPE_NUMBER = "SDL.textinput.android.i
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_StartTextInput
-pub extern fn SDL_TextInputActive(window: ?*video.SDL_Window) bool;
+pub extern fn SDL_TextInputActive(window: *video.SDL_Window) bool;
 
 /// Stop receiving any text input events in a window.
 ///
@@ -453,7 +453,7 @@ pub extern fn SDL_TextInputActive(window: ?*video.SDL_Window) bool;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_StartTextInput
-pub extern fn SDL_StopTextInput(window: ?*video.SDL_Window) bool;
+pub extern fn SDL_StopTextInput(window: *video.SDL_Window) bool;
 
 /// Dismiss the composition window/IME without disabling the subsystem.
 ///
@@ -467,7 +467,7 @@ pub extern fn SDL_StopTextInput(window: ?*video.SDL_Window) bool;
 ///
 /// \sa SDL_StartTextInput
 /// \sa SDL_StopTextInput
-pub extern fn SDL_ClearComposition(window: ?*video.SDL_Window) bool;
+pub extern fn SDL_ClearComposition(window: *video.SDL_Window) bool;
 
 /// Set the area used to type Unicode text input.
 ///
@@ -489,8 +489,8 @@ pub extern fn SDL_ClearComposition(window: ?*video.SDL_Window) bool;
 /// \sa SDL_GetTextInputArea
 /// \sa SDL_StartTextInput
 pub extern fn SDL_SetTextInputArea(
-    window: ?*video.SDL_Window,
-    rect: [*c]const rect.SDL_Rect,
+    window: *video.SDL_Window,
+    rect: ?*const rect.SDL_Rect,
     cursor: c_int,
 ) bool;
 
@@ -512,9 +512,9 @@ pub extern fn SDL_SetTextInputArea(
 ///
 /// \sa SDL_SetTextInputArea
 pub extern fn SDL_GetTextInputArea(
-    window: ?*video.SDL_Window,
-    rect: [*c]rect.SDL_Rect,
-    cursor: [*c]c_int,
+    window: *video.SDL_Window,
+    rect: ?*rect.SDL_Rect,
+    cursor: ?*c_int,
 ) bool;
 
 /// Check whether the platform has screen keyboard support.
@@ -540,4 +540,4 @@ pub extern fn SDL_HasScreenKeyboardSupport() bool;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_HasScreenKeyboardSupport
-pub extern fn SDL_ScreenKeyboardShown(window: ?*video.SDL_Window) bool;
+pub extern fn SDL_ScreenKeyboardShown(window: *video.SDL_Window) bool;

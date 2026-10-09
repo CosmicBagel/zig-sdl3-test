@@ -175,10 +175,10 @@ pub const SDL_BUTTON_X2 = SDL_MouseButtonFlags{ .side_2 = true };
 /// \since This datatype is available since SDL 3.4.0.
 ///
 /// \sa SDL_SetRelativeMouseTransform
-pub const SDL_MouseMotionTransformCallback = ?*const fn (
+pub const SDL_MouseMotionTransformCallback = *const fn (
     userdata: ?*anyopaque,
     timestamp: u64,
-    window: ?*video.SDL_Window,
+    window: *video.SDL_Window,
     mouseID: SDL_MouseID,
     x: *f32,
     y: *f32,
@@ -233,7 +233,7 @@ pub extern fn SDL_GetMice(count: ?*c_int) ?*SDL_MouseID;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetMice
-pub extern fn SDL_GetMouseNameForID(instance_id: SDL_MouseID) ?[*]const u8;
+pub extern fn SDL_GetMouseNameForID(instance_id: SDL_MouseID) ?[*:0]const u8;
 
 /// Get the window which currently has mouse focus.
 ///
@@ -242,7 +242,7 @@ pub extern fn SDL_GetMouseNameForID(instance_id: SDL_MouseID) ?[*]const u8;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetMouseFocus() ?*video.SDL_Window;
+pub extern fn SDL_GetMouseFocus() *video.SDL_Window;
 
 /// Query SDL's cache for the synchronous mouse button state and the
 /// window-relative SDL-cursor position.
@@ -429,7 +429,7 @@ pub extern fn SDL_SetRelativeMouseTransform(
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowRelativeMouseMode
-pub extern fn SDL_SetWindowRelativeMouseMode(window: ?*video.SDL_Window, enabled: bool) bool;
+pub extern fn SDL_SetWindowRelativeMouseMode(window: *video.SDL_Window, enabled: bool) bool;
 
 /// Query whether relative mouse mode is enabled for a window.
 ///
@@ -441,7 +441,7 @@ pub extern fn SDL_SetWindowRelativeMouseMode(window: ?*video.SDL_Window, enabled
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetWindowRelativeMouseMode
-pub extern fn SDL_GetWindowRelativeMouseMode(window: ?*video.SDL_Window) bool;
+pub extern fn SDL_GetWindowRelativeMouseMode(window: *video.SDL_Window) bool;
 
 /// Capture the mouse and to track input outside an SDL window.
 ///
@@ -657,7 +657,7 @@ pub extern fn SDL_CreateSystemCursor(id: SDL_SystemCursor) ?*SDL_Cursor;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetCursor
-pub extern fn SDL_SetCursor(cursor: ?*SDL_Cursor) bool;
+pub extern fn SDL_SetCursor(cursor: *SDL_Cursor) bool;
 
 /// Get the active cursor.
 ///
@@ -701,7 +701,7 @@ pub extern fn SDL_GetDefaultCursor() ?*SDL_Cursor;
 /// \sa SDL_CreateColorCursor
 /// \sa SDL_CreateCursor
 /// \sa SDL_CreateSystemCursor
-pub extern fn SDL_DestroyCursor(cursor: ?*SDL_Cursor) void;
+pub extern fn SDL_DestroyCursor(cursor: *SDL_Cursor) void;
 
 /// Show the cursor.
 ///

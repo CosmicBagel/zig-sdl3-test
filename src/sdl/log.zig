@@ -44,6 +44,8 @@
 // Each log call is atomic, so you won't see log messages cut off one another
 // when logging from multiple threads.
 
+const std = @import("std");
+
 /// The predefined log categories
 ///
 /// By default the application and gpu categories are enabled at the INFO
@@ -170,7 +172,7 @@ pub extern fn SDL_ResetLogPriorities() void;
 ///
 /// \sa SDL_SetLogPriorities
 /// \sa SDL_SetLogPriority
-pub extern fn SDL_SetLogPriorityPrefix(priority: SDL_LogPriority, prefix: [*c]const u8) bool;
+pub extern fn SDL_SetLogPriorityPrefix(priority: SDL_LogPriority, prefix: ?[*:0]const u8) bool;
 
 /// Log a message with SDL_LOG_CATEGORY_APPLICATION and SDL_LOG_PRIORITY_INFO.
 ///
@@ -191,7 +193,7 @@ pub extern fn SDL_SetLogPriorityPrefix(priority: SDL_LogPriority, prefix: [*c]co
 /// \sa SDL_LogTrace
 /// \sa SDL_LogVerbose
 /// \sa SDL_LogWarn
-pub extern fn SDL_Log(fmt: [*c]const u8, ...) void;
+pub extern fn SDL_Log(fmt: [*:0]const u8, ...) void;
 
 /// Log a message with SDL_LOG_PRIORITY_TRACE.
 ///
@@ -213,7 +215,7 @@ pub extern fn SDL_Log(fmt: [*c]const u8, ...) void;
 /// \sa SDL_LogMessageV
 /// \sa SDL_LogVerbose
 /// \sa SDL_LogWarn
-pub extern fn SDL_LogTrace(category: SDL_LogCategory, fmt: [*c]const u8, ...) void;
+pub extern fn SDL_LogTrace(category: SDL_LogCategory, fmt: [*:0]const u8, ...) void;
 
 /// Log a message with SDL_LOG_PRIORITY_VERBOSE.
 ///
@@ -234,7 +236,7 @@ pub extern fn SDL_LogTrace(category: SDL_LogCategory, fmt: [*c]const u8, ...) vo
 /// \sa SDL_LogMessage
 /// \sa SDL_LogMessageV
 /// \sa SDL_LogWarn
-pub extern fn SDL_LogVerbose(category: SDL_LogCategory, fmt: [*c]const u8, ...) void;
+pub extern fn SDL_LogVerbose(category: SDL_LogCategory, fmt: [*:0]const u8, ...) void;
 
 /// Log a message with SDL_LOG_PRIORITY_DEBUG.
 ///
@@ -256,7 +258,7 @@ pub extern fn SDL_LogVerbose(category: SDL_LogCategory, fmt: [*c]const u8, ...) 
 /// \sa SDL_LogTrace
 /// \sa SDL_LogVerbose
 /// \sa SDL_LogWarn
-pub extern fn SDL_LogDebug(category: SDL_LogCategory, fmt: [*c]const u8, ...) void;
+pub extern fn SDL_LogDebug(category: SDL_LogCategory, fmt: [*:0]const u8, ...) void;
 
 /// Log a message with SDL_LOG_PRIORITY_INFO.
 ///
@@ -278,7 +280,7 @@ pub extern fn SDL_LogDebug(category: SDL_LogCategory, fmt: [*c]const u8, ...) vo
 /// \sa SDL_LogTrace
 /// \sa SDL_LogVerbose
 /// \sa SDL_LogWarn
-pub extern fn SDL_LogInfo(category: SDL_LogCategory, fmt: [*c]const u8, ...) void;
+pub extern fn SDL_LogInfo(category: SDL_LogCategory, fmt: [*:0]const u8, ...) void;
 
 /// Log a message with SDL_LOG_PRIORITY_WARN.
 ///
@@ -300,7 +302,7 @@ pub extern fn SDL_LogInfo(category: SDL_LogCategory, fmt: [*c]const u8, ...) voi
 /// \sa SDL_LogMessageV
 /// \sa SDL_LogTrace
 /// \sa SDL_LogVerbose
-pub extern fn SDL_LogWarn(category: SDL_LogCategory, fmt: [*c]const u8, ...) void;
+pub extern fn SDL_LogWarn(category: SDL_LogCategory, fmt: [*:0]const u8, ...) void;
 
 /// Log a message with SDL_LOG_PRIORITY_ERROR.
 ///
@@ -322,7 +324,7 @@ pub extern fn SDL_LogWarn(category: SDL_LogCategory, fmt: [*c]const u8, ...) voi
 /// \sa SDL_LogTrace
 /// \sa SDL_LogVerbose
 /// \sa SDL_LogWarn
-pub extern fn SDL_LogError(category: SDL_LogCategory, fmt: [*c]const u8, ...) void;
+pub extern fn SDL_LogError(category: SDL_LogCategory, fmt: [*:0]const u8, ...) void;
 
 /// Log a message with SDL_LOG_PRIORITY_CRITICAL.
 ///
@@ -344,7 +346,7 @@ pub extern fn SDL_LogError(category: SDL_LogCategory, fmt: [*c]const u8, ...) vo
 /// \sa SDL_LogTrace
 /// \sa SDL_LogVerbose
 /// \sa SDL_LogWarn
-pub extern fn SDL_LogCritical(category: SDL_LogCategory, fmt: [*c]const u8, ...) void;
+pub extern fn SDL_LogCritical(category: SDL_LogCategory, fmt: [*:0]const u8, ...) void;
 
 /// Log a message with the specified category and priority.
 ///
@@ -370,7 +372,7 @@ pub extern fn SDL_LogCritical(category: SDL_LogCategory, fmt: [*c]const u8, ...)
 pub extern fn SDL_LogMessage(
     category: SDL_LogCategory,
     priority: SDL_LogPriority,
-    fmt: [*c]const u8,
+    fmt: [*:0]const u8,
     ...,
 ) void;
 
@@ -399,8 +401,8 @@ pub extern fn SDL_LogMessage(
 pub extern fn SDL_LogMessageV(
     category: SDL_LogCategory,
     priority: SDL_LogPriority,
-    fmt: [*c]const u8,
-    ap: [*c]u8,
+    fmt: [*:0]const u8,
+    ap: std.builtin.VaList,
 ) void;
 
 /// The prototype for the log output callback function.
@@ -416,11 +418,11 @@ pub extern fn SDL_LogMessageV(
 /// \param message the message being output.
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const SDL_LogOutputFunction = ?*const fn (
+pub const SDL_LogOutputFunction = *const fn (
     userdata: ?*anyopaque,
     category: SDL_LogCategory,
     priority: SDL_LogPriority,
-    message: [*c]const u8,
+    message: [*:0]const u8,
 ) callconv(.c) void;
 
 /// Get the default log output function.
@@ -450,8 +452,8 @@ pub extern fn SDL_GetDefaultLogOutputFunction() SDL_LogOutputFunction;
 /// \sa SDL_GetDefaultLogOutputFunction
 /// \sa SDL_SetLogOutputFunction
 pub extern fn SDL_GetLogOutputFunction(
-    callback: [*c]SDL_LogOutputFunction,
-    userdata: [*c]?*anyopaque,
+    callback: *SDL_LogOutputFunction,
+    userdata: *?*anyopaque,
 ) void;
 
 /// Replace the default log output function with one of your own.
@@ -466,4 +468,3 @@ pub extern fn SDL_GetLogOutputFunction(
 /// \sa SDL_GetDefaultLogOutputFunction
 /// \sa SDL_GetLogOutputFunction
 pub extern fn SDL_SetLogOutputFunction(callback: SDL_LogOutputFunction, userdata: ?*anyopaque) void;
-

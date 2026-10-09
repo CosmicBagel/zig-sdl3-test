@@ -4217,8 +4217,8 @@ pub const SDL_HintPriority = enum(c_uint) {
 /// \sa SDL_ResetHint
 /// \sa SDL_SetHint
 pub extern fn SDL_SetHintWithPriority(
-    name: [*c]const u8,
-    value: [*c]const u8,
+    name: [*:0]const u8,
+    value: [*:0]const u8,
     priority: SDL_HintPriority,
 ) bool;
 
@@ -4241,8 +4241,8 @@ pub extern fn SDL_SetHintWithPriority(
 /// \sa SDL_ResetHint
 /// \sa SDL_SetHintWithPriority
 pub extern fn SDL_SetHint(
-    name: [*c]const u8,
-    value: [*c]const u8,
+    name: [*:0]const u8,
+    value: [*:0]const u8,
 ) bool;
 
 /// Reset a hint to the default value.
@@ -4261,7 +4261,7 @@ pub extern fn SDL_SetHint(
 ///
 /// \sa SDL_SetHint
 /// \sa SDL_ResetHints
-pub extern fn SDL_ResetHint(name: [*c]const u8) bool;
+pub extern fn SDL_ResetHint(name: [*:0]const u8) bool;
 
 /// Reset all hints to the default values.
 ///
@@ -4287,7 +4287,7 @@ pub extern fn SDL_ResetHints() void;
 ///
 /// \sa SDL_SetHint
 /// \sa SDL_SetHintWithPriority
-pub extern fn SDL_GetHint(name: [*c]const u8) [*c]const u8;
+pub extern fn SDL_GetHint(name: [*:0]const u8) ?[*:0]const u8;
 
 /// Get the boolean value of a hint variable.
 ///
@@ -4302,7 +4302,7 @@ pub extern fn SDL_GetHint(name: [*c]const u8) [*c]const u8;
 ///
 /// \sa SDL_GetHint
 /// \sa SDL_SetHint
-pub extern fn SDL_GetHintBoolean(name: [*c]const u8, default_value: bool) bool;
+pub extern fn SDL_GetHintBoolean(name: [*:0]const u8, default_value: bool) bool;
 
 /// A callback used to send notifications of hint value changes.
 ///
@@ -4322,11 +4322,11 @@ pub extern fn SDL_GetHintBoolean(name: [*c]const u8, default_value: bool) bool;
 /// \since This datatype is available since SDL 3.2.0.
 ///
 /// \sa SDL_AddHintCallback
-pub const SDL_HintCallback = ?*const fn (
+pub const SDL_HintCallback = *const fn (
     userdata: ?*anyopaque,
-    name: [*c]const u8,
-    oldValue: [*c]const u8,
-    newValue: [*c]const u8,
+    name: [*:0]const u8,
+    oldValue: [*:0]const u8,
+    newValue: [*:0]const u8,
 ) callconv(.c) void;
 
 /// Add a function to watch a particular hint.
@@ -4347,7 +4347,7 @@ pub const SDL_HintCallback = ?*const fn (
 ///
 /// \sa SDL_RemoveHintCallback
 pub extern fn SDL_AddHintCallback(
-    name: [*c]const u8,
+    name: [*:0]const u8,
     callback: SDL_HintCallback,
     userdata: ?*anyopaque,
 ) bool;
@@ -4365,7 +4365,7 @@ pub extern fn SDL_AddHintCallback(
 ///
 /// \sa SDL_AddHintCallback
 pub extern fn SDL_RemoveHintCallback(
-    name: [*c]const u8,
+    name: [*:0]const u8,
     callback: SDL_HintCallback,
     userdata: ?*anyopaque,
 ) void;

@@ -232,7 +232,7 @@ pub extern fn SDL_CreateWindowAndRenderer(
 /// \sa SDL_GetNumRenderDrivers
 /// \sa SDL_GetRenderDriver
 /// \sa SDL_GetRendererName
-pub extern fn SDL_CreateRenderer(window: *video.SDL_Window, name: [*:0]const u8) ?*SDL_Renderer;
+pub extern fn SDL_CreateRenderer(window: *video.SDL_Window, name: ?[*:0]const u8) ?*SDL_Renderer;
 
 /// Create a 2D rendering context for a window, with the specified properties.
 ///
@@ -356,7 +356,7 @@ pub extern fn SDL_CreateGPURenderer(
 /// \threadsafety It is safe to call this function from any thread.
 ///
 /// \since This function is available since SDL 3.4.0.
-pub extern fn SDL_GetGPURendererDevice(renderer: ?*SDL_Renderer) ?*gpu.SDL_GPUDevice;
+pub extern fn SDL_GetGPURendererDevice(renderer: *SDL_Renderer) ?*gpu.SDL_GPUDevice;
 
 /// Create a 2D software rendering context for a surface.
 ///
@@ -1345,7 +1345,7 @@ pub extern fn SDL_UpdateNVTexture(
 pub extern fn SDL_LockTexture(
     texture: *SDL_Texture,
     rect: *const rect.SDL_Rect,
-    pixels: **anyopaque,
+    pixels: *?*anyopaque,
     pitch: *c_int,
 ) bool;
 
@@ -1384,7 +1384,7 @@ pub extern fn SDL_LockTexture(
 pub extern fn SDL_LockTextureToSurface(
     texture: *SDL_Texture,
     rect: ?*const rect.SDL_Rect,
-    surface: **surface.SDL_Surface,
+    surface: *?*surface.SDL_Surface,
 ) bool;
 
 /// Unlock a texture, uploading the changes to video memory, if needed.
@@ -1429,7 +1429,7 @@ pub extern fn SDL_UnlockTexture(texture: *SDL_Texture) void;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetRenderTarget
-pub extern fn SDL_SetRenderTarget(renderer: ?*SDL_Renderer, texture: *SDL_Texture) bool;
+pub extern fn SDL_SetRenderTarget(renderer: *SDL_Renderer, texture: ?*SDL_Texture) bool;
 
 /// Get the current render target.
 ///
@@ -2796,7 +2796,7 @@ pub const SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE = 8;
 ///
 /// \sa SDL_RenderDebugTextFormat
 /// \sa SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE
-pub extern fn SDL_RenderDebugText(renderer: *SDL_Renderer, x: f32, y: f32, str: [*]const u8) bool;
+pub extern fn SDL_RenderDebugText(renderer: *SDL_Renderer, x: f32, y: f32, str: [*:0]const u8) bool;
 
 /// Draw debug text to an SDL_Renderer.
 ///
@@ -2826,7 +2826,7 @@ pub extern fn SDL_RenderDebugTextFormat(
     renderer: *SDL_Renderer,
     x: f32,
     y: f32,
-    fmt: [*]const u8,
+    fmt: [*:0]const u8,
     ...,
 ) bool;
 

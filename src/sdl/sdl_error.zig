@@ -47,7 +47,7 @@
 /// \sa SDL_ClearError
 /// \sa SDL_GetError
 /// \sa SDL_SetErrorV
-pub extern fn SDL_SetError(fmt: [*c]const u8, ...) bool;
+pub extern fn SDL_SetError(fmt: [*:0]const u8, ...) bool;
 
 /// Set the SDL error message for the current thread.
 ///
@@ -64,7 +64,7 @@ pub extern fn SDL_SetError(fmt: [*c]const u8, ...) bool;
 /// \sa SDL_ClearError
 /// \sa SDL_GetError
 /// \sa SDL_SetError
-pub extern fn SDL_SetErrorV(fmt: [*c]const u8, ap: [*c]u8) bool;
+pub extern fn SDL_SetErrorV(fmt: [*:0]const u8, ap: [*c]u8) bool;
 
 /// Set an error indicating that memory allocation failed.
 ///
@@ -110,7 +110,7 @@ pub extern fn SDL_OutOfMemory() bool;
 ///
 /// \sa SDL_ClearError
 /// \sa SDL_SetError
-pub extern fn SDL_GetError() [*c]const u8;
+pub extern fn SDL_GetError() [*:0]const u8;
 
 /// Clear any previous error message for this thread.
 ///
@@ -156,6 +156,6 @@ pub fn SDL_Unsupported() bool {
 /// \threadsafety It is safe to call this macro from any thread.
 ///
 /// \since This macro is available since SDL 3.2.0.
-pub fn SDL_InvalidParamError(param: [*c]const u8) bool {
+pub fn SDL_InvalidParamError(param: [*:0]const u8) bool {
     return SDL_SetError("Parameter '%s' is invalid", param);
 }

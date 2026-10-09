@@ -162,7 +162,7 @@ pub const AppIterate_func = *const fn (appstate: ?*anyopaque) callconv(.c) SDL_A
 /// \since This datatype is available since SDL 3.2.0.
 pub const AppEvent_func = *const fn (
     appstate: ?*anyopaque,
-    event: ?*events.SDL_Event,
+    event: *events.SDL_Event,
 ) callconv(.c) SDL_AppResult;
 
 /// Function pointer typedef for SDL_AppQuit.
@@ -326,7 +326,7 @@ pub extern fn SDL_IsMainThread() bool;
 /// \since This datatype is available since SDL 3.2.0.
 ///
 /// \sa SDL_RunOnMainThread
-pub const SDL_MainThreadCallback = ?*const fn (userdata: ?*anyopaque) callconv(.c) void;
+pub const SDL_MainThreadCallback = *const fn (userdata: ?*anyopaque) callconv(.c) void;
 
 /// Call a function on the main thread during event processing.
 ///
@@ -390,7 +390,11 @@ pub extern fn SDL_RunOnMainThread(
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetAppMetadataProperty
-pub extern fn SDL_SetAppMetadata(appname: [*:0]const u8, appversion: [*:0]const u8, appidentifier: [*:0]const u8) bool;
+pub extern fn SDL_SetAppMetadata(
+    appname: [*:0]const u8,
+    appversion: [*:0]const u8,
+    appidentifier: [*:0]const u8,
+) bool;
 
 /// Specify metadata about your app through a set of properties.
 ///

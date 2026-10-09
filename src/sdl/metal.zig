@@ -11,7 +11,7 @@ const video = @import("video.zig");
 /// A handle to a CAMetalLayer-backed NSView (macOS) or UIView (iOS/tvOS).
 ///
 /// \since This datatype is available since SDL 3.2.0.
-pub const SDL_MetalView = ?*anyopaque;
+pub const SDL_MetalView = opaque{};
 
 /////////////////////////////
 // Metal support functions
@@ -35,7 +35,7 @@ pub const SDL_MetalView = ?*anyopaque;
 ///
 /// \sa SDL_Metal_DestroyView
 /// \sa SDL_Metal_GetLayer
-pub extern fn SDL_Metal_CreateView(window: ?*video.SDL_Window) SDL_MetalView;
+pub extern fn SDL_Metal_CreateView(window: *video.SDL_Window) *SDL_MetalView;
 
 /// Destroy an existing SDL_MetalView object.
 ///
@@ -49,7 +49,7 @@ pub extern fn SDL_Metal_CreateView(window: ?*video.SDL_Window) SDL_MetalView;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_Metal_CreateView
-pub extern fn SDL_Metal_DestroyView(view: SDL_MetalView) void;
+pub extern fn SDL_Metal_DestroyView(view: *SDL_MetalView) void;
 
 /// Get a pointer to the backing CAMetalLayer for the given view.
 ///
@@ -59,4 +59,4 @@ pub extern fn SDL_Metal_DestroyView(view: SDL_MetalView) void;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_Metal_GetLayer(view: SDL_MetalView) ?*anyopaque;
+pub extern fn SDL_Metal_GetLayer(view: *SDL_MetalView) *anyopaque;
