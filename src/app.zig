@@ -147,18 +147,18 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
         ShaderConfig.gpu_driver,
     ));
 
-    if (!sdl.gpu.SDL_SetGPUAllowedFramesInFlight(sdl_handles.gpu_device, 1)) {
+    if (!sdl.gpu.SDL_SetGPUAllowedFramesInFlight(sdl_handles.gpu_device.?, 1)) {
         sdl.log.SDL_Log("SDL_SetGPUAllowedFramesInFlight failed: %s", sdl.sdl_error.SDL_GetError());
         _ = sdl.sdl_error.SDL_ClearError();
     }
 
     try errorWrap(sdl.gpu.SDL_ClaimWindowForGPUDevice(
-        sdl_handles.gpu_device,
-        sdl_handles.window,
+        sdl_handles.gpu_device.?,
+        sdl_handles.window.?,
     ));
 
     const vertex_shader = try errorWrap(sdl.gpu.SDL_CreateGPUShader(
-        sdl_handles.gpu_device,
+        sdl_handles.gpu_device.?,
         &sdl.gpu.SDL_GPUShaderCreateInfo{
             .code = ShaderConfig.vertex_shader_code,
             .code_size = ShaderConfig.vertex_shader_code.len,
@@ -173,7 +173,7 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
     ));
 
     const fragment_shader = try errorWrap(sdl.gpu.SDL_CreateGPUShader(
-        sdl_handles.gpu_device,
+        sdl_handles.gpu_device.?,
         &sdl.gpu.SDL_GPUShaderCreateInfo{
             .code = ShaderConfig.frag_shader_code,
             .code_size = ShaderConfig.frag_shader_code.len,
@@ -188,14 +188,14 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
     ));
 
     sdl_handles.graphics_pipeline_sprites = try errorWrap(sdl.gpu.SDL_CreateGPUGraphicsPipeline(
-        sdl_handles.gpu_device,
+        sdl_handles.gpu_device.?,
         &sdl.gpu.SDL_GPUGraphicsPipelineCreateInfo{
             .vertex_shader = vertex_shader,
             .fragment_shader = fragment_shader,
             .target_info = sdl.gpu.SDL_GPUGraphicsPipelineTargetInfo{
                 .num_color_targets = 1,
-                .color_target_descriptions = &sdl.gpu.SDL_GPUColorTargetDescription{
-                    .format = sdl.gpu.SDL_GetGPUSwapchainTextureFormat(sdl_handles.gpu_device, sdl_handles.window),
+                .color_target_descriptions = @ptrCast(&sdl.gpu.SDL_GPUColorTargetDescription{
+                    .format = sdl.gpu.SDL_GetGPUSwapchainTextureFormat(sdl_handles.gpu_device.?, sdl_handles.window.?),
                     .blend_state = sdl.gpu.SDL_GPUColorTargetBlendState{
                         .enable_blend = true,
                         .color_blend_op = sdl.gpu.SDL_GPUBlendOp.add,
@@ -205,17 +205,17 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
                         .src_alpha_blendfactor = sdl.gpu.SDL_GPUBlendFactor.src_alpha,
                         .dst_alpha_blendfactor = sdl.gpu.SDL_GPUBlendFactor.one_minus_src_alpha,
                     },
-                },
+                }),
             },
             .primitive_type = sdl.gpu.SDL_GPUPrimitiveType.trianglestrip,
             .vertex_input_state = .{
                 .num_vertex_buffers = 1,
-                .vertex_buffer_descriptions = &sdl.gpu.SDL_GPUVertexBufferDescription{
+                .vertex_buffer_descriptions = @ptrCast(&sdl.gpu.SDL_GPUVertexBufferDescription{
                     .slot = 0,
                     .input_rate = sdl.gpu.SDL_GPUVertexInputRate.vertex,
                     .instance_step_rate = 0,
                     .pitch = @sizeOf(VertexColored),
-                },
+                }),
                 .num_vertex_attributes = 2,
                 .vertex_attributes = &[_]sdl.gpu.SDL_GPUVertexAttribute{
                     sdl.gpu.SDL_GPUVertexAttribute{
@@ -238,15 +238,15 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
     ));
 
     // we don't need to store the shaders after creating the pipeline
-    sdl.gpu.SDL_ReleaseGPUShader(sdl_handles.gpu_device, vertex_shader);
-    sdl.gpu.SDL_ReleaseGPUShader(sdl_handles.gpu_device, fragment_shader);
+    sdl.gpu.SDL_ReleaseGPUShader(sdl_handles.gpu_device.?, vertex_shader);
+    sdl.gpu.SDL_ReleaseGPUShader(sdl_handles.gpu_device.?, fragment_shader);
 
     // create verticies, create vertex buffer, create transfer buffer, memcpy, unmap
 
     // create gpu buffer (this buffer exists gpu side I think)
     // we will use a transfer buffer and a copy pass to upload veticies to it
     sdl_handles.vertex_buffer = try errorWrap(sdl.gpu.SDL_CreateGPUBuffer(
-        sdl_handles.gpu_device,
+        sdl_handles.gpu_device.?,
         &sdl.gpu.SDL_GPUBufferCreateInfo{
             .usage = sdl.gpu.SDL_GPU_BUFFERUSAGE_VERTEX,
             .size = triangle_verticies.len * @sizeOf(VertexColored),
@@ -255,7 +255,7 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
     ));
 
     const transfer_buffer = try errorWrap(sdl.gpu.SDL_CreateGPUTransferBuffer(
-        sdl_handles.gpu_device,
+        sdl_handles.gpu_device.?,
         &sdl.gpu.SDL_GPUTransferBufferCreateInfo{
             .size = triangle_verticies.len * @sizeOf(VertexColored),
             .usage = .upload,
@@ -264,7 +264,7 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
     ));
 
     const outbound_data = sdl.gpu.SDL_MapGPUTransferBuffer(
-        sdl_handles.gpu_device,
+        sdl_handles.gpu_device.?,
         transfer_buffer,
         false,
     );
@@ -274,16 +274,16 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
         &triangle_verticies,
         triangle_verticies.len * @sizeOf(VertexColored),
     );
-    sdl.gpu.SDL_UnmapGPUTransferBuffer(sdl_handles.gpu_device, transfer_buffer);
+    sdl.gpu.SDL_UnmapGPUTransferBuffer(sdl_handles.gpu_device.?, transfer_buffer);
 
     // copy pass
 
     // get command buffer (crash on null)
     const command_buffer: ?*sdl.gpu.SDL_GPUCommandBuffer = try errorWrap(
-        sdl.gpu.SDL_AcquireGPUCommandBuffer(sdl_handles.gpu_device),
+        sdl.gpu.SDL_AcquireGPUCommandBuffer(sdl_handles.gpu_device.?),
     );
 
-    const copy_pass: ?*sdl.gpu.SDL_GPUCopyPass = try errorWrap(sdl.gpu.SDL_BeginGPUCopyPass(command_buffer));
+    const copy_pass: *sdl.gpu.SDL_GPUCopyPass = sdl.gpu.SDL_BeginGPUCopyPass(command_buffer.?);
 
     // upload verticies
     sdl.gpu.SDL_UploadToGPUBuffer(
@@ -302,7 +302,7 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
     sdl.gpu.SDL_EndGPUCopyPass(copy_pass);
 
     // submit command buffer (always submit)
-    try errorWrap(sdl.gpu.SDL_SubmitGPUCommandBuffer(command_buffer));
+    try errorWrap(sdl.gpu.SDL_SubmitGPUCommandBuffer(command_buffer.?));
 
     const error_check = sdl.sdl_error.SDL_GetError();
     if (std.mem.len(error_check) > 0) {
@@ -341,7 +341,7 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
 
     // get command buffer (crash on null)
     const command_buffer: ?*sdl.gpu.SDL_GPUCommandBuffer = try errorWrap(
-        sdl.gpu.SDL_AcquireGPUCommandBuffer(sdl_handles.gpu_device),
+        sdl.gpu.SDL_AcquireGPUCommandBuffer(sdl_handles.gpu_device.?),
     );
 
     // wait for swapchain texture (crash on fail, okay if null)
@@ -349,8 +349,8 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
     var swapchain_texture_width: u32 = undefined;
     var swapchain_texture_height: u32 = undefined;
     try errorWrap(sdl.gpu.SDL_WaitAndAcquireGPUSwapchainTexture(
-        command_buffer,
-        sdl_handles.window,
+        command_buffer.?,
+        sdl_handles.window.?,
         &swapchain_texture,
         &swapchain_texture_width,
         &swapchain_texture_height,
@@ -373,37 +373,37 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
                 .cycle = false,
             };
         const render_pass: ?*sdl.gpu.SDL_GPURenderPass = try errorWrap(sdl.gpu.SDL_BeginGPURenderPass(
-            command_buffer,
-            &color_target,
+            command_buffer.?,
+            @ptrCast(&color_target),
             1,
             null,
         ));
 
         sdl.gpu.SDL_BindGPUGraphicsPipeline(
-            render_pass,
-            sdl_handles.graphics_pipeline_sprites,
+            render_pass.?,
+            sdl_handles.graphics_pipeline_sprites.?,
         );
         sdl.gpu.SDL_BindGPUVertexBuffers(
-            render_pass,
+            render_pass.?,
             0,
-            &sdl.gpu.SDL_GPUBufferBinding{
+            @ptrCast(&sdl.gpu.SDL_GPUBufferBinding{
                 .buffer = sdl_handles.vertex_buffer,
                 .offset = 0,
-            },
+            }),
             1,
         );
 
         // the time since the app started in seconds
         frag_uniform.time = @as(f32, @floatFromInt(sdl.SDL_GetTicksNS())) / @as(f32, 1e9);
         sdl.gpu.SDL_PushGPUFragmentUniformData(
-            command_buffer,
+            command_buffer.?,
             0,
             &frag_uniform,
             @sizeOf(FragUniform),
         );
 
         sdl.gpu.SDL_PushGPUVertexUniformData(
-            command_buffer,
+            command_buffer.?,
             0,
             &vert_uniform_a,
             @sizeOf(VertUniform),
@@ -411,7 +411,7 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
 
         // draw 4 realz (well put the draw call in the command buffer)
         sdl.gpu.SDL_DrawGPUPrimitives(
-            render_pass,
+            render_pass.?,
             3,
             1,
             0,
@@ -419,7 +419,7 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
         );
 
         sdl.gpu.SDL_PushGPUVertexUniformData(
-            command_buffer,
+            command_buffer.?,
             0,
             &vert_uniform_b,
             @sizeOf(VertUniform),
@@ -427,7 +427,7 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
 
         // draw 4 realz (well put the draw call in the command buffer)
         sdl.gpu.SDL_DrawGPUPrimitives(
-            render_pass,
+            render_pass.?,
             3,
             1,
             0,
@@ -436,7 +436,7 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
 
         vert_uniform_c.rotation += 0.01;
         sdl.gpu.SDL_PushGPUVertexUniformData(
-            command_buffer,
+            command_buffer.?,
             0,
             &vert_uniform_c,
             @sizeOf(VertUniform),
@@ -444,18 +444,18 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
 
         // draw 4 realz (well put the draw call in the command buffer)
         sdl.gpu.SDL_DrawGPUPrimitives(
-            render_pass,
+            render_pass.?,
             3,
             1,
             0,
             0,
         );
 
-        sdl.gpu.SDL_EndGPURenderPass(render_pass);
+        sdl.gpu.SDL_EndGPURenderPass(render_pass.?);
     }
 
     // submit command buffer (always submit, even if swapchain texture null)
-    try errorWrap(sdl.gpu.SDL_SubmitGPUCommandBuffer(command_buffer));
+    try errorWrap(sdl.gpu.SDL_SubmitGPUCommandBuffer(command_buffer.?));
 
     const error_check = sdl.sdl_error.SDL_GetError();
     if (std.mem.len(error_check) > 0) {
@@ -526,10 +526,10 @@ pub fn AppQuit(appstate: ?*anyopaque, app_result: sdl.init.SDL_AppResult) !void 
 
     // is best to destroy things in reverse order of creation
     sdl.gpu.SDL_ReleaseGPUGraphicsPipeline(
-        sdl_handles.gpu_device,
-        sdl_handles.graphics_pipeline_sprites,
+        sdl_handles.gpu_device.?,
+        sdl_handles.graphics_pipeline_sprites.?,
     );
-    sdl.gpu.SDL_ReleaseGPUBuffer(sdl_handles.gpu_device, sdl_handles.vertex_buffer);
-    sdl.gpu.SDL_DestroyGPUDevice(sdl_handles.gpu_device);
+    sdl.gpu.SDL_ReleaseGPUBuffer(sdl_handles.gpu_device.?, sdl_handles.vertex_buffer.?);
+    sdl.gpu.SDL_DestroyGPUDevice(sdl_handles.gpu_device.?);
     sdl.video.SDL_DestroyWindow(sdl_handles.window);
 }
