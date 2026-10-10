@@ -263,17 +263,20 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
         },
     ));
 
-    const outbound_data = sdl.gpu.SDL_MapGPUTransferBuffer(
-        sdl_handles.gpu_device.?,
-        transfer_buffer,
-        false,
-    );
+    const outbound_data: [*]VertexColored = @ptrCast(@alignCast(
+        sdl.gpu.SDL_MapGPUTransferBuffer(
+            sdl_handles.gpu_device.?,
+            transfer_buffer,
+            false,
+        ).?,
+    ));
     // copy in data to be uploaded in copy pass
-    _ = sdl.stdinc.SDL_memcpy(
-        outbound_data.?,
+    std.mem.copyForwards(
+        VertexColored,
+        outbound_data[0..triangle_verticies.len],
         &triangle_verticies,
-        triangle_verticies.len * @sizeOf(VertexColored),
     );
+
     sdl.gpu.SDL_UnmapGPUTransferBuffer(sdl_handles.gpu_device.?, transfer_buffer);
 
     // copy pass
@@ -335,9 +338,10 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
     now /= 1000;
 
     // choose the color for the frame we will draw. The sine wave trick makes it fade between colors smoothly.
+    const pi_f32 = @as(f32, std.math.pi);
     const red: f32 = 0.5 + 0.5 * @sin(now);
-    const green: f32 = 0.5 + 0.5 * @sin(now + sdl.stdinc.SDL_PI_F * 2 / 3);
-    const blue: f32 = 0.5 + 0.5 * @sin(now + sdl.stdinc.SDL_PI_F * 4 / 3);
+    const green: f32 = 0.5 + 0.5 * @sin(now + pi_f32 * 2 / 3);
+    const blue: f32 = 0.5 + 0.5 * @sin(now + pi_f32 * 4 / 3);
 
     // get command buffer (crash on null)
     const command_buffer: ?*sdl.gpu.SDL_GPUCommandBuffer = try errorWrap(
