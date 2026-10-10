@@ -861,7 +861,7 @@ pub const SDL_GPUTextureUsageFlags = packed struct(u32) {
     /// Texture supports reads and writes in the same compute shader. This is
     /// NOT equivalent to READ | WRITE.
     compute_storage_simultaneous_read_write: bool = false, // bit 6
-    _unused: u25 = 0,
+    _reserved: u25 = 0,
 };
 pub const SDL_GPU_TEXTUREUSAGE_SAMPLER: SDL_GPUTextureUsageFlags = .{ .sampler = true };
 pub const SDL_GPU_TEXTUREUSAGE_COLOR_TARGET: SDL_GPUTextureUsageFlags = .{ .color_target = true };
@@ -951,7 +951,7 @@ pub const SDL_GPUBufferUsageFlags = packed struct(u32) {
     compute_storage_read: bool = false,
     /// Buffer supports storage writes in the compute stage.
     compute_storage_write: bool = false,
-    _unused: u26 = 0,
+    _reserved: u26 = 0,
 };
 
 /// Buffer is a vertex buffer.
@@ -1243,7 +1243,7 @@ pub const SDL_GPUColorComponentFlags = packed struct(u8) {
     B: bool = false, // bit 2
     /// the alpha component */
     A: bool = false, // bit 3
-    _unused: u4 = 0,
+    _reserved: u4 = 0,
 };
 
 pub const SDL_GPU_COLORCOMPONENT_R: SDL_GPUColorComponentFlags = .{ .R = true };
