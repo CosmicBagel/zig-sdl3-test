@@ -1361,17 +1361,17 @@ pub const SDL_GPUSwapchainComposition = enum(c_uint) {
 /// \sa SDL_SetGPUViewport
 pub const SDL_GPUViewport = extern struct {
     /// The left offset of the viewport.
-    x: f32 = 0,
+    x: f32,
     /// The top offset of the viewport.
-    y: f32 = 0,
+    y: f32,
     /// The width of the viewport.
-    w: f32 = 0,
+    w: f32,
     /// The height of the viewport.
-    h: f32 = 0,
+    h: f32,
     /// The minimum depth of the viewport.
-    min_depth: f32 = 0,
+    min_depth: f32,
     /// The maximum depth of the viewport.
-    max_depth: f32 = 0,
+    max_depth: f32,
 };
 
 /// A structure specifying parameters related to transferring data to or from a
@@ -1395,13 +1395,13 @@ pub const SDL_GPUViewport = extern struct {
 /// \sa SDL_DownloadFromGPUTexture
 pub const SDL_GPUTextureTransferInfo = extern struct {
     /// The transfer buffer used in the transfer operation.
-    transfer_buffer: ?*SDL_GPUTransferBuffer = null,
+    transfer_buffer: *SDL_GPUTransferBuffer,
     /// The starting byte of the image data in the transfer buffer.
-    offset: u32 = 0,
+    offset: u32,
     /// The number of pixels from one row to the next.
-    pixels_per_row: u32 = 0,
+    pixels_per_row: u32,
     /// The number of rows from one layer/depth-slice to the next.
-    rows_per_layer: u32 = 0,
+    rows_per_layer: u32,
 };
 
 /// A structure specifying a location in a transfer buffer.
@@ -1413,8 +1413,8 @@ pub const SDL_GPUTextureTransferInfo = extern struct {
 /// \sa SDL_UploadToGPUBuffer
 /// \sa SDL_DownloadFromGPUBuffer
 pub const SDL_GPUTransferBufferLocation = extern struct {
-    transfer_buffer: ?*SDL_GPUTransferBuffer = null,
-    offset: u32 = 0,
+    transfer_buffer: *SDL_GPUTransferBuffer,
+    offset: u32,
 };
 
 /// A structure specifying a location in a texture.
@@ -1426,17 +1426,17 @@ pub const SDL_GPUTransferBufferLocation = extern struct {
 /// \sa SDL_CopyGPUTextureToTexture
 pub const SDL_GPUTextureLocation = extern struct {
     /// The texture used in the copy operation.
-    texture: ?*SDL_GPUTexture = null,
+    texture: *SDL_GPUTexture,
     /// The mip level index of the location.
-    mip_level: u32 = 0,
+    mip_level: u32,
     /// The layer index of the location.
-    layer: u32 = 0,
+    layer: u32,
     /// The left offset of the location.
-    x: u32 = 0,
+    x: u32,
     /// The top offset of the location.
-    y: u32 = 0,
+    y: u32,
     /// The front offset of the location.
-    z: u32 = 0,
+    z: u32,
 };
 
 /// A structure specifying a region of a texture.
@@ -1450,23 +1450,23 @@ pub const SDL_GPUTextureLocation = extern struct {
 /// \sa SDL_CreateGPUTexture
 pub const SDL_GPUTextureRegion = extern struct {
     /// The texture used in the copy operation.
-    texture: ?*SDL_GPUTexture = null,
+    texture: *SDL_GPUTexture,
     /// The mip level index to transfer.
-    mip_level: u32 = 0,
+    mip_level: u32,
     /// The layer index to transfer.
-    layer: u32 = 0,
+    layer: u32,
     /// The left offset of the region.
-    x: u32 = 0,
+    x: u32,
     /// The top offset of the region.
-    y: u32 = 0,
+    y: u32,
     /// The front offset of the region.
-    z: u32 = 0,
+    z: u32,
     /// The width of the region.
-    w: u32 = 0,
+    w: u32,
     /// The height of the region.
-    h: u32 = 0,
+    h: u32,
     /// The depth of the region.
-    d: u32 = 0,
+    d: u32,
 };
 
 /// A structure specifying a region of a texture used in the blit operation.
@@ -1476,21 +1476,21 @@ pub const SDL_GPUTextureRegion = extern struct {
 /// \sa SDL_BlitGPUTexture
 pub const SDL_GPUBlitRegion = extern struct {
     /// The texture.
-    texture: ?*SDL_GPUTexture = null,
+    texture: *SDL_GPUTexture,
     /// The mip level index of the region.
-    mip_level: u32 = 0,
+    mip_level: u32,
     /// The layer index or depth plane of the region. This value is treated as
     /// a layer index on 2D array and cube textures, and as a depth plane on 3D
     /// textures.
-    layer_or_depth_plane: u32 = 0,
+    layer_or_depth_plane: u32,
     /// The left offset of the region.
-    x: u32 = 0,
+    x: u32,
     /// The top offset of the region.
-    y: u32 = 0,
+    y: u32,
     /// The width of the region.
-    w: u32 = 0,
+    w: u32,
     /// The height of the region.
-    h: u32 = 0,
+    h: u32,
 };
 
 /// A structure specifying a location in a buffer.
@@ -1502,9 +1502,9 @@ pub const SDL_GPUBlitRegion = extern struct {
 /// \sa SDL_CopyGPUBufferToBuffer
 pub const SDL_GPUBufferLocation = extern struct {
     /// The buffer.
-    buffer: ?*SDL_GPUBuffer = null,
+    buffer: *SDL_GPUBuffer,
     /// The starting byte within the buffer.
-    offset: u32 = 0,
+    offset: u32,
 };
 
 /// A structure specifying a region of a buffer.
@@ -1517,11 +1517,11 @@ pub const SDL_GPUBufferLocation = extern struct {
 /// \sa SDL_DownloadFromGPUBuffer
 pub const SDL_GPUBufferRegion = extern struct {
     /// The buffer.
-    buffer: ?*SDL_GPUBuffer = null,
+    buffer: *SDL_GPUBuffer,
     /// The starting byte within the buffer.
-    offset: u32 = 0,
+    offset: u32,
     /// The size in bytes of the region.
-    size: u32 = 0,
+    size: u32,
 };
 
 /// A structure specifying the parameters of an indirect draw command.
@@ -1604,35 +1604,35 @@ pub const SDL_GPUIndirectDispatchCommand = extern struct {
 /// \sa SDL_GPUCompareOp
 pub const SDL_GPUSamplerCreateInfo = extern struct {
     /// The minification filter to apply to lookups.
-    min_filter: SDL_GPUFilter = @import("std").mem.zeroes(SDL_GPUFilter),
+    min_filter: SDL_GPUFilter,
     /// The magnification filter to apply to lookups.
-    mag_filter: SDL_GPUFilter = @import("std").mem.zeroes(SDL_GPUFilter),
+    mag_filter: SDL_GPUFilter,
     /// The mipmap filter to apply to lookups.
-    mipmap_mode: SDL_GPUSamplerMipmapMode = @import("std").mem.zeroes(SDL_GPUSamplerMipmapMode),
+    mipmap_mode: SDL_GPUSamplerMipmapMode,
     /// The addressing mode for U coordinates outside [0, 1).
-    address_mode_u: SDL_GPUSamplerAddressMode = @import("std").mem.zeroes(SDL_GPUSamplerAddressMode),
+    address_mode_u: SDL_GPUSamplerAddressMode,
     /// The addressing mode for V coordinates outside [0, 1).
-    address_mode_v: SDL_GPUSamplerAddressMode = @import("std").mem.zeroes(SDL_GPUSamplerAddressMode),
+    address_mode_v: SDL_GPUSamplerAddressMode,
     /// The addressing mode for W coordinates outside [0, 1).
-    address_mode_w: SDL_GPUSamplerAddressMode = @import("std").mem.zeroes(SDL_GPUSamplerAddressMode),
+    address_mode_w: SDL_GPUSamplerAddressMode,
     /// The bias to be added to mipmap LOD calculation.
-    mip_lod_bias: f32 = 0,
+    mip_lod_bias: f32,
     /// The anisotropy value clamp used by the sampler.
-    max_anisotropy: f32 = 0,
+    max_anisotropy: f32,
     /// The comparison operator to apply to fetched data before filtering.
-    compare_op: SDL_GPUCompareOp = @import("std").mem.zeroes(SDL_GPUCompareOp),
+    compare_op: SDL_GPUCompareOp,
     /// Clamps the minimum of the computed LOD value.
-    min_lod: f32 = 0,
+    min_lod: f32,
     /// Clamps the maximum of the computed LOD value.
-    max_lod: f32 = 0,
+    max_lod: f32,
     /// true to enable anisotropic filtering.
-    enable_anisotropy: bool = false,
+    enable_anisotropy: bool,
     /// true to enable comparison against a reference value during lookups.
-    enable_compare: bool = false,
-    padding1: u8 = 0,
-    padding2: u8 = 0,
+    enable_compare: bool,
+    _padding1: u8 = undefined,
+    _padding2: u8 = undefined,
     /// A properties ID for extensions. Should be 0 if no extensions are needed.
-    props: properties.SDL_PropertiesID = 0,
+    props: properties.SDL_PropertiesID,
 };
 
 /// A structure specifying the parameters of vertex buffers used in a graphics
@@ -1653,13 +1653,13 @@ pub const SDL_GPUSamplerCreateInfo = extern struct {
 /// \sa SDL_GPUVertexInputRate
 pub const SDL_GPUVertexBufferDescription = extern struct {
     /// The binding slot of the vertex buffer.
-    slot: u32 = 0,
+    slot: u32,
     /// The size of a single element + the offset between elements.
-    pitch: u32 = 0,
+    pitch: u32,
     /// Whether attribute addressing is a function of the vertex index or instance index.
-    input_rate: SDL_GPUVertexInputRate = @import("std").mem.zeroes(SDL_GPUVertexInputRate),
+    input_rate: SDL_GPUVertexInputRate,
     /// Reserved for future use. Must be set to 0.
-    instance_step_rate: u32 = 0,
+    instance_step_rate: u32,
 };
 
 /// A structure specifying a vertex attribute.
@@ -1674,13 +1674,13 @@ pub const SDL_GPUVertexBufferDescription = extern struct {
 /// \sa SDL_GPUVertexElementFormat
 pub const SDL_GPUVertexAttribute = extern struct {
     /// The shader input location index.
-    location: u32 = 0,
+    location: u32,
     /// The binding slot of the associated vertex buffer.
-    buffer_slot: u32 = 0,
+    buffer_slot: u32,
     /// The size and type of the attribute data.
-    format: SDL_GPUVertexElementFormat = @import("std").mem.zeroes(SDL_GPUVertexElementFormat),
+    format: SDL_GPUVertexElementFormat,
     /// The byte offset of this attribute relative to the start of the vertex element.
-    offset: u32 = 0,
+    offset: u32,
 };
 
 /// A structure specifying the parameters of a graphics pipeline vertex input
@@ -1693,13 +1693,13 @@ pub const SDL_GPUVertexAttribute = extern struct {
 /// \sa SDL_GPUVertexAttribute
 pub const SDL_GPUVertexInputState = extern struct {
     /// A pointer to an array of vertex buffer descriptions.
-    vertex_buffer_descriptions: ?[*]const SDL_GPUVertexBufferDescription = null,
+    vertex_buffer_descriptions: [*]const SDL_GPUVertexBufferDescription,
     /// The number of vertex buffer descriptions in the above array.
-    num_vertex_buffers: u32 = 0,
+    num_vertex_buffers: u32,
     /// A pointer to an array of vertex attribute descriptions.
-    vertex_attributes: ?[*]const SDL_GPUVertexAttribute = null,
+    vertex_attributes: [*]const SDL_GPUVertexAttribute,
     /// The number of vertex attribute descriptions in the above array.
-    num_vertex_attributes: u32 = 0,
+    num_vertex_attributes: u32,
 };
 
 /// A structure specifying the stencil operation state of a graphics pipeline.
@@ -1709,13 +1709,13 @@ pub const SDL_GPUVertexInputState = extern struct {
 /// \sa SDL_GPUDepthStencilState
 pub const SDL_GPUStencilOpState = extern struct {
     /// The action performed on samples that fail the stencil test.
-    fail_op: SDL_GPUStencilOp = @import("std").mem.zeroes(SDL_GPUStencilOp),
+    fail_op: SDL_GPUStencilOp,
     /// The action performed on samples that pass the depth and stencil tests.
-    pass_op: SDL_GPUStencilOp = @import("std").mem.zeroes(SDL_GPUStencilOp),
+    pass_op: SDL_GPUStencilOp,
     /// The action performed on samples that pass the stencil test and fail the depth test.
-    depth_fail_op: SDL_GPUStencilOp = @import("std").mem.zeroes(SDL_GPUStencilOp),
+    depth_fail_op: SDL_GPUStencilOp,
     /// The comparison operator used in the stencil test.
-    compare_op: SDL_GPUCompareOp = @import("std").mem.zeroes(SDL_GPUCompareOp),
+    compare_op: SDL_GPUCompareOp,
 };
 
 /// A structure specifying the blend state of a color target.
@@ -1728,26 +1728,26 @@ pub const SDL_GPUStencilOpState = extern struct {
 /// \sa SDL_GPUColorComponentFlags
 pub const SDL_GPUColorTargetBlendState = extern struct {
     /// The value to be multiplied by the source RGB value.
-    src_color_blendfactor: SDL_GPUBlendFactor = @import("std").mem.zeroes(SDL_GPUBlendFactor),
+    src_color_blendfactor: SDL_GPUBlendFactor,
     /// The value to be multiplied by the destination RGB value.
-    dst_color_blendfactor: SDL_GPUBlendFactor = @import("std").mem.zeroes(SDL_GPUBlendFactor),
+    dst_color_blendfactor: SDL_GPUBlendFactor,
     /// The blend operation for the RGB components.
-    color_blend_op: SDL_GPUBlendOp = @import("std").mem.zeroes(SDL_GPUBlendOp),
+    color_blend_op: SDL_GPUBlendOp,
     /// The value to be multiplied by the source alpha.
-    src_alpha_blendfactor: SDL_GPUBlendFactor = @import("std").mem.zeroes(SDL_GPUBlendFactor),
+    src_alpha_blendfactor: SDL_GPUBlendFactor,
     /// The value to be multiplied by the destination alpha.
-    dst_alpha_blendfactor: SDL_GPUBlendFactor = @import("std").mem.zeroes(SDL_GPUBlendFactor),
+    dst_alpha_blendfactor: SDL_GPUBlendFactor,
     /// The blend operation for the alpha component.
-    alpha_blend_op: SDL_GPUBlendOp = @import("std").mem.zeroes(SDL_GPUBlendOp),
+    alpha_blend_op: SDL_GPUBlendOp,
     /// A bitmask specifying which of the RGBA components are enabled for
     /// writing. Writes to all channels if enable_color_write_mask is false.
-    color_write_mask: SDL_GPUColorComponentFlags = .{},
+    color_write_mask: SDL_GPUColorComponentFlags,
     // Whether blending is enabled for the color target.
-    enable_blend: bool = false,
+    enable_blend: bool,
     /// Whether the color write mask is enabled.
-    enable_color_write_mask: bool = false,
-    padding1: u8 = 0,
-    padding2: u8 = 0,
+    enable_color_write_mask: bool,
+    _padding1: u8 = undefined,
+    _padding2: u8 = undefined,
 };
 
 /// A structure specifying code and metadata for creating a shader object.
@@ -1759,26 +1759,26 @@ pub const SDL_GPUColorTargetBlendState = extern struct {
 /// \sa SDL_GPUShaderStage
 pub const SDL_GPUShaderCreateInfo = extern struct {
     /// The size in bytes of the code pointed to.
-    code_size: usize = 0,
+    code_size: usize,
     /// A pointer to shader code.
-    code: ?[*:0]const u8 = null,
+    code: [*:0]const u8,
     /// A pointer to a null-terminated UTF-8 string specifying the entry point
     /// function name for the shader.
-    entrypoint: ?[*:0]const u8 = null,
+    entrypoint: [*:0]const u8,
     /// The format of the shader code.
-    format: SDL_GPUShaderFormat = .invalid,
+    format: SDL_GPUShaderFormat,
     /// The stage the shader program corresponds to.
-    stage: SDL_GPUShaderStage = @import("std").mem.zeroes(SDL_GPUShaderStage),
+    stage: SDL_GPUShaderStage,
     /// The number of samplers defined in the shader.
-    num_samplers: u32 = 0,
+    num_samplers: u32,
     /// The number of storage textures defined in the shader.
-    num_storage_textures: u32 = 0,
+    num_storage_textures: u32,
     /// The number of storage buffers defined in the shader.
-    num_storage_buffers: u32 = 0,
+    num_storage_buffers: u32,
     /// The number of uniform buffers defined in the shader.
-    num_uniform_buffers: u32 = 0,
+    num_uniform_buffers: u32,
     /// A properties ID for extensions. Should be 0 if no extensions are needed.
-    props: properties.SDL_PropertiesID = 0,
+    props: properties.SDL_PropertiesID,
 };
 
 /// A structure specifying the parameters of a texture.
@@ -1796,24 +1796,24 @@ pub const SDL_GPUShaderCreateInfo = extern struct {
 /// \sa SDL_GPUSampleCount
 pub const SDL_GPUTextureCreateInfo = extern struct {
     /// The base dimensionality of the texture.
-    type: SDL_GPUTextureType = @import("std").mem.zeroes(SDL_GPUTextureType),
+    type: SDL_GPUTextureType,
     /// The pixel format of the texture.
-    format: SDL_GPUTextureFormat = @import("std").mem.zeroes(SDL_GPUTextureFormat),
+    format: SDL_GPUTextureFormat,
     /// How the texture is intended to be used by the client.
-    usage: SDL_GPUTextureUsageFlags = 0,
+    usage: SDL_GPUTextureUsageFlags,
     /// The width of the texture.
-    width: u32 = 0,
+    width: u32,
     /// The height of the texture.
-    height: u32 = 0,
+    height: u32,
     /// The layer count or depth of the texture. This value is treated as a
     /// layer count on 2D array textures, and as a depth value on 3D textures.
-    layer_count_or_depth: u32 = 0,
+    layer_count_or_depth: u32,
     /// The number of mip levels in the texture.
-    num_levels: u32 = 0,
+    num_levels: u32,
     /// The number of samples per texel. Only applies if the texture is used as a render target.
-    sample_count: SDL_GPUSampleCount = @import("std").mem.zeroes(SDL_GPUSampleCount),
+    sample_count: SDL_GPUSampleCount,
     /// A properties ID for extensions. Should be 0 if no extensions are needed.
-    props: properties.SDL_PropertiesID = 0,
+    props: properties.SDL_PropertiesID,
 };
 
 /// A structure specifying the parameters of a buffer.
@@ -1827,11 +1827,11 @@ pub const SDL_GPUTextureCreateInfo = extern struct {
 /// \sa SDL_GPUBufferUsageFlags
 pub const SDL_GPUBufferCreateInfo = extern struct {
     /// How the buffer is intended to be used by the client.
-    usage: SDL_GPUBufferUsageFlags = .{},
+    usage: SDL_GPUBufferUsageFlags,
     /// The size in bytes of the buffer.
-    size: u32 = 0,
+    size: u32,
     /// A properties ID for extensions. Should be 0 if no extensions are needed.
-    props: properties.SDL_PropertiesID = 0,
+    props: properties.SDL_PropertiesID,
 };
 
 /// A structure specifying the parameters of a transfer buffer.
@@ -1841,11 +1841,11 @@ pub const SDL_GPUBufferCreateInfo = extern struct {
 /// \sa SDL_CreateGPUTransferBuffer
 pub const SDL_GPUTransferBufferCreateInfo = extern struct {
     /// How the transfer buffer is intended to be used by the client.
-    usage: SDL_GPUTransferBufferUsage = @import("std").mem.zeroes(SDL_GPUTransferBufferUsage),
+    usage: SDL_GPUTransferBufferUsage,
     /// The size in bytes of the transfer buffer.
-    size: u32 = 0,
+    size: u32,
     /// A properties ID for extensions. Should be 0 if no extensions are needed.
-    props: properties.SDL_PropertiesID = 0,
+    props: properties.SDL_PropertiesID,
 };
 
 /////////////////////////////
@@ -1868,23 +1868,23 @@ pub const SDL_GPUTransferBufferCreateInfo = extern struct {
 /// \sa SDL_GPUGraphicsPipelineCreateInfo
 pub const SDL_GPURasterizerState = extern struct {
     /// Whether polygons will be filled in or drawn as lines.
-    fill_mode: SDL_GPUFillMode = @import("std").mem.zeroes(SDL_GPUFillMode),
+    fill_mode: SDL_GPUFillMode,
     /// The facing direction in which triangles will be culled.
-    cull_mode: SDL_GPUCullMode = @import("std").mem.zeroes(SDL_GPUCullMode),
+    cull_mode: SDL_GPUCullMode,
     /// The vertex winding that will cause a triangle to be determined as front-facing.
-    front_face: SDL_GPUFrontFace = @import("std").mem.zeroes(SDL_GPUFrontFace),
+    front_face: SDL_GPUFrontFace,
     /// A scalar factor controlling the depth value added to each fragment.
-    depth_bias_constant_factor: f32 = 0,
+    depth_bias_constant_factor: f32,
     /// The maximum depth bias of a fragment.
-    depth_bias_clamp: f32 = 0,
+    depth_bias_clamp: f32,
     /// A scalar factor applied to a fragment's slope in depth calculations.
-    depth_bias_slope_factor: f32 = 0,
+    depth_bias_slope_factor: f32,
     /// true to bias fragment depth values.
-    enable_depth_bias: bool = false,
+    enable_depth_bias: bool,
     /// true to enable depth clip, false to enable depth clamp.
-    enable_depth_clip: bool = false,
-    padding1: u8 = 0,
-    padding2: u8 = 0,
+    enable_depth_clip: bool,
+    _padding1: u8 = undefined,
+    _padding2: u8 = undefined,
 };
 
 /// A structure specifying the parameters of the graphics pipeline multisample
@@ -1895,15 +1895,15 @@ pub const SDL_GPURasterizerState = extern struct {
 /// \sa SDL_GPUGraphicsPipelineCreateInfo
 pub const SDL_GPUMultisampleState = extern struct {
     /// The number of samples to be used in rasterization.
-    sample_count: SDL_GPUSampleCount = @import("std").mem.zeroes(SDL_GPUSampleCount),
+    sample_count: SDL_GPUSampleCount,
     /// Reserved for future use. Must be set to 0.
-    sample_mask: u32 = 0,
+    sample_mask: u32,
     /// Reserved for future use. Must be set to false.
-    enable_mask: bool = false,
+    enable_mask: bool,
     /// true enables the alpha-to-coverage feature.
-    enable_alpha_to_coverage: bool = false,
-    padding2: u8 = 0,
-    padding3: u8 = 0,
+    enable_alpha_to_coverage: bool,
+    _padding2: u8 = undefined,
+    _padding3: u8 = undefined,
 };
 
 /// A structure specifying the parameters of the graphics pipeline depth
@@ -1914,24 +1914,24 @@ pub const SDL_GPUMultisampleState = extern struct {
 /// \sa SDL_GPUGraphicsPipelineCreateInfo
 pub const SDL_GPUDepthStencilState = extern struct {
     /// The comparison operator used for depth testing.
-    compare_op: SDL_GPUCompareOp = @import("std").mem.zeroes(SDL_GPUCompareOp),
+    compare_op: SDL_GPUCompareOp,
     /// The stencil op state for back-facing triangles.
-    back_stencil_state: SDL_GPUStencilOpState = @import("std").mem.zeroes(SDL_GPUStencilOpState),
+    back_stencil_state: SDL_GPUStencilOpState,
     /// The stencil op state for front-facing triangles.
-    front_stencil_state: SDL_GPUStencilOpState = @import("std").mem.zeroes(SDL_GPUStencilOpState),
+    front_stencil_state: SDL_GPUStencilOpState,
     /// Selects the bits of the stencil values participating in the stencil test.
-    compare_mask: u8 = 0,
+    compare_mask: u8,
     /// Selects the bits of the stencil values updated by the stencil test.
-    write_mask: u8 = 0,
+    write_mask: u8,
     /// true enables the depth test.
-    enable_depth_test: bool = false,
+    enable_depth_test: bool,
     /// true enables depth writes. Depth writes are always disabled when enable_depth_test is false.
-    enable_depth_write: bool = false,
+    enable_depth_write: bool,
     /// true enables the stencil test.
-    enable_stencil_test: bool = false,
-    padding1: u8 = 0,
-    padding2: u8 = 0,
-    padding3: u8 = 0,
+    enable_stencil_test: bool,
+    _padding1: u8 = undefined,
+    _padding2: u8 = undefined,
+    _padding3: u8 = undefined,
 };
 
 /// A structure specifying the parameters of color targets used in a graphics
@@ -1942,9 +1942,9 @@ pub const SDL_GPUDepthStencilState = extern struct {
 /// \sa SDL_GPUGraphicsPipelineTargetInfo
 pub const SDL_GPUColorTargetDescription = extern struct {
     /// The pixel format of the texture to be used as a color target.
-    format: SDL_GPUTextureFormat = @import("std").mem.zeroes(SDL_GPUTextureFormat),
+    format: SDL_GPUTextureFormat,
     /// The blend state to be used for the color target.
-    blend_state: SDL_GPUColorTargetBlendState = @import("std").mem.zeroes(SDL_GPUColorTargetBlendState),
+    blend_state: SDL_GPUColorTargetBlendState,
 };
 
 /// A structure specifying the descriptions of render targets used in a
@@ -1957,16 +1957,16 @@ pub const SDL_GPUColorTargetDescription = extern struct {
 /// \sa SDL_GPUTextureFormat
 pub const SDL_GPUGraphicsPipelineTargetInfo = extern struct {
     /// A pointer to an array of color target descriptions.
-    color_target_descriptions: ?[*]const SDL_GPUColorTargetDescription = null,
+    color_target_descriptions: [*]const SDL_GPUColorTargetDescription,
     /// The number of color target descriptions in the above array.
-    num_color_targets: u32 = 0,
+    num_color_targets: u32,
     /// The pixel format of the depth-stencil target. Ignored if has_depth_stencil_target is false.
-    depth_stencil_format: SDL_GPUTextureFormat = @import("std").mem.zeroes(SDL_GPUTextureFormat),
+    depth_stencil_format: SDL_GPUTextureFormat,
     /// true specifies that the pipeline uses a depth-stencil target.
-    has_depth_stencil_target: bool = false,
-    padding1: u8 = 0,
-    padding2: u8 = 0,
-    padding3: u8 = 0,
+    has_depth_stencil_target: bool,
+    _padding1: u8 = undefined,
+    _padding2: u8 = undefined,
+    _padding3: u8 = undefined,
 };
 
 /// A structure specifying the parameters of a graphics pipeline state.
@@ -1983,23 +1983,23 @@ pub const SDL_GPUGraphicsPipelineTargetInfo = extern struct {
 /// \sa SDL_GPUGraphicsPipelineTargetInfo
 pub const SDL_GPUGraphicsPipelineCreateInfo = extern struct {
     /// The vertex shader used by the graphics pipeline.
-    vertex_shader: ?*SDL_GPUShader = null,
+    vertex_shader: *SDL_GPUShader,
     /// The fragment shader used by the graphics pipeline.
-    fragment_shader: ?*SDL_GPUShader = null,
+    fragment_shader: *SDL_GPUShader,
     /// The vertex layout of the graphics pipeline.
-    vertex_input_state: SDL_GPUVertexInputState = @import("std").mem.zeroes(SDL_GPUVertexInputState),
+    vertex_input_state: SDL_GPUVertexInputState,
     /// The primitive topology of the graphics pipeline.
-    primitive_type: SDL_GPUPrimitiveType = @import("std").mem.zeroes(SDL_GPUPrimitiveType),
+    primitive_type: SDL_GPUPrimitiveType,
     /// The rasterizer state of the graphics pipeline.
-    rasterizer_state: SDL_GPURasterizerState = @import("std").mem.zeroes(SDL_GPURasterizerState),
+    rasterizer_state: SDL_GPURasterizerState,
     /// The multisample state of the graphics pipeline.
-    multisample_state: SDL_GPUMultisampleState = @import("std").mem.zeroes(SDL_GPUMultisampleState),
+    multisample_state: SDL_GPUMultisampleState,
     /// The depth-stencil state of the graphics pipeline.
-    depth_stencil_state: SDL_GPUDepthStencilState = @import("std").mem.zeroes(SDL_GPUDepthStencilState),
+    depth_stencil_state: SDL_GPUDepthStencilState,
     /// Formats and blend modes for the render targets of the graphics pipeline.
-    target_info: SDL_GPUGraphicsPipelineTargetInfo = @import("std").mem.zeroes(SDL_GPUGraphicsPipelineTargetInfo),
+    target_info: SDL_GPUGraphicsPipelineTargetInfo,
     /// A properties ID for extensions. Should be 0 if no extensions are needed.
-    props: properties.SDL_PropertiesID = 0,
+    props: properties.SDL_PropertiesID,
 };
 
 /// A structure specifying the parameters of a compute pipeline state.
@@ -2010,34 +2010,34 @@ pub const SDL_GPUGraphicsPipelineCreateInfo = extern struct {
 /// \sa SDL_GPUShaderFormat
 pub const SDL_GPUComputePipelineCreateInfo = extern struct {
     /// The size in bytes of the compute shader code pointed to.
-    code_size: usize = 0,
+    code_size: usize,
     /// A pointer to compute shader code.
-    code: ?[*:0]const u8 = null,
+    code: [*:0]const u8,
     /// A pointer to a null-terminated UTF-8 string specifying the entry point
     /// function name for the shader.
-    entrypoint: ?[*:0]const u8 = null,
+    entrypoint: [*:0]const u8,
     /// The format of the compute shader code.
-    format: SDL_GPUShaderFormat = 0,
+    format: SDL_GPUShaderFormat,
     /// The number of samplers defined in the shader.
-    num_samplers: u32 = 0,
+    num_samplers: u32,
     /// The number of readonly storage textures defined in the shader.
-    num_readonly_storage_textures: u32 = 0,
+    num_readonly_storage_textures: u32,
     /// The number of readonly storage buffers defined in the shader.
-    num_readonly_storage_buffers: u32 = 0,
+    num_readonly_storage_buffers: u32,
     /// The number of read-write storage textures defined in the shader.
-    num_readwrite_storage_textures: u32 = 0,
+    num_readwrite_storage_textures: u32,
     /// The number of read-write storage buffers defined in the shader.
-    num_readwrite_storage_buffers: u32 = 0,
+    num_readwrite_storage_buffers: u32,
     /// The number of uniform buffers defined in the shader.
-    num_uniform_buffers: u32 = 0,
+    num_uniform_buffers: u32,
     /// The number of threads in the X dimension. This should match the value in the shader.
-    threadcount_x: u32 = 0,
+    threadcount_x: u32,
     /// The number of threads in the Y dimension. This should match the value in the shader.
-    threadcount_y: u32 = 0,
+    threadcount_y: u32,
     /// The number of threads in the Z dimension. This should match the value in the shader.
-    threadcount_z: u32 = 0,
+    threadcount_z: u32,
     /// A properties ID for extensions. Should be 0 if no extensions are needed.
-    props: properties.SDL_PropertiesID = 0,
+    props: properties.SDL_PropertiesID,
 };
 
 /// A structure specifying the parameters of a color target used by a render
@@ -2076,36 +2076,36 @@ pub const SDL_GPUComputePipelineCreateInfo = extern struct {
 /// \sa SDL_FColor
 pub const SDL_GPUColorTargetInfo = extern struct {
     /// The texture that will be used as a color target by a render pass.
-    texture: ?*SDL_GPUTexture = null,
+    texture: *SDL_GPUTexture,
     /// The mip level to use as a color target.
-    mip_level: u32 = 0,
+    mip_level: u32,
     /// The layer index or depth plane to use as a color target. This value is
     /// treated as a layer index on 2D array and cube textures, and as a depth
     /// plane on 3D textures.
-    layer_or_depth_plane: u32 = 0,
+    layer_or_depth_plane: u32,
     /// The color to clear the color target to at the start of the render pass.
     /// Ignored if SDL_GPULoadOp.clear is not used.
-    clear_color: pixels.SDL_FColor = @import("std").mem.zeroes(pixels.SDL_FColor),
+    clear_color: pixels.SDL_FColor,
     /// What is done with the contents of the color target at the beginning of the render pass.
-    load_op: SDL_GPULoadOp = @import("std").mem.zeroes(SDL_GPULoadOp),
+    load_op: SDL_GPULoadOp,
     /// What is done with the results of the render pass.
-    store_op: SDL_GPUStoreOp = @import("std").mem.zeroes(SDL_GPUStoreOp),
+    store_op: SDL_GPUStoreOp,
     /// The texture that will receive the results of a multisample resolve
     /// operation. Ignored if a RESOLVE* store_op is not used.
-    resolve_texture: ?*SDL_GPUTexture = null,
+    resolve_texture: ?*SDL_GPUTexture,
     /// The mip level of the resolve texture to use for the resolve operation.
     /// Ignored if a RESOLVE* store_op is not used.
-    resolve_mip_level: u32 = 0,
+    resolve_mip_level: u32,
     /// The layer index of the resolve texture to use for the resolve
     /// operation. Ignored if a RESOLVE* store_op is not used.
-    resolve_layer: u32 = 0,
+    resolve_layer: u32,
     /// true cycles the texture if the texture is bound and load_op is not LOAD
-    cycle: bool = false,
+    cycle: bool,
     /// true cycles the resolve texture if the resolve texture is bound.
     /// Ignored if a RESOLVE* store_op is not used.
-    cycle_resolve_texture: bool = false,
-    padding1: u8 = 0,
-    padding2: u8 = 0,
+    cycle_resolve_texture: bool,
+    _padding1: u8 = undefined,
+    _padding2: u8 = undefined,
 };
 
 /// A structure specifying the parameters of a depth-stencil target used by a
@@ -2155,27 +2155,27 @@ pub const SDL_GPUColorTargetInfo = extern struct {
 /// \sa SDL_BeginGPURenderPass
 pub const SDL_GPUDepthStencilTargetInfo = extern struct {
     /// The texture that will be used as the depth stencil target by the render pass.
-    texture: ?*SDL_GPUTexture = null,
+    texture: *SDL_GPUTexture,
     /// The value to clear the depth component to at the beginning of the
     /// render pass. Ignored if SDL_GPULoadOp.clear is not used.
-    clear_depth: f32 = 0,
+    clear_depth: f32,
     /// What is done with the depth contents at the beginning of the render pass.
-    load_op: SDL_GPULoadOp = @import("std").mem.zeroes(SDL_GPULoadOp),
+    load_op: SDL_GPULoadOp,
     /// What is done with the depth results of the render pass.
-    store_op: SDL_GPUStoreOp = @import("std").mem.zeroes(SDL_GPUStoreOp),
+    store_op: SDL_GPUStoreOp,
     /// What is done with the stencil contents at the beginning of the render pass.
-    stencil_load_op: SDL_GPULoadOp = @import("std").mem.zeroes(SDL_GPULoadOp),
+    stencil_load_op: SDL_GPULoadOp,
     /// What is done with the stencil results of the render pass.
-    stencil_store_op: SDL_GPUStoreOp = @import("std").mem.zeroes(SDL_GPUStoreOp),
+    stencil_store_op: SDL_GPUStoreOp,
     /// true cycles the texture if the texture is bound and any load ops are not LOAD
-    cycle: bool = false,
+    cycle: bool,
     /// The value to clear the stencil component to at the beginning of the
     /// render pass. Ignored if SDL_GPULoadOp.clear is not used.
-    clear_stencil: u8 = 0,
+    clear_stencil: u8,
     /// The mip level to use as the depth stencil target.
-    mip_level: u8 = 0,
+    mip_level: u8,
     /// The layer index to use as the depth stencil target.
-    layer: u8 = 0,
+    layer: u8,
 };
 
 /// A structure containing parameters for a blit command.
@@ -2185,23 +2185,23 @@ pub const SDL_GPUDepthStencilTargetInfo = extern struct {
 /// \sa SDL_BlitGPUTexture
 pub const SDL_GPUBlitInfo = extern struct {
     /// The source region for the blit.
-    source: SDL_GPUBlitRegion = @import("std").mem.zeroes(SDL_GPUBlitRegion),
+    source: SDL_GPUBlitRegion,
     /// The destination region for the blit.
-    destination: SDL_GPUBlitRegion = @import("std").mem.zeroes(SDL_GPUBlitRegion),
+    destination: SDL_GPUBlitRegion,
     /// What is done with the contents of the destination before the blit.
-    load_op: SDL_GPULoadOp = @import("std").mem.zeroes(SDL_GPULoadOp),
+    load_op: SDL_GPULoadOp,
     /// The color to clear the destination region to before the blit. Ignored
     /// if load_op is not SDL_GPULoadOp.clear.
-    clear_color: pixels.SDL_FColor = @import("std").mem.zeroes(pixels.SDL_FColor),
+    clear_color: pixels.SDL_FColor,
     /// The flip mode for the source region.
-    flip_mode: surface.SDL_FlipMode = @import("std").mem.zeroes(surface.SDL_FlipMode),
+    flip_mode: surface.SDL_FlipMode,
     /// The filter mode used when blitting.
-    filter: SDL_GPUFilter = @import("std").mem.zeroes(SDL_GPUFilter),
+    filter: SDL_GPUFilter,
     /// true cycles the destination texture if it is already bound.
-    cycle: bool = false,
-    padding1: u8 = 0,
-    padding2: u8 = 0,
-    padding3: u8 = 0,
+    cycle: bool,
+    _padding1: u8 = undefined,
+    _padding2: u8 = undefined,
+    _padding3: u8 = undefined,
 };
 
 /////////////////////////////
@@ -2218,9 +2218,9 @@ pub const SDL_GPUBufferBinding = extern struct {
     /// The buffer to bind. Must have been created with
     /// SDL_GPU_BUFFERUSAGE_VERTEX for SDL_BindGPUVertexBuffers, or
     /// SDL_GPU_BUFFERUSAGE_INDEX for SDL_BindGPUIndexBuffer.
-    buffer: ?*SDL_GPUBuffer = null,
+    buffer: *SDL_GPUBuffer,
     /// The starting byte of the data to bind in the buffer.
-    offset: u32 = 0,
+    offset: u32,
 };
 
 /// A structure specifying parameters in a sampler binding call.
@@ -2233,9 +2233,9 @@ pub const SDL_GPUBufferBinding = extern struct {
 /// \sa SDL_GPUSampler
 pub const SDL_GPUTextureSamplerBinding = extern struct {
     /// The texture to bind. Must have been created with SDL_GPU_TEXTUREUSAGE_SAMPLER.
-    texture: ?*SDL_GPUTexture = null,
+    texture: *SDL_GPUTexture,
     /// The sampler to bind.
-    sampler: ?*SDL_GPUSampler = null,
+    sampler: *SDL_GPUSampler,
 };
 
 /// A structure specifying parameters related to binding buffers in a compute
@@ -2247,12 +2247,12 @@ pub const SDL_GPUTextureSamplerBinding = extern struct {
 pub const SDL_GPUStorageBufferReadWriteBinding = extern struct {
     /// The buffer to bind. Must have been created with
     /// SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_WRITE.
-    buffer: ?*SDL_GPUBuffer = null,
+    buffer: *SDL_GPUBuffer,
     /// true cycles the buffer if it is already bound.
-    cycle: bool = false,
-    padding1: u8 = 0,
-    padding2: u8 = 0,
-    padding3: u8 = 0,
+    cycle: bool,
+    _padding1: u8 = undefined,
+    _padding2: u8 = undefined,
+    _padding3: u8 = undefined,
 };
 
 /// A structure specifying parameters related to binding textures in a compute
@@ -2265,16 +2265,16 @@ pub const SDL_GPUStorageTextureReadWriteBinding = extern struct {
     /// The texture to bind. Must have been created with
     /// SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE or
     /// SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE.
-    texture: ?*SDL_GPUTexture = null,
+    texture: *SDL_GPUTexture,
     /// The mip level index to bind.
-    mip_level: u32 = 0,
+    mip_level: u32,
     /// The layer index to bind.
-    layer: u32 = 0,
+    layer: u32,
     /// true cycles the texture if it is already bound.
-    cycle: bool = false,
-    padding1: u8 = 0,
-    padding2: u8 = 0,
-    padding3: u8 = 0,
+    cycle: bool,
+    _padding1: u8 = undefined,
+    _padding2: u8 = undefined,
+    _padding3: u8 = undefined,
 };
 
 /////////////////////////////
@@ -2490,20 +2490,20 @@ pub const SDL_PROP_GPU_DEVICE_CREATE_METAL_ALLOW_MACFAMILY1_BOOLEAN = "SDL.gpu.d
 pub const SDL_GPUVulkanOptions = extern struct {
     /// The Vulkan API version to request for the instance. Use Vulkan's
     /// VK_MAKE_VERSION or VK_MAKE_API_VERSION.
-    vulkan_api_version: u32 = 0,
+    vulkan_api_version: u32,
     /// Pointer to the first element of a chain of Vulkan feature structs.
     /// (Requires API version 1.1 or higher.)
-    feature_list: ?*anyopaque = null,
+    feature_list: *anyopaque,
     /// Pointer to a VkPhysicalDeviceFeatures struct to enable additional Vulkan 1.0 features.
-    vulkan_10_physical_device_features: ?*anyopaque = null,
+    vulkan_10_physical_device_features: *anyopaque,
     /// Number of additional device extensions to require.
-    device_extension_count: u32 = 0,
+    device_extension_count: u32,
     /// Pointer to a list of additional device extensions to require.
-    device_extension_names: ?[*][*:0]const u8 = null,
+    device_extension_names: [*][*:0]const u8,
     /// Number of additional instance extensions to require.
-    instance_extension_count: u32 = 0,
+    instance_extension_count: u32,
     /// Pointer to a list of additional instance extensions to require.
-    instance_extension_names: ?[*][*:0]const u8 = null,
+    instance_extension_names: [*][*:0]const u8,
 };
 
 /// Destroys a GPU context previously returned by SDL_CreateGPUDevice.
