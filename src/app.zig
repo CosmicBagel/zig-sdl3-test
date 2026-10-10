@@ -269,8 +269,8 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
         false,
     );
     // copy in data to be uploaded in copy pass
-    _ = sdl.SDL_memcpy(
-        outbound_data,
+    _ = sdl.stdinc.SDL_memcpy(
+        outbound_data.?,
         &triangle_verticies,
         triangle_verticies.len * @sizeOf(VertexColored),
     );
@@ -329,15 +329,15 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
 pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
     _ = appstate;
 
-    const app_iterate_start = sdl.SDL_GetTicksNS();
+    const app_iterate_start = sdl.timer.SDL_GetTicksNS();
 
-    var now: f32 = @floatFromInt(sdl.SDL_GetTicks());
+    var now: f32 = @floatFromInt(sdl.timer.SDL_GetTicks());
     now /= 1000;
 
     // choose the color for the frame we will draw. The sine wave trick makes it fade between colors smoothly.
     const red: f32 = 0.5 + 0.5 * @sin(now);
-    const green: f32 = 0.5 + 0.5 * @sin(now + sdl.SDL_PI_F * 2 / 3);
-    const blue: f32 = 0.5 + 0.5 * @sin(now + sdl.SDL_PI_F * 4 / 3);
+    const green: f32 = 0.5 + 0.5 * @sin(now + sdl.stdinc.SDL_PI_F * 2 / 3);
+    const blue: f32 = 0.5 + 0.5 * @sin(now + sdl.stdinc.SDL_PI_F * 4 / 3);
 
     // get command buffer (crash on null)
     const command_buffer: ?*sdl.gpu.SDL_GPUCommandBuffer = try errorWrap(
@@ -394,7 +394,7 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
         );
 
         // the time since the app started in seconds
-        frag_uniform.time = @as(f32, @floatFromInt(sdl.SDL_GetTicksNS())) / @as(f32, 1e9);
+        frag_uniform.time = @as(f32, @floatFromInt(sdl.timer.SDL_GetTicksNS())) / @as(f32, 1e9);
         sdl.gpu.SDL_PushGPUFragmentUniformData(
             command_buffer.?,
             0,
@@ -465,9 +465,9 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
 
     // wait a sensible amount of time for next frame (assuming foreground rate
     // is unlmited)
-    const time_spent = sdl.SDL_GetTicksNS() - app_iterate_start;
+    const time_spent = sdl.timer.SDL_GetTicksNS() - app_iterate_start;
     if (time_spent < target_frame_time_ns) {
-        sdl.SDL_DelayNS(target_frame_time_ns - time_spent);
+        sdl.timer.SDL_DelayNS(target_frame_time_ns - time_spent);
     }
 
     return .app_continue;
@@ -531,5 +531,5 @@ pub fn AppQuit(appstate: ?*anyopaque, app_result: sdl.init.SDL_AppResult) !void 
     );
     sdl.gpu.SDL_ReleaseGPUBuffer(sdl_handles.gpu_device.?, sdl_handles.vertex_buffer.?);
     sdl.gpu.SDL_DestroyGPUDevice(sdl_handles.gpu_device.?);
-    sdl.video.SDL_DestroyWindow(sdl_handles.window);
+    sdl.video.SDL_DestroyWindow(sdl_handles.window.?);
 }
