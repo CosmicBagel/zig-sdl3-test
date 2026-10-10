@@ -169,6 +169,7 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
             .num_storage_buffers = 0,
             .num_storage_textures = 0,
             .num_uniform_buffers = 1,
+            .props = 0,
         },
     ));
 
@@ -184,6 +185,7 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
             .num_storage_buffers = 0,
             .num_storage_textures = 0,
             .num_uniform_buffers = 1,
+            .props = 0,
         },
     ));
 
@@ -204,8 +206,12 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
                         .dst_color_blendfactor = sdl.gpu.SDL_GPUBlendFactor.one_minus_src_alpha,
                         .src_alpha_blendfactor = sdl.gpu.SDL_GPUBlendFactor.src_alpha,
                         .dst_alpha_blendfactor = sdl.gpu.SDL_GPUBlendFactor.one_minus_src_alpha,
+                        .enable_color_write_mask = false,
+                        .color_write_mask = .{},
                     },
                 }),
+                .has_depth_stencil_target = false,
+                .depth_stencil_format = .invalid,
             },
             .primitive_type = sdl.gpu.SDL_GPUPrimitiveType.trianglestrip,
             .vertex_input_state = .{
@@ -234,6 +240,10 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
                     },
                 },
             },
+            .rasterizer_state = undefined,
+            .multisample_state = undefined,
+            .depth_stencil_state = undefined,
+            .props = 0,
         },
     ));
 
@@ -296,7 +306,7 @@ pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init
             .transfer_buffer = transfer_buffer,
         },
         &sdl.gpu.SDL_GPUBufferRegion{
-            .buffer = sdl_handles.vertex_buffer,
+            .buffer = sdl_handles.vertex_buffer.?,
             .offset = 0,
             .size = triangle_verticies.len * @sizeOf(VertexColored),
         },
@@ -371,10 +381,16 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
                     .b = blue,
                     .a = 1.0,
                 },
-                .texture = swapchain_texture,
+                .texture = swapchain_texture.?,
                 .load_op = .clear,
                 .store_op = .store,
                 .cycle = false,
+                .mip_level = 0,
+                .layer_or_depth_plane = 0,
+                .cycle_resolve_texture = false,
+                .resolve_layer = 0,
+                .resolve_mip_level = 0,
+                .resolve_texture = null,
             };
         const render_pass: ?*sdl.gpu.SDL_GPURenderPass = try errorWrap(sdl.gpu.SDL_BeginGPURenderPass(
             command_buffer.?,
@@ -391,7 +407,7 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
             render_pass.?,
             0,
             @ptrCast(&sdl.gpu.SDL_GPUBufferBinding{
-                .buffer = sdl_handles.vertex_buffer,
+                .buffer = sdl_handles.vertex_buffer.?,
                 .offset = 0,
             }),
             1,
