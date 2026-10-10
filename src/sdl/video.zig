@@ -412,6 +412,9 @@ pub const SDL_EGLAttrib = isize;
 /// \since This datatype is available since SDL 3.2.0.
 pub const SDL_EGLint = c_int;
 
+// yoinked from SDL_egl.h
+pub const EGL_NONE = 0x3038;
+
 /// EGL platform attribute initialization callback.
 ///
 /// This is called when SDL is attempting to create an EGL context, to let the
@@ -433,9 +436,9 @@ pub const SDL_EGLint = c_int;
 /// \since This datatype is available since SDL 3.2.0.
 ///
 /// \sa SDL_EGL_SetAttributeCallbacks
-pub const SDL_EGLAttribArrayCallback = ?*const fn (
+pub const SDL_EGLAttribArrayCallback = *const fn (
     userdata: ?*anyopaque,
-) callconv(.c) [*c]SDL_EGLAttrib;
+) callconv(.c) [*:EGL_NONE]SDL_EGLAttrib;
 
 /// EGL surface/context attribute initialization callback types.
 ///
@@ -468,7 +471,7 @@ pub const SDL_EGLIntArrayCallback = ?*const fn (
     userdata: ?*anyopaque,
     display: SDL_EGLDisplay,
     config: SDL_EGLConfig,
-) callconv(.c) [*c]SDL_EGLint;
+) callconv(.c) [*:EGL_NONE]SDL_EGLint;
 
 /// An enumeration of OpenGL configuration attributes.
 ///
@@ -635,7 +638,7 @@ pub extern fn SDL_GetNumVideoDrivers() c_int;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetNumVideoDrivers
-pub extern fn SDL_GetVideoDriver(index: c_int) [*c]const u8;
+pub extern fn SDL_GetVideoDriver(index: c_int) ?[*:0]const u8;
 
 /// Get the name of the currently initialized video driver.
 ///
@@ -652,7 +655,7 @@ pub extern fn SDL_GetVideoDriver(index: c_int) [*c]const u8;
 ///
 /// \sa SDL_GetNumVideoDrivers
 /// \sa SDL_GetVideoDriver
-pub extern fn SDL_GetCurrentVideoDriver() [*c]const u8;
+pub extern fn SDL_GetCurrentVideoDriver() ?[*:0]const u8;
 
 /// Get the current system theme.
 ///
@@ -674,7 +677,7 @@ pub extern fn SDL_GetSystemTheme() SDL_SystemTheme;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetDisplays(count: [*c]c_int) [*c]SDL_DisplayID;
+pub extern fn SDL_GetDisplays(count: ?*c_int) ?[*:0]SDL_DisplayID;
 
 /// Return the primary display.
 ///
@@ -740,7 +743,7 @@ pub const SDL_PROP_DISPLAY_WINDOWS_HMONITOR_POINTER = "SDL.display.windows.hmoni
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetDisplays
-pub extern fn SDL_GetDisplayName(displayID: SDL_DisplayID) [*c]const u8;
+pub extern fn SDL_GetDisplayName(displayID: SDL_DisplayID) ?[*:0]const u8;
 
 /// Get the desktop area represented by a display.
 ///
@@ -758,7 +761,7 @@ pub extern fn SDL_GetDisplayName(displayID: SDL_DisplayID) [*c]const u8;
 ///
 /// \sa SDL_GetDisplayUsableBounds
 /// \sa SDL_GetDisplays
-pub extern fn SDL_GetDisplayBounds(displayID: SDL_DisplayID, rect: [*c]rect.SDL_Rect) bool;
+pub extern fn SDL_GetDisplayBounds(displayID: SDL_DisplayID, rect: *rect.SDL_Rect) bool;
 
 /// Get the usable desktop area represented by a display, in screen
 /// coordinates.
@@ -782,7 +785,7 @@ pub extern fn SDL_GetDisplayBounds(displayID: SDL_DisplayID, rect: [*c]rect.SDL_
 ///
 /// \sa SDL_GetDisplayBounds
 /// \sa SDL_GetDisplays
-pub extern fn SDL_GetDisplayUsableBounds(displayID: SDL_DisplayID, rect: [*c]rect.SDL_Rect) bool;
+pub extern fn SDL_GetDisplayUsableBounds(displayID: SDL_DisplayID, rect: *rect.SDL_Rect) bool;
 
 /// Get the orientation of a display when it is unrotated.
 ///
@@ -859,7 +862,10 @@ pub extern fn SDL_GetDisplayContentScale(displayID: SDL_DisplayID) f32;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetDisplays
-pub extern fn SDL_GetFullscreenDisplayModes(displayID: SDL_DisplayID, count: [*c]c_int) [*c][*c]SDL_DisplayMode;
+pub extern fn SDL_GetFullscreenDisplayModes(
+    displayID: SDL_DisplayID,
+    count: ?*c_int,
+) ?[*:null]*SDL_DisplayMode;
 
 /// Get the closest match to the requested display mode.
 ///
@@ -894,7 +900,7 @@ pub extern fn SDL_GetClosestFullscreenDisplayMode(
     h: c_int,
     refresh_rate: f32,
     include_high_density_modes: bool,
-    closest: [*c]SDL_DisplayMode,
+    closest: ?*SDL_DisplayMode,
 ) bool;
 
 /// Get information about the desktop's display mode.
@@ -914,7 +920,7 @@ pub extern fn SDL_GetClosestFullscreenDisplayMode(
 ///
 /// \sa SDL_GetCurrentDisplayMode
 /// \sa SDL_GetDisplays
-pub extern fn SDL_GetDesktopDisplayMode(displayID: SDL_DisplayID) [*c]const SDL_DisplayMode;
+pub extern fn SDL_GetDesktopDisplayMode(displayID: SDL_DisplayID) ?*const SDL_DisplayMode;
 
 /// Get information about the current display mode.
 ///
@@ -933,7 +939,7 @@ pub extern fn SDL_GetDesktopDisplayMode(displayID: SDL_DisplayID) [*c]const SDL_
 ///
 /// \sa SDL_GetDesktopDisplayMode
 /// \sa SDL_GetDisplays
-pub extern fn SDL_GetCurrentDisplayMode(displayID: SDL_DisplayID) [*c]const SDL_DisplayMode;
+pub extern fn SDL_GetCurrentDisplayMode(displayID: SDL_DisplayID) ?*const SDL_DisplayMode;
 
 /// Get the display containing a point.
 ///
@@ -947,7 +953,7 @@ pub extern fn SDL_GetCurrentDisplayMode(displayID: SDL_DisplayID) [*c]const SDL_
 ///
 /// \sa SDL_GetDisplayBounds
 /// \sa SDL_GetDisplays
-pub extern fn SDL_GetDisplayForPoint(point: [*c]const rect.SDL_Point) SDL_DisplayID;
+pub extern fn SDL_GetDisplayForPoint(point: *const rect.SDL_Point) SDL_DisplayID;
 
 /// Get the display primarily containing a rect.
 ///
@@ -962,7 +968,7 @@ pub extern fn SDL_GetDisplayForPoint(point: [*c]const rect.SDL_Point) SDL_Displa
 ///
 /// \sa SDL_GetDisplayBounds
 /// \sa SDL_GetDisplays
-pub extern fn SDL_GetDisplayForRect(rect: [*c]const rect.SDL_Rect) SDL_DisplayID;
+pub extern fn SDL_GetDisplayForRect(rect: *const rect.SDL_Rect) SDL_DisplayID;
 
 /// Get the display associated with a window.
 ///
@@ -977,7 +983,7 @@ pub extern fn SDL_GetDisplayForRect(rect: [*c]const rect.SDL_Rect) SDL_DisplayID
 ///
 /// \sa SDL_GetDisplayBounds
 /// \sa SDL_GetDisplays
-pub extern fn SDL_GetDisplayForWindow(window: ?*SDL_Window) SDL_DisplayID;
+pub extern fn SDL_GetDisplayForWindow(window: *SDL_Window) SDL_DisplayID;
 
 /// Get the pixel density of a window.
 ///
@@ -994,7 +1000,7 @@ pub extern fn SDL_GetDisplayForWindow(window: ?*SDL_Window) SDL_DisplayID;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowDisplayScale
-pub extern fn SDL_GetWindowPixelDensity(window: ?*SDL_Window) f32;
+pub extern fn SDL_GetWindowPixelDensity(window: *SDL_Window) f32;
 
 /// Get the content display scale relative to a window's pixel size.
 ///
@@ -1016,7 +1022,7 @@ pub extern fn SDL_GetWindowPixelDensity(window: ?*SDL_Window) f32;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetWindowDisplayScale(window: ?*SDL_Window) f32;
+pub extern fn SDL_GetWindowDisplayScale(window: *SDL_Window) f32;
 
 /// Set the display mode to use when a window is visible and fullscreen.
 ///
@@ -1049,7 +1055,10 @@ pub extern fn SDL_GetWindowDisplayScale(window: ?*SDL_Window) f32;
 /// \sa SDL_GetWindowFullscreenMode
 /// \sa SDL_SetWindowFullscreen
 /// \sa SDL_SyncWindow
-pub extern fn SDL_SetWindowFullscreenMode(window: ?*SDL_Window, mode: [*c]const SDL_DisplayMode) bool;
+pub extern fn SDL_SetWindowFullscreenMode(
+    window: *SDL_Window,
+    mode: ?*const SDL_DisplayMode,
+) bool;
 
 /// Query the display mode to use when a window is visible at fullscreen.
 ///
@@ -1063,7 +1072,7 @@ pub extern fn SDL_SetWindowFullscreenMode(window: ?*SDL_Window, mode: [*c]const 
 ///
 /// \sa SDL_SetWindowFullscreenMode
 /// \sa SDL_SetWindowFullscreen
-pub extern fn SDL_GetWindowFullscreenMode(window: ?*SDL_Window) [*c]const SDL_DisplayMode;
+pub extern fn SDL_GetWindowFullscreenMode(window: *SDL_Window) ?*const SDL_DisplayMode;
 
 /// Get the raw ICC profile data for the screen the window is currently on.
 ///
@@ -1076,7 +1085,7 @@ pub extern fn SDL_GetWindowFullscreenMode(window: ?*SDL_Window) [*c]const SDL_Di
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetWindowICCProfile(window: ?*SDL_Window, size: [*c]usize) ?*anyopaque;
+pub extern fn SDL_GetWindowICCProfile(window: *SDL_Window, size: *usize) ?*anyopaque;
 
 /// Get the pixel format associated with the window.
 ///
@@ -1088,7 +1097,7 @@ pub extern fn SDL_GetWindowICCProfile(window: ?*SDL_Window, size: [*c]usize) ?*a
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetWindowPixelFormat(window: ?*SDL_Window) pixels.SDL_PixelFormat;
+pub extern fn SDL_GetWindowPixelFormat(window: *SDL_Window) pixels.SDL_PixelFormat;
 
 /// Get a list of valid windows.
 ///
@@ -1102,7 +1111,7 @@ pub extern fn SDL_GetWindowPixelFormat(window: ?*SDL_Window) pixels.SDL_PixelFor
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetWindows(count: [*c]c_int) [*c]?*SDL_Window;
+pub extern fn SDL_GetWindows(count: *c_int) ?[*:null]*SDL_Window;
 
 /// Create a window with the specified dimensions and flags.
 ///
@@ -1189,7 +1198,12 @@ pub extern fn SDL_GetWindows(count: [*c]c_int) [*c]?*SDL_Window;
 /// \sa SDL_CreatePopupWindow
 /// \sa SDL_CreateWindowWithProperties
 /// \sa SDL_DestroyWindow
-pub extern fn SDL_CreateWindow(title: [*c]const u8, w: c_int, h: c_int, flags: SDL_WindowFlags) ?*SDL_Window;
+pub extern fn SDL_CreateWindow(
+    title: [*:0]const u8,
+    w: c_int,
+    h: c_int,
+    flags: SDL_WindowFlags,
+) ?*SDL_Window;
 
 /// Create a child popup window of the specified parent window.
 ///
@@ -1263,7 +1277,14 @@ pub extern fn SDL_CreateWindow(title: [*c]const u8, w: c_int, h: c_int, flags: S
 /// \sa SDL_CreateWindowWithProperties
 /// \sa SDL_DestroyWindow
 /// \sa SDL_GetWindowParent
-pub extern fn SDL_CreatePopupWindow(parent: ?*SDL_Window, offset_x: c_int, offset_y: c_int, w: c_int, h: c_int, flags: SDL_WindowFlags) ?*SDL_Window;
+pub extern fn SDL_CreatePopupWindow(
+    parent: *SDL_Window,
+    offset_x: c_int,
+    offset_y: c_int,
+    w: c_int,
+    h: c_int,
+    flags: SDL_WindowFlags,
+) ?*SDL_Window;
 
 /// Create a window with the specified properties.
 ///
@@ -1465,7 +1486,7 @@ pub const SDL_PROP_WINDOW_CREATE_EMSCRIPTEN_KEYBOARD_ELEMENT_STRING = "SDL.windo
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowFromID
-pub extern fn SDL_GetWindowID(window: ?*SDL_Window) SDL_WindowID;
+pub extern fn SDL_GetWindowID(window: *SDL_Window) SDL_WindowID;
 
 /// Get a window from a stored ID.
 ///
@@ -1494,7 +1515,7 @@ pub extern fn SDL_GetWindowFromID(id: SDL_WindowID) ?*SDL_Window;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_CreatePopupWindow
-pub extern fn SDL_GetWindowParent(window: ?*SDL_Window) ?*SDL_Window;
+pub extern fn SDL_GetWindowParent(window: *SDL_Window) ?*SDL_Window;
 
 /// Get the properties associated with a window.
 ///
@@ -1621,7 +1642,7 @@ pub extern fn SDL_GetWindowParent(window: ?*SDL_Window) ?*SDL_Window;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetWindowProperties(window: ?*SDL_Window) properties.SDL_PropertiesID;
+pub extern fn SDL_GetWindowProperties(window: *SDL_Window) properties.SDL_PropertiesID;
 
 pub const SDL_PROP_WINDOW_SHAPE_POINTER = "SDL.window.shape";
 pub const SDL_PROP_WINDOW_HDR_ENABLED_BOOLEAN = "SDL.window.HDR_enabled";
@@ -1678,7 +1699,7 @@ pub const SDL_PROP_WINDOW_EMSCRIPTEN_KEYBOARD_ELEMENT_STRING = "SDL.window.emscr
 /// \sa SDL_SetWindowMouseGrab
 /// \sa SDL_SetWindowFillDocument
 /// \sa SDL_ShowWindow
-pub extern fn SDL_GetWindowFlags(window: ?*SDL_Window) SDL_WindowFlags;
+pub extern fn SDL_GetWindowFlags(window: *SDL_Window) SDL_WindowFlags;
 
 /// Set the title of a window.
 ///
@@ -1694,7 +1715,7 @@ pub extern fn SDL_GetWindowFlags(window: ?*SDL_Window) SDL_WindowFlags;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowTitle
-pub extern fn SDL_SetWindowTitle(window: ?*SDL_Window, title: [*c]const u8) bool;
+pub extern fn SDL_SetWindowTitle(window: *SDL_Window, title: [*:0]const u8) bool;
 
 /// Get the title of a window.
 ///
@@ -1707,7 +1728,7 @@ pub extern fn SDL_SetWindowTitle(window: ?*SDL_Window, title: [*c]const u8) bool
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetWindowTitle
-pub extern fn SDL_GetWindowTitle(window: ?*SDL_Window) [*c]const u8;
+pub extern fn SDL_GetWindowTitle(window: *SDL_Window) [*:0]const u8;
 
 /// Set the icon for a window.
 ///
@@ -1732,7 +1753,7 @@ pub extern fn SDL_GetWindowTitle(window: ?*SDL_Window) [*c]const u8;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_AddSurfaceAlternateImage
-pub extern fn SDL_SetWindowIcon(window: ?*SDL_Window, icon: [*c]surface.SDL_Surface) bool;
+pub extern fn SDL_SetWindowIcon(window: *SDL_Window, icon: *surface.SDL_Surface) bool;
 
 /// Request that the window's position be set.
 ///
@@ -1771,7 +1792,7 @@ pub extern fn SDL_SetWindowIcon(window: ?*SDL_Window, icon: [*c]surface.SDL_Surf
 ///
 /// \sa SDL_GetWindowPosition
 /// \sa SDL_SyncWindow
-pub extern fn SDL_SetWindowPosition(window: ?*SDL_Window, x: c_int, y: c_int) bool;
+pub extern fn SDL_SetWindowPosition(window: *SDL_Window, x: c_int, y: c_int) bool;
 
 /// Get the position of a window.
 ///
@@ -1794,7 +1815,7 @@ pub extern fn SDL_SetWindowPosition(window: ?*SDL_Window, x: c_int, y: c_int) bo
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetWindowPosition
-pub extern fn SDL_GetWindowPosition(window: ?*SDL_Window, x: [*c]c_int, y: [*c]c_int) bool;
+pub extern fn SDL_GetWindowPosition(window: *SDL_Window, x: ?*c_int, y: ?*c_int) bool;
 
 /// Request that the size of a window's client area be set.
 ///
@@ -1829,7 +1850,7 @@ pub extern fn SDL_GetWindowPosition(window: ?*SDL_Window, x: [*c]c_int, y: [*c]c
 /// \sa SDL_GetWindowSize
 /// \sa SDL_SetWindowFullscreenMode
 /// \sa SDL_SyncWindow
-pub extern fn SDL_SetWindowSize(window: ?*SDL_Window, w: c_int, h: c_int) bool;
+pub extern fn SDL_SetWindowSize(window: *SDL_Window, w: c_int, h: c_int) bool;
 
 /// Get the size of a window's client area.
 ///
@@ -1851,7 +1872,7 @@ pub extern fn SDL_SetWindowSize(window: ?*SDL_Window, w: c_int, h: c_int) bool;
 /// \sa SDL_GetWindowSizeInPixels
 /// \sa SDL_SetWindowSize
 /// \sa SDL_EVENT_WINDOW_RESIZED
-pub extern fn SDL_GetWindowSize(window: ?*SDL_Window, w: [*c]c_int, h: [*c]c_int) bool;
+pub extern fn SDL_GetWindowSize(window: *SDL_Window, w: [*c]c_int, h: [*c]c_int) bool;
 
 /// Get the safe area for this window.
 ///
@@ -1871,7 +1892,7 @@ pub extern fn SDL_GetWindowSize(window: ?*SDL_Window, w: [*c]c_int, h: [*c]c_int
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetWindowSafeArea(window: ?*SDL_Window, rect: [*c]rect.SDL_Rect) bool;
+pub extern fn SDL_GetWindowSafeArea(window: *SDL_Window, rect: *rect.SDL_Rect) bool;
 
 /// Request that the aspect ratio of a window's client area be set.
 ///
@@ -1910,7 +1931,7 @@ pub extern fn SDL_GetWindowSafeArea(window: ?*SDL_Window, rect: [*c]rect.SDL_Rec
 ///
 /// \sa SDL_GetWindowAspectRatio
 /// \sa SDL_SyncWindow
-pub extern fn SDL_SetWindowAspectRatio(window: ?*SDL_Window, min_aspect: f32, max_aspect: f32) bool;
+pub extern fn SDL_SetWindowAspectRatio(window: *SDL_Window, min_aspect: f32, max_aspect: f32) bool;
 
 /// Get the aspect ratio of a window's client area.
 ///
@@ -1927,7 +1948,11 @@ pub extern fn SDL_SetWindowAspectRatio(window: ?*SDL_Window, min_aspect: f32, ma
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetWindowAspectRatio
-pub extern fn SDL_GetWindowAspectRatio(window: ?*SDL_Window, min_aspect: [*c]f32, max_aspect: [*c]f32) bool;
+pub extern fn SDL_GetWindowAspectRatio(
+    window: *SDL_Window,
+    min_aspect: ?*f32,
+    max_aspect: ?*f32,
+) bool;
 
 /// Get the size of a window's borders (decorations) around the client area.
 ///
@@ -1962,7 +1987,13 @@ pub extern fn SDL_GetWindowAspectRatio(window: ?*SDL_Window, min_aspect: [*c]f32
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowSize
-pub extern fn SDL_GetWindowBordersSize(window: ?*SDL_Window, top: [*c]c_int, left: [*c]c_int, bottom: [*c]c_int, right: [*c]c_int) bool;
+pub extern fn SDL_GetWindowBordersSize(
+    window: *SDL_Window,
+    top: ?*c_int,
+    left: ?*c_int,
+    bottom: ?*c_int,
+    right: ?*c_int,
+) bool;
 
 /// Get the size of a window's client area, in pixels.
 ///
@@ -1980,7 +2011,7 @@ pub extern fn SDL_GetWindowBordersSize(window: ?*SDL_Window, top: [*c]c_int, lef
 ///
 /// \sa SDL_CreateWindow
 /// \sa SDL_GetWindowSize
-pub extern fn SDL_GetWindowSizeInPixels(window: ?*SDL_Window, w: [*c]c_int, h: [*c]c_int) bool;
+pub extern fn SDL_GetWindowSizeInPixels(window: *SDL_Window, w: ?*c_int, h: ?*c_int) bool;
 
 /// Set the minimum size of a window's client area.
 ///
@@ -1996,7 +2027,7 @@ pub extern fn SDL_GetWindowSizeInPixels(window: ?*SDL_Window, w: [*c]c_int, h: [
 ///
 /// \sa SDL_GetWindowMinimumSize
 /// \sa SDL_SetWindowMaximumSize
-pub extern fn SDL_SetWindowMinimumSize(window: ?*SDL_Window, min_w: c_int, min_h: c_int) bool;
+pub extern fn SDL_SetWindowMinimumSize(window: *SDL_Window, min_w: c_int, min_h: c_int) bool;
 
 /// Get the minimum size of a window's client area.
 ///
@@ -2014,7 +2045,7 @@ pub extern fn SDL_SetWindowMinimumSize(window: ?*SDL_Window, min_w: c_int, min_h
 ///
 /// \sa SDL_GetWindowMaximumSize
 /// \sa SDL_SetWindowMinimumSize
-pub extern fn SDL_GetWindowMinimumSize(window: ?*SDL_Window, w: [*c]c_int, h: [*c]c_int) bool;
+pub extern fn SDL_GetWindowMinimumSize(window: *SDL_Window, w: ?*c_int, h: ?*c_int) bool;
 
 /// Set the maximum size of a window's client area.
 ///
@@ -2030,7 +2061,7 @@ pub extern fn SDL_GetWindowMinimumSize(window: ?*SDL_Window, w: [*c]c_int, h: [*
 ///
 /// \sa SDL_GetWindowMaximumSize
 /// \sa SDL_SetWindowMinimumSize
-pub extern fn SDL_SetWindowMaximumSize(window: ?*SDL_Window, max_w: c_int, max_h: c_int) bool;
+pub extern fn SDL_SetWindowMaximumSize(window: *SDL_Window, max_w: c_int, max_h: c_int) bool;
 
 /// Get the maximum size of a window's client area.
 ///
@@ -2048,7 +2079,7 @@ pub extern fn SDL_SetWindowMaximumSize(window: ?*SDL_Window, max_w: c_int, max_h
 ///
 /// \sa SDL_GetWindowMinimumSize
 /// \sa SDL_SetWindowMaximumSize
-pub extern fn SDL_GetWindowMaximumSize(window: ?*SDL_Window, w: [*c]c_int, h: [*c]c_int) bool;
+pub extern fn SDL_GetWindowMaximumSize(window: *SDL_Window, w: ?*c_int, h: ?*c_int) bool;
 
 /// Set the border state of a window.
 ///
@@ -2068,7 +2099,7 @@ pub extern fn SDL_GetWindowMaximumSize(window: ?*SDL_Window, w: [*c]c_int, h: [*
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowFlags
-pub extern fn SDL_SetWindowBordered(window: ?*SDL_Window, bordered: bool) bool;
+pub extern fn SDL_SetWindowBordered(window: *SDL_Window, bordered: bool) bool;
 
 /// Set the user-resizable state of a window.
 ///
@@ -2088,7 +2119,7 @@ pub extern fn SDL_SetWindowBordered(window: ?*SDL_Window, bordered: bool) bool;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowFlags
-pub extern fn SDL_SetWindowResizable(window: ?*SDL_Window, resizable: bool) bool;
+pub extern fn SDL_SetWindowResizable(window: *SDL_Window, resizable: bool) bool;
 
 /// Set the window to always be above the others.
 ///
@@ -2105,7 +2136,7 @@ pub extern fn SDL_SetWindowResizable(window: ?*SDL_Window, resizable: bool) bool
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowFlags
-pub extern fn SDL_SetWindowAlwaysOnTop(window: ?*SDL_Window, on_top: bool) bool;
+pub extern fn SDL_SetWindowAlwaysOnTop(window: *SDL_Window, on_top: bool) bool;
 
 /// Set the window to fill the current document space (Emscripten only).
 ///
@@ -2134,7 +2165,7 @@ pub extern fn SDL_SetWindowAlwaysOnTop(window: ?*SDL_Window, on_top: bool) bool;
 /// \since This function is available since SDL 3.4.0.
 ///
 /// \sa SDL_GetWindowFlags
-pub extern fn SDL_SetWindowFillDocument(window: ?*SDL_Window, fill: bool) bool;
+pub extern fn SDL_SetWindowFillDocument(window: *SDL_Window, fill: bool) bool;
 
 /// Show a window.
 ///
@@ -2148,7 +2179,7 @@ pub extern fn SDL_SetWindowFillDocument(window: ?*SDL_Window, fill: bool) bool;
 ///
 /// \sa SDL_HideWindow
 /// \sa SDL_RaiseWindow
-pub extern fn SDL_ShowWindow(window: ?*SDL_Window) bool;
+pub extern fn SDL_ShowWindow(window: *SDL_Window) bool;
 
 /// Hide a window.
 ///
@@ -2162,7 +2193,7 @@ pub extern fn SDL_ShowWindow(window: ?*SDL_Window) bool;
 ///
 /// \sa SDL_ShowWindow
 /// \sa SDL_WINDOW_HIDDEN
-pub extern fn SDL_HideWindow(window: ?*SDL_Window) bool;
+pub extern fn SDL_HideWindow(window: *SDL_Window) bool;
 
 /// Request that a window be raised above other windows and gain the input
 /// focus.
@@ -2180,7 +2211,7 @@ pub extern fn SDL_HideWindow(window: ?*SDL_Window) bool;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_RaiseWindow(window: ?*SDL_Window) bool;
+pub extern fn SDL_RaiseWindow(window: *SDL_Window) bool;
 
 /// Request that the window be made as large as possible.
 ///
@@ -2212,7 +2243,7 @@ pub extern fn SDL_RaiseWindow(window: ?*SDL_Window) bool;
 /// \sa SDL_MinimizeWindow
 /// \sa SDL_RestoreWindow
 /// \sa SDL_SyncWindow
-pub extern fn SDL_MaximizeWindow(window: ?*SDL_Window) bool;
+pub extern fn SDL_MaximizeWindow(window: *SDL_Window) bool;
 
 /// Request that the window be minimized to an iconic representation.
 ///
@@ -2239,7 +2270,7 @@ pub extern fn SDL_MaximizeWindow(window: ?*SDL_Window) bool;
 /// \sa SDL_MaximizeWindow
 /// \sa SDL_RestoreWindow
 /// \sa SDL_SyncWindow
-pub extern fn SDL_MinimizeWindow(window: ?*SDL_Window) bool;
+pub extern fn SDL_MinimizeWindow(window: *SDL_Window) bool;
 
 /// Request that the size and position of a minimized or maximized window be
 /// restored.
@@ -2267,7 +2298,7 @@ pub extern fn SDL_MinimizeWindow(window: ?*SDL_Window) bool;
 /// \sa SDL_MaximizeWindow
 /// \sa SDL_MinimizeWindow
 /// \sa SDL_SyncWindow
-pub extern fn SDL_RestoreWindow(window: ?*SDL_Window) bool;
+pub extern fn SDL_RestoreWindow(window: *SDL_Window) bool;
 
 /// Request that the window's fullscreen state be changed.
 ///
@@ -2297,7 +2328,7 @@ pub extern fn SDL_RestoreWindow(window: ?*SDL_Window) bool;
 /// \sa SDL_SetWindowFullscreenMode
 /// \sa SDL_SyncWindow
 /// \sa SDL_WINDOW_FULLSCREEN
-pub extern fn SDL_SetWindowFullscreen(window: ?*SDL_Window, fullscreen: bool) bool;
+pub extern fn SDL_SetWindowFullscreen(window: *SDL_Window, fullscreen: bool) bool;
 
 /// Block until any pending window state is finalized.
 ///
@@ -2326,7 +2357,7 @@ pub extern fn SDL_SetWindowFullscreen(window: ?*SDL_Window, fullscreen: bool) bo
 /// \sa SDL_MaximizeWindow
 /// \sa SDL_RestoreWindow
 /// \sa SDL_HINT_VIDEO_SYNC_WINDOW_OPERATIONS
-pub extern fn SDL_SyncWindow(window: ?*SDL_Window) bool;
+pub extern fn SDL_SyncWindow(window: *SDL_Window) bool;
 
 /// Return whether the window has a surface associated with it.
 ///
@@ -2339,7 +2370,7 @@ pub extern fn SDL_SyncWindow(window: ?*SDL_Window) bool;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowSurface
-pub extern fn SDL_WindowHasSurface(window: ?*SDL_Window) bool;
+pub extern fn SDL_WindowHasSurface(window: *SDL_Window) bool;
 
 /// Get the SDL surface associated with the window.
 ///
@@ -2366,7 +2397,7 @@ pub extern fn SDL_WindowHasSurface(window: ?*SDL_Window) bool;
 /// \sa SDL_WindowHasSurface
 /// \sa SDL_UpdateWindowSurface
 /// \sa SDL_UpdateWindowSurfaceRects
-pub extern fn SDL_GetWindowSurface(window: ?*SDL_Window) [*c]surface.SDL_Surface;
+pub extern fn SDL_GetWindowSurface(window: *SDL_Window) ?*surface.SDL_Surface;
 
 /// Toggle VSync for the window surface.
 ///
@@ -2390,7 +2421,7 @@ pub extern fn SDL_GetWindowSurface(window: ?*SDL_Window) [*c]surface.SDL_Surface
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowSurfaceVSync
-pub extern fn SDL_SetWindowSurfaceVSync(window: ?*SDL_Window, vsync: c_int) bool;
+pub extern fn SDL_SetWindowSurfaceVSync(window: *SDL_Window, vsync: c_int) bool;
 pub const SDL_WINDOW_SURFACE_VSYNC_DISABLED = 0;
 pub const SDL_WINDOW_SURFACE_VSYNC_ADAPTIVE = -1;
 
@@ -2407,7 +2438,7 @@ pub const SDL_WINDOW_SURFACE_VSYNC_ADAPTIVE = -1;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetWindowSurfaceVSync
-pub extern fn SDL_GetWindowSurfaceVSync(window: ?*SDL_Window, vsync: [*c]c_int) bool;
+pub extern fn SDL_GetWindowSurfaceVSync(window: *SDL_Window, vsync: *c_int) bool;
 
 /// Copy the window surface to the screen.
 ///
@@ -2426,7 +2457,7 @@ pub extern fn SDL_GetWindowSurfaceVSync(window: ?*SDL_Window, vsync: [*c]c_int) 
 ///
 /// \sa SDL_GetWindowSurface
 /// \sa SDL_UpdateWindowSurfaceRects
-pub extern fn SDL_UpdateWindowSurface(window: ?*SDL_Window) bool;
+pub extern fn SDL_UpdateWindowSurface(window: *SDL_Window) bool;
 
 /// Copy areas of the window surface to the screen.
 ///
@@ -2453,7 +2484,11 @@ pub extern fn SDL_UpdateWindowSurface(window: ?*SDL_Window) bool;
 ///
 /// \sa SDL_GetWindowSurface
 /// \sa SDL_UpdateWindowSurface
-pub extern fn SDL_UpdateWindowSurfaceRects(window: ?*SDL_Window, rects: [*c]const rect.SDL_Rect, numrects: c_int) bool;
+pub extern fn SDL_UpdateWindowSurfaceRects(
+    window: *SDL_Window,
+    rects: [*]const rect.SDL_Rect,
+    numrects: c_int,
+) bool;
 
 /// Destroy the surface associated with the window.
 ///
@@ -2467,7 +2502,7 @@ pub extern fn SDL_UpdateWindowSurfaceRects(window: ?*SDL_Window, rects: [*c]cons
 ///
 /// \sa SDL_GetWindowSurface
 /// \sa SDL_WindowHasSurface
-pub extern fn SDL_DestroyWindowSurface(window: ?*SDL_Window) bool;
+pub extern fn SDL_DestroyWindowSurface(window: *SDL_Window) bool;
 
 /// Set a window's keyboard grab mode.
 ///
@@ -2498,7 +2533,7 @@ pub extern fn SDL_DestroyWindowSurface(window: ?*SDL_Window) bool;
 ///
 /// \sa SDL_GetWindowKeyboardGrab
 /// \sa SDL_SetWindowMouseGrab
-pub extern fn SDL_SetWindowKeyboardGrab(window: ?*SDL_Window, grabbed: bool) bool;
+pub extern fn SDL_SetWindowKeyboardGrab(window: *SDL_Window, grabbed: bool) bool;
 
 /// Set a window's mouse grab mode.
 ///
@@ -2516,7 +2551,7 @@ pub extern fn SDL_SetWindowKeyboardGrab(window: ?*SDL_Window, grabbed: bool) boo
 /// \sa SDL_GetWindowMouseRect
 /// \sa SDL_SetWindowMouseRect
 /// \sa SDL_SetWindowKeyboardGrab
-pub extern fn SDL_SetWindowMouseGrab(window: ?*SDL_Window, grabbed: bool) bool;
+pub extern fn SDL_SetWindowMouseGrab(window: *SDL_Window, grabbed: bool) bool;
 
 /// Get a window's keyboard grab mode.
 ///
@@ -2528,7 +2563,7 @@ pub extern fn SDL_SetWindowMouseGrab(window: ?*SDL_Window, grabbed: bool) bool;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetWindowKeyboardGrab
-pub extern fn SDL_GetWindowKeyboardGrab(window: ?*SDL_Window) bool;
+pub extern fn SDL_GetWindowKeyboardGrab(window: *SDL_Window) bool;
 
 /// Get a window's mouse grab mode.
 ///
@@ -2543,7 +2578,7 @@ pub extern fn SDL_GetWindowKeyboardGrab(window: ?*SDL_Window) bool;
 /// \sa SDL_SetWindowMouseRect
 /// \sa SDL_SetWindowMouseGrab
 /// \sa SDL_SetWindowKeyboardGrab
-pub extern fn SDL_GetWindowMouseGrab(window: ?*SDL_Window) bool;
+pub extern fn SDL_GetWindowMouseGrab(window: *SDL_Window) bool;
 
 /// Get the window that currently has an input grab enabled.
 ///
@@ -2555,7 +2590,7 @@ pub extern fn SDL_GetWindowMouseGrab(window: ?*SDL_Window) bool;
 ///
 /// \sa SDL_SetWindowMouseGrab
 /// \sa SDL_SetWindowKeyboardGrab
-pub extern fn SDL_GetGrabbedWindow() ?*SDL_Window;
+pub extern fn SDL_GetGrabbedWindow() *SDL_Window;
 
 /// Confines the cursor to the specified area of a window.
 ///
@@ -2575,7 +2610,7 @@ pub extern fn SDL_GetGrabbedWindow() ?*SDL_Window;
 /// \sa SDL_GetWindowMouseRect
 /// \sa SDL_GetWindowMouseGrab
 /// \sa SDL_SetWindowMouseGrab
-pub extern fn SDL_SetWindowMouseRect(window: ?*SDL_Window, rect: [*c]const rect.SDL_Rect) bool;
+pub extern fn SDL_SetWindowMouseRect(window: *SDL_Window, rect: ?*const rect.SDL_Rect) bool;
 
 /// Get the mouse confinement rectangle of a window.
 ///
@@ -2590,7 +2625,7 @@ pub extern fn SDL_SetWindowMouseRect(window: ?*SDL_Window, rect: [*c]const rect.
 /// \sa SDL_SetWindowMouseRect
 /// \sa SDL_GetWindowMouseGrab
 /// \sa SDL_SetWindowMouseGrab
-pub extern fn SDL_GetWindowMouseRect(window: ?*SDL_Window) [*c]const rect.SDL_Rect;
+pub extern fn SDL_GetWindowMouseRect(window: *SDL_Window) ?*const rect.SDL_Rect;
 
 /// Set the opacity for a window.
 ///
@@ -2609,7 +2644,7 @@ pub extern fn SDL_GetWindowMouseRect(window: ?*SDL_Window) [*c]const rect.SDL_Re
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GetWindowOpacity
-pub extern fn SDL_SetWindowOpacity(window: ?*SDL_Window, opacity: f32) bool;
+pub extern fn SDL_SetWindowOpacity(window: *SDL_Window, opacity: f32) bool;
 
 /// Get the opacity of a window.
 ///
@@ -2625,7 +2660,7 @@ pub extern fn SDL_SetWindowOpacity(window: ?*SDL_Window, opacity: f32) bool;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetWindowOpacity
-pub extern fn SDL_GetWindowOpacity(window: ?*SDL_Window) f32;
+pub extern fn SDL_GetWindowOpacity(window: *SDL_Window) f32;
 
 /// Set the window as a child of a parent window.
 ///
@@ -2657,7 +2692,7 @@ pub extern fn SDL_GetWindowOpacity(window: ?*SDL_Window) f32;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_SetWindowModal
-pub extern fn SDL_SetWindowParent(window: ?*SDL_Window, parent: ?*SDL_Window) bool;
+pub extern fn SDL_SetWindowParent(window: *SDL_Window, parent: *SDL_Window) bool;
 
 /// Toggle the state of the window as modal.
 ///
@@ -2675,7 +2710,7 @@ pub extern fn SDL_SetWindowParent(window: ?*SDL_Window, parent: ?*SDL_Window) bo
 ///
 /// \sa SDL_SetWindowParent
 /// \sa SDL_WINDOW_MODAL
-pub extern fn SDL_SetWindowModal(window: ?*SDL_Window, modal: bool) bool;
+pub extern fn SDL_SetWindowModal(window: *SDL_Window, modal: bool) bool;
 
 /// Set whether the window may have input focus.
 ///
@@ -2687,7 +2722,7 @@ pub extern fn SDL_SetWindowModal(window: ?*SDL_Window, modal: bool) bool;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_SetWindowFocusable(window: ?*SDL_Window, focusable: bool) bool;
+pub extern fn SDL_SetWindowFocusable(window: *SDL_Window, focusable: bool) bool;
 
 /// Display the system-level window menu.
 ///
@@ -2710,7 +2745,7 @@ pub extern fn SDL_SetWindowFocusable(window: ?*SDL_Window, focusable: bool) bool
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_ShowWindowSystemMenu(window: ?*SDL_Window, x: c_int, y: c_int) bool;
+pub extern fn SDL_ShowWindowSystemMenu(window: *SDL_Window, x: c_int, y: c_int) bool;
 
 /// Possible return values from the SDL_HitTest callback.
 ///
@@ -2750,9 +2785,9 @@ pub const SDL_HitTestResult = enum(c_uint) {
 /// \returns an SDL_HitTestResult value.
 ///
 /// \sa SDL_SetWindowHitTest
-pub const SDL_HitTest = ?*const fn (
-    win: ?*SDL_Window,
-    area: [*c]const rect.SDL_Point,
+pub const SDL_HitTest = *const fn (
+    win: *SDL_Window,
+    area: *const rect.SDL_Point,
     data: ?*anyopaque,
 ) callconv(.c) SDL_HitTestResult;
 
@@ -2796,7 +2831,11 @@ pub const SDL_HitTest = ?*const fn (
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_SetWindowHitTest(window: ?*SDL_Window, callback: SDL_HitTest, callback_data: ?*anyopaque) bool;
+pub extern fn SDL_SetWindowHitTest(
+    window: *SDL_Window,
+    callback: SDL_HitTest,
+    callback_data: ?*anyopaque,
+) bool;
 
 /// Set the shape of a transparent window.
 ///
@@ -2822,7 +2861,7 @@ pub extern fn SDL_SetWindowHitTest(window: ?*SDL_Window, callback: SDL_HitTest, 
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_SetWindowShape(window: ?*SDL_Window, shape: [*c]surface.SDL_Surface) bool;
+pub extern fn SDL_SetWindowShape(window: *SDL_Window, shape: ?*surface.SDL_Surface) bool;
 
 /// Request a window to demand attention from the user.
 ///
@@ -2834,7 +2873,7 @@ pub extern fn SDL_SetWindowShape(window: ?*SDL_Window, shape: [*c]surface.SDL_Su
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_FlashWindow(window: ?*SDL_Window, operation: SDL_FlashOperation) bool;
+pub extern fn SDL_FlashWindow(window: *SDL_Window, operation: SDL_FlashOperation) bool;
 
 /// Sets the state of the progress bar for the given window’s taskbar icon.
 ///
@@ -2847,7 +2886,7 @@ pub extern fn SDL_FlashWindow(window: ?*SDL_Window, operation: SDL_FlashOperatio
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.4.0.
-pub extern fn SDL_SetWindowProgressState(window: ?*SDL_Window, state: SDL_ProgressState) bool;
+pub extern fn SDL_SetWindowProgressState(window: *SDL_Window, state: SDL_ProgressState) bool;
 
 /// Get the state of the progress bar for the given window’s taskbar icon.
 ///
@@ -2858,7 +2897,7 @@ pub extern fn SDL_SetWindowProgressState(window: ?*SDL_Window, state: SDL_Progre
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.4.0.
-pub extern fn SDL_GetWindowProgressState(window: ?*SDL_Window) SDL_ProgressState;
+pub extern fn SDL_GetWindowProgressState(window: *SDL_Window) SDL_ProgressState;
 
 /// Sets the value of the progress bar for the given window’s taskbar icon.
 ///
@@ -2871,7 +2910,7 @@ pub extern fn SDL_GetWindowProgressState(window: ?*SDL_Window) SDL_ProgressState
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.4.0.
-pub extern fn SDL_SetWindowProgressValue(window: ?*SDL_Window, value: f32) bool;
+pub extern fn SDL_SetWindowProgressValue(window: *SDL_Window, value: f32) bool;
 
 /// Get the value of the progress bar for the given window’s taskbar icon.
 ///
@@ -2882,7 +2921,7 @@ pub extern fn SDL_SetWindowProgressValue(window: ?*SDL_Window, value: f32) bool;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.4.0.
-pub extern fn SDL_GetWindowProgressValue(window: ?*SDL_Window) f32;
+pub extern fn SDL_GetWindowProgressValue(window: *SDL_Window) f32;
 
 /// Destroy a window.
 ///
@@ -2901,7 +2940,7 @@ pub extern fn SDL_GetWindowProgressValue(window: ?*SDL_Window) f32;
 /// \sa SDL_CreatePopupWindow
 /// \sa SDL_CreateWindow
 /// \sa SDL_CreateWindowWithProperties
-pub extern fn SDL_DestroyWindow(window: ?*SDL_Window) void;
+pub extern fn SDL_DestroyWindow(window: *SDL_Window) void;
 
 /// Check whether the screensaver is currently enabled.
 ///
@@ -2975,7 +3014,7 @@ pub extern fn SDL_DisableScreenSaver() bool;
 ///
 /// \sa SDL_GL_GetProcAddress
 /// \sa SDL_GL_UnloadLibrary
-pub extern fn SDL_GL_LoadLibrary(path: [*c]const u8) bool;
+pub extern fn SDL_GL_LoadLibrary(path: ?*const u8) bool;
 
 /// Get an OpenGL function by name.
 ///
@@ -3028,7 +3067,7 @@ pub extern fn SDL_GL_LoadLibrary(path: [*c]const u8) bool;
 /// \sa SDL_GL_ExtensionSupported
 /// \sa SDL_GL_LoadLibrary
 /// \sa SDL_GL_UnloadLibrary
-pub extern fn SDL_GL_GetProcAddress(proc: [*c]const u8) stdinc.SDL_FunctionPointer;
+pub extern fn SDL_GL_GetProcAddress(proc: [*:0]const u8) stdinc.SDL_FunctionPointer;
 
 /// Get an EGL library function by name.
 ///
@@ -3045,7 +3084,7 @@ pub extern fn SDL_GL_GetProcAddress(proc: [*c]const u8) stdinc.SDL_FunctionPoint
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_EGL_GetCurrentDisplay
-pub extern fn SDL_EGL_GetProcAddress(proc: [*c]const u8) stdinc.SDL_FunctionPointer;
+pub extern fn SDL_EGL_GetProcAddress(proc: [*:0]const u8) stdinc.SDL_FunctionPointer;
 
 /// Unload the OpenGL library previously loaded by SDL_GL_LoadLibrary().
 ///
@@ -3075,7 +3114,7 @@ pub extern fn SDL_GL_UnloadLibrary() void;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GL_ExtensionSupported(extension: [*c]const u8) bool;
+pub extern fn SDL_GL_ExtensionSupported(extension: [*:0]const u8) bool;
 
 /// Reset all previously set OpenGL context attributes to their default values.
 ///
@@ -3122,7 +3161,7 @@ pub extern fn SDL_GL_SetAttribute(attr: SDL_GLAttr, value: c_int) bool;
 ///
 /// \sa SDL_GL_ResetAttributes
 /// \sa SDL_GL_SetAttribute
-pub extern fn SDL_GL_GetAttribute(attr: SDL_GLAttr, value: [*c]c_int) bool;
+pub extern fn SDL_GL_GetAttribute(attr: SDL_GLAttr, value: *c_int) bool;
 
 /// Create an OpenGL context for an OpenGL window, and make it current.
 ///
@@ -3150,7 +3189,7 @@ pub extern fn SDL_GL_GetAttribute(attr: SDL_GLAttr, value: [*c]c_int) bool;
 ///
 /// \sa SDL_GL_DestroyContext
 /// \sa SDL_GL_MakeCurrent
-pub extern fn SDL_GL_CreateContext(window: ?*SDL_Window) SDL_GLContext;
+pub extern fn SDL_GL_CreateContext(window: *SDL_Window) SDL_GLContext;
 
 /// Set up an OpenGL context for rendering into an OpenGL window.
 ///
@@ -3166,7 +3205,7 @@ pub extern fn SDL_GL_CreateContext(window: ?*SDL_Window) SDL_GLContext;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GL_CreateContext
-pub extern fn SDL_GL_MakeCurrent(window: ?*SDL_Window, context: SDL_GLContext) bool;
+pub extern fn SDL_GL_MakeCurrent(window: *SDL_Window, context: SDL_GLContext) bool;
 
 /// Get the currently active OpenGL window.
 ///
@@ -3219,7 +3258,7 @@ pub extern fn SDL_EGL_GetCurrentConfig() SDL_EGLConfig;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_EGL_GetWindowSurface(window: ?*SDL_Window) SDL_EGLSurface;
+pub extern fn SDL_EGL_GetWindowSurface(window: *SDL_Window) SDL_EGLSurface;
 
 /// Sets the callbacks for defining custom EGLAttrib arrays for EGL
 /// initialization.
@@ -3239,7 +3278,12 @@ pub extern fn SDL_EGL_GetWindowSurface(window: ?*SDL_Window) SDL_EGLSurface;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_EGL_SetAttributeCallbacks(platformAttribCallback: SDL_EGLAttribArrayCallback, surfaceAttribCallback: SDL_EGLIntArrayCallback, contextAttribCallback: SDL_EGLIntArrayCallback, userdata: ?*anyopaque) void;
+pub extern fn SDL_EGL_SetAttributeCallbacks(
+    platformAttribCallback: SDL_EGLAttribArrayCallback,
+    surfaceAttribCallback: SDL_EGLIntArrayCallback,
+    contextAttribCallback: SDL_EGLIntArrayCallback,
+    userdata: ?*anyopaque,
+) void;
 
 /// Set the swap interval for the current OpenGL context.
 ///
@@ -3287,7 +3331,7 @@ pub extern fn SDL_GL_SetSwapInterval(interval: c_int) bool;
 /// \since This function is available since SDL 3.2.0.
 ///
 /// \sa SDL_GL_SetSwapInterval
-pub extern fn SDL_GL_GetSwapInterval(interval: [*c]c_int) bool;
+pub extern fn SDL_GL_GetSwapInterval(interval: *c_int) bool;
 
 /// Update a window with OpenGL rendering.
 ///
@@ -3305,7 +3349,7 @@ pub extern fn SDL_GL_GetSwapInterval(interval: [*c]c_int) bool;
 /// \threadsafety This function should only be called on the main thread.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GL_SwapWindow(window: ?*SDL_Window) bool;
+pub extern fn SDL_GL_SwapWindow(window: *SDL_Window) bool;
 
 /// Delete an OpenGL context.
 ///
