@@ -3,8 +3,9 @@
 /// This allows providing some nice zig quality of life features like error
 /// trace and tidy args
 const std = @import("std");
-const app = @import("app.zig");
 const sdl = @import("sdl/sdl.zig");
+
+const app = @import("app_01_basic_triangle.zig");
 
 pub fn main() u8 {
     return @intCast(sdl.main.SDL_RunApp(0, null, RunAppCallback, null));
