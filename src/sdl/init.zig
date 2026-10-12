@@ -72,19 +72,19 @@ pub const SDL_InitFlags = packed struct(u32) {
 };
 
 /// `SDL_INIT_AUDIO` implies `SDL_INIT_EVENTS`
-pub const SDL_INIT_AUDIO = 0x00000010;
+pub const SDL_INIT_AUDIO: SDL_InitFlags = .{ .audio = true };
 /// `SDL_INIT_VIDEO` implies `SDL_INIT_EVENTS`, should be initialized on the main thread
-pub const SDL_INIT_VIDEO = 0x00000020;
+pub const SDL_INIT_VIDEO: SDL_InitFlags = .{ .video = true };
 /// `SDL_INIT_JOYSTICK` implies `SDL_INIT_EVENTS`
-pub const SDL_INIT_JOYSTICK = 0x00000200;
-pub const SDL_INIT_HAPTIC = 0x00001000;
+pub const SDL_INIT_JOYSTICK: SDL_InitFlags = .{ .joystick = true };
+pub const SDL_INIT_HAPTIC: SDL_InitFlags = .{ .haptic = true };
 /// `SDL_INIT_GAMEPAD` implies `SDL_INIT_JOYSTICK`
-pub const SDL_INIT_GAMEPAD = 0x00002000;
-pub const SDL_INIT_EVENTS = 0x00004000;
+pub const SDL_INIT_GAMEPAD: SDL_InitFlags = .{ .gamepad = true };
+pub const SDL_INIT_EVENTS: SDL_InitFlags = .{ .events = true };
 /// `SDL_INIT_SENSOR` implies `SDL_INIT_EVENTS`
-pub const SDL_INIT_SENSOR = 0x00008000;
+pub const SDL_INIT_SENSOR: SDL_InitFlags = .{ .sensor = true };
 /// `SDL_INIT_CAMERA` implies `SDL_INIT_EVENTS`
-pub const SDL_INIT_CAMERA = 0x00010000;
+pub const SDL_INIT_CAMERA: SDL_InitFlags = .{ .camera = true };
 
 /// Return values for optional main callbacks.
 ///
