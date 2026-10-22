@@ -1013,6 +1013,23 @@ pub const SDL_GPUShaderFormat = enum(u32) {
     metallib = 1 << 5,
 };
 
+/// Specifies the format of shader code, but with multiple flags
+pub const SDL_GPUShaderFormatFlags = packed struct(u32) {
+    /// Shaders for NDA'd platforms.
+    private: bool = false,
+    /// SPIR-V shaders for Vulkan.
+    spirv: bool = false,
+    /// DXBC SM5_1 shaders for D3D12.
+    dxbc: bool = false,
+    /// DXIL SM6_0 shaders for D3D12.
+    dxil: bool = false,
+    /// MSL shaders for Metal.
+    msl: bool = false,
+    /// Precompiled metallib shaders for Metal.
+    metallib: bool = false,
+    _reserved: u26 = 0,
+};
+
 /// Specifies the format of a vertex attribute.
 ///
 /// \since This enum is available since SDL 3.2.0.
@@ -2293,7 +2310,7 @@ pub const SDL_GPUStorageTextureReadWriteBinding = extern struct {
 ///
 /// \sa SDL_CreateGPUDevice
 pub extern fn SDL_GPUSupportsShaderFormats(
-    format_flags: SDL_GPUShaderFormat,
+    format_flags: SDL_GPUShaderFormatFlags,
     name: ?[*:0]const u8,
 ) bool;
 
@@ -2332,7 +2349,7 @@ pub extern fn SDL_GPUSupportsProperties(props: properties.SDL_PropertiesID) bool
 /// \sa SDL_DestroyGPUDevice
 /// \sa SDL_GPUSupportsShaderFormats
 pub extern fn SDL_CreateGPUDevice(
-    format_flags: SDL_GPUShaderFormat,
+    format_flags: SDL_GPUShaderFormatFlags,
     debug_mode: bool,
     name: ?[*:0]const u8,
 ) ?*SDL_GPUDevice;
