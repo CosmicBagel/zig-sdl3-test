@@ -1,8 +1,11 @@
 const std = @import("std");
-
 const sdl = @import("sdl/sdl.zig");
-const sdl_helpers = @import("sdl_helpers.zig");
-const errorWrap = sdl_helpers.errorWrap;
+const app_common = @import("app_common.zig");
+
+const app_name = "EmptyApp";
+var app_context = app_common.AppContext{
+    .name = app_name,
+};
 
 /// This will be called once before anything else. argc/argv work like they
 /// always do. If this returns SDL_APP_CONTINUE, the app runs. If it returns
@@ -17,26 +20,11 @@ const errorWrap = sdl_helpers.errorWrap;
 /// parameter. This allows you to avoid global variables, but is totally
 /// optional. If you don't set this, the pointer will be NULL in later function
 /// calls.
-pub fn AppInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init.SDL_AppResult {
+pub fn appInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init.SDL_AppResult {
     _ = appstate;
     _ = args;
 
-    const source_location = @src();
-    const app_name = source_location.file;
-
-    sdl.log.SDL_SetLogPriorities(.verbose);
-    sdl.log.SDL_Log(app_name);
-
-    try errorWrap(sdl.init.SDL_SetAppMetadata(
-        app_name,
-        "0.0.1",
-        "com.cosmicbagel." ++ app_name,
-    ));
-
-    if (!sdl.init.SDL_Init(.{ .video = true })) {
-        sdl.log.SDL_Log("Failed to initialize SDL: %s", sdl.sdl_error.SDL_GetError());
-        return .app_failure;
-    }
+    try app_common.appInitMinimal(&app_context);
 
     return .app_continue;
 }
@@ -55,7 +43,7 @@ var last_time: u64 = 0;
 /// may choose to run this more or less (perhaps less in the background, etc),
 /// or it might just call this function in a loop as fast as possible. You do
 /// not check the event queue in this function (SDL_AppEvent exists for that).
-pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
+pub fn appIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
     _ = appstate;
 
     const new_time: u64 = sdl.timer.SDL_GetTicks() / 1000;
@@ -72,7 +60,7 @@ pub fn AppIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
 /// SDL_PollEvent, SDL_PumpEvent, etc, as SDL will manage all this for you.
 /// Return values are the same as from SDL_AppIterate(), so you can terminate
 /// in response to SDL_EVENT_QUIT, etc.
-pub fn AppEvent(appstate: ?*anyopaque, event: ?*sdl.events.SDL_Event) !sdl.init.SDL_AppResult {
+pub fn appEvent(appstate: ?*anyopaque, event: ?*sdl.events.SDL_Event) !sdl.init.SDL_AppResult {
     _ = appstate;
     _ = event;
 
@@ -91,7 +79,8 @@ pub fn AppEvent(appstate: ?*anyopaque, event: ?*sdl.events.SDL_Event) !sdl.init.
 ///
 /// The SDL_AppResult value that terminated the app is provided here, in case
 /// it's useful to know if this was a successful or failing run of the app.
-pub fn AppQuit(appstate: ?*anyopaque, app_result: sdl.init.SDL_AppResult) !void {
+pub fn appQuit(appstate: ?*anyopaque, app_result: sdl.init.SDL_AppResult) !void {
     _ = appstate;
     _ = app_result;
+    app_common.appDeinitMinimal(&app_context);
 }

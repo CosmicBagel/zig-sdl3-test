@@ -30,12 +30,12 @@ pub export fn SDL_AppInit(
 ) callconv(.c) sdl.init.SDL_AppResult {
     const argc = @as(usize, @intCast(c_argc));
 
-    return unwrapWithTrace(app.AppInit(appstate, c_argv.?[0..argc]));
+    return unwrapWithTrace(app.appInit(appstate, c_argv.?[0..argc]));
 }
 
 // see sdl.init.AppIterate_func
 pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) sdl.init.SDL_AppResult {
-    return unwrapWithTrace(app.AppIterate(appstate));
+    return unwrapWithTrace(app.appIterate(appstate));
 }
 
 // see sdl.init.AppEvent_func
@@ -43,7 +43,7 @@ pub export fn SDL_AppEvent(
     appstate: ?*anyopaque,
     event: ?*sdl.events.SDL_Event,
 ) callconv(.c) sdl.init.SDL_AppResult {
-    return unwrapWithTrace(app.AppEvent(appstate, event));
+    return unwrapWithTrace(app.appEvent(appstate, event));
 }
 
 // see sdl.init.AppQuit_func
@@ -51,7 +51,7 @@ pub export fn SDL_AppQuit(
     appstate: ?*anyopaque,
     app_result: sdl.init.SDL_AppResult,
 ) callconv(.c) void {
-    app.AppQuit(appstate, app_result) catch |err| {
+    app.appQuit(appstate, app_result) catch |err| {
         if (@errorReturnTrace()) |trace| std.debug.dumpErrorReturnTrace(trace);
         std.log.err("{t}", .{err});
         sdl.SDL_LogError(.error_category, "%s", sdl.SDL_GetError());
