@@ -17,15 +17,16 @@ pub fn appInitMinimal(context: *AppContext) !void {
     sdl.log.SDL_Log(context.name);
 
     var buf: [256]u8 = undefined;
+    const app_id = try std.fmt.bufPrintSentinel(
+        &buf,
+        "{s}{s}",
+        .{ "com.cosmicbagel.com", context.name },
+        0,
+    );
     if (!sdl.init.SDL_SetAppMetadata(
         context.name,
         "0.0.1",
-        try std.fmt.bufPrintSentinel(
-            &buf,
-            "{s}{s}",
-            .{ "com.cosmicbagel.com", context.name },
-            0,
-        ),
+        app_id,
     )) {
         return AppError.SdlError;
     }
