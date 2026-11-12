@@ -20,11 +20,12 @@ var app_context = app_common.AppContext{
 /// parameter. This allows you to avoid global variables, but is totally
 /// optional. If you don't set this, the pointer will be NULL in later function
 /// calls.
-pub fn appInit(appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init.SDL_AppResult {
+pub fn appInit(io: std.Io, gpa: std.mem.Allocator, appstate: ?*?*anyopaque, args: std.process.Args.Vector) !sdl.init.SDL_AppResult {
+    _ = gpa;
     _ = appstate;
     _ = args;
 
-    try app_common.appInitMinimal(&app_context);
+    try app_common.appInitMinimal(io, &app_context);
 
     return .app_continue;
 }
@@ -43,7 +44,9 @@ var last_time: u64 = 0;
 /// may choose to run this more or less (perhaps less in the background, etc),
 /// or it might just call this function in a loop as fast as possible. You do
 /// not check the event queue in this function (SDL_AppEvent exists for that).
-pub fn appIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
+pub fn appIterate(io: std.Io, gpa: std.mem.Allocator, appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
+    _ = io;
+    _ = gpa;
     _ = appstate;
 
     const new_time: u64 = sdl.timer.SDL_GetTicks() / 1000;
@@ -60,7 +63,9 @@ pub fn appIterate(appstate: ?*anyopaque) !sdl.init.SDL_AppResult {
 /// SDL_PollEvent, SDL_PumpEvent, etc, as SDL will manage all this for you.
 /// Return values are the same as from SDL_AppIterate(), so you can terminate
 /// in response to SDL_EVENT_QUIT, etc.
-pub fn appEvent(appstate: ?*anyopaque, event: ?*sdl.events.SDL_Event) !sdl.init.SDL_AppResult {
+pub fn appEvent(io: std.Io, gpa: std.mem.Allocator, appstate: ?*anyopaque, event: ?*sdl.events.SDL_Event) !sdl.init.SDL_AppResult {
+    _ = io;
+    _ = gpa;
     _ = appstate;
     _ = event;
 
@@ -79,8 +84,9 @@ pub fn appEvent(appstate: ?*anyopaque, event: ?*sdl.events.SDL_Event) !sdl.init.
 ///
 /// The SDL_AppResult value that terminated the app is provided here, in case
 /// it's useful to know if this was a successful or failing run of the app.
-pub fn appQuit(appstate: ?*anyopaque, app_result: sdl.init.SDL_AppResult) !void {
+pub fn appQuit(io: std.Io, gpa: std.mem.Allocator, appstate: ?*anyopaque, app_result: sdl.init.SDL_AppResult) !void {
+    _ = gpa;
     _ = appstate;
     _ = app_result;
-    app_common.appDeinitMinimal(&app_context);
+    app_common.appDeinitMinimal(io, &app_context);
 }

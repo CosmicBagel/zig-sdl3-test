@@ -5,9 +5,32 @@
 const std = @import("std");
 const sdl = @import("sdl/sdl.zig");
 
+// const app = @import("app_01_basic_triangle.zig");
 const app = @import("app_01_basic_triangle.zig");
 
-pub fn main() u8 {
+var io: std.Io = undefined;
+
+const debug_memory_limit = 1024 * 1024 * 500; //about 500MiB
+var gpa: std.mem.Allocator = undefined;
+
+pub fn main(init: std.process.Init.Minimal) u8 {
+    var debug_allocator = std.heap.DebugAllocator(.{ .enable_memory_limit = true }).init;
+    debug_allocator.requested_memory_limit = debug_memory_limit;
+    defer {
+        const check = debug_allocator.deinit();
+        if (check == .leak) {
+            std.debug.print("ERROR: one or more memory leaks detected!", .{});
+        }
+    }
+    gpa = debug_allocator.allocator();
+
+    var threaded_io: std.Io.Threaded = .init(gpa, .{
+        .argv0 = .init(.{ .vector = init.args.vector }),
+        .environ = .{ .block = init.environ.block },
+    });
+    defer threaded_io.deinit();
+    io = threaded_io.io();
+
     return @intCast(sdl.main.SDL_RunApp(0, null, RunAppCallback, null));
 }
 
@@ -30,12 +53,12 @@ pub export fn SDL_AppInit(
 ) callconv(.c) sdl.init.SDL_AppResult {
     const argc = @as(usize, @intCast(c_argc));
 
-    return unwrapWithTrace(app.appInit(appstate, c_argv.?[0..argc]));
+    return unwrapWithTrace(app.appInit(io, gpa, appstate, c_argv.?[0..argc]));
 }
 
 // see sdl.init.AppIterate_func
 pub export fn SDL_AppIterate(appstate: ?*anyopaque) callconv(.c) sdl.init.SDL_AppResult {
-    return unwrapWithTrace(app.appIterate(appstate));
+    return unwrapWithTrace(app.appIterate(io, gpa, appstate));
 }
 
 // see sdl.init.AppEvent_func
@@ -43,7 +66,7 @@ pub export fn SDL_AppEvent(
     appstate: ?*anyopaque,
     event: ?*sdl.events.SDL_Event,
 ) callconv(.c) sdl.init.SDL_AppResult {
-    return unwrapWithTrace(app.appEvent(appstate, event));
+    return unwrapWithTrace(app.appEvent(io, gpa, appstate, event));
 }
 
 // see sdl.init.AppQuit_func
@@ -51,7 +74,7 @@ pub export fn SDL_AppQuit(
     appstate: ?*anyopaque,
     app_result: sdl.init.SDL_AppResult,
 ) callconv(.c) void {
-    app.appQuit(appstate, app_result) catch |err| {
+    app.appQuit(io, gpa, appstate, app_result) catch |err| {
         if (@errorReturnTrace()) |trace| std.debug.dumpErrorReturnTrace(trace);
         std.log.err("{t}", .{err});
         sdl.SDL_LogError(.error_category, "%s", sdl.SDL_GetError());
