@@ -2573,7 +2573,7 @@ pub extern fn SDL_GetGPUDeviceDriver(device: *SDL_GPUDevice) ?[*:0]const u8;
 ///          consume.
 ///
 /// \since This function is available since SDL 3.2.0.
-pub extern fn SDL_GetGPUShaderFormats(device: *SDL_GPUDevice) SDL_GPUShaderFormat;
+pub extern fn SDL_GetGPUShaderFormats(device: *SDL_GPUDevice) SDL_GPUShaderFormatFlags;
 
 /// Get the properties associated with a GPU device.
 ///
