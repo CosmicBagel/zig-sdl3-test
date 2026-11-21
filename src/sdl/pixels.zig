@@ -1119,10 +1119,10 @@ pub const SDL_Color = extern struct {
 ///
 /// \since This struct is available since SDL 3.2.0.
 pub const SDL_FColor = extern struct {
-    r: f32,
-    g: f32,
-    b: f32,
-    a: f32,
+    r: f32 = 0.0,
+    g: f32 = 0.0,
+    b: f32 = 0.0,
+    a: f32 = 1.0,
 };
 
 /// A set of indexed colors representing a palette.

@@ -1676,7 +1676,7 @@ pub const SDL_GPUVertexBufferDescription = extern struct {
     /// Whether attribute addressing is a function of the vertex index or instance index.
     input_rate: SDL_GPUVertexInputRate,
     /// Reserved for future use. Must be set to 0.
-    instance_step_rate: u32,
+    instance_step_rate: u32 = 0,
 };
 
 /// A structure specifying a vertex attribute.
@@ -1710,13 +1710,13 @@ pub const SDL_GPUVertexAttribute = extern struct {
 /// \sa SDL_GPUVertexAttribute
 pub const SDL_GPUVertexInputState = extern struct {
     /// A pointer to an array of vertex buffer descriptions.
-    vertex_buffer_descriptions: [*]const SDL_GPUVertexBufferDescription,
+    vertex_buffer_descriptions: ?[*]const SDL_GPUVertexBufferDescription = null,
     /// The number of vertex buffer descriptions in the above array.
-    num_vertex_buffers: u32,
+    num_vertex_buffers: u32 = 0,
     /// A pointer to an array of vertex attribute descriptions.
-    vertex_attributes: [*]const SDL_GPUVertexAttribute,
+    vertex_attributes: ?[*]const SDL_GPUVertexAttribute = null,
     /// The number of vertex attribute descriptions in the above array.
-    num_vertex_attributes: u32,
+    num_vertex_attributes: u32 = 0,
 };
 
 /// A structure specifying the stencil operation state of a graphics pipeline.
@@ -1726,13 +1726,13 @@ pub const SDL_GPUVertexInputState = extern struct {
 /// \sa SDL_GPUDepthStencilState
 pub const SDL_GPUStencilOpState = extern struct {
     /// The action performed on samples that fail the stencil test.
-    fail_op: SDL_GPUStencilOp,
+    fail_op: SDL_GPUStencilOp = .invalid,
     /// The action performed on samples that pass the depth and stencil tests.
-    pass_op: SDL_GPUStencilOp,
+    pass_op: SDL_GPUStencilOp = .invalid,
     /// The action performed on samples that pass the stencil test and fail the depth test.
-    depth_fail_op: SDL_GPUStencilOp,
+    depth_fail_op: SDL_GPUStencilOp = .invalid,
     /// The comparison operator used in the stencil test.
-    compare_op: SDL_GPUCompareOp,
+    compare_op: SDL_GPUCompareOp = .invalid,
 };
 
 /// A structure specifying the blend state of a color target.
@@ -1745,24 +1745,24 @@ pub const SDL_GPUStencilOpState = extern struct {
 /// \sa SDL_GPUColorComponentFlags
 pub const SDL_GPUColorTargetBlendState = extern struct {
     /// The value to be multiplied by the source RGB value.
-    src_color_blendfactor: SDL_GPUBlendFactor,
+    src_color_blendfactor: SDL_GPUBlendFactor = .invalid,
     /// The value to be multiplied by the destination RGB value.
-    dst_color_blendfactor: SDL_GPUBlendFactor,
+    dst_color_blendfactor: SDL_GPUBlendFactor = .invalid,
     /// The blend operation for the RGB components.
-    color_blend_op: SDL_GPUBlendOp,
+    color_blend_op: SDL_GPUBlendOp = .invalid,
     /// The value to be multiplied by the source alpha.
-    src_alpha_blendfactor: SDL_GPUBlendFactor,
+    src_alpha_blendfactor: SDL_GPUBlendFactor = .invalid,
     /// The value to be multiplied by the destination alpha.
-    dst_alpha_blendfactor: SDL_GPUBlendFactor,
+    dst_alpha_blendfactor: SDL_GPUBlendFactor = .invalid,
     /// The blend operation for the alpha component.
-    alpha_blend_op: SDL_GPUBlendOp,
+    alpha_blend_op: SDL_GPUBlendOp = .invalid,
     /// A bitmask specifying which of the RGBA components are enabled for
     /// writing. Writes to all channels if enable_color_write_mask is false.
-    color_write_mask: SDL_GPUColorComponentFlags,
+    color_write_mask: SDL_GPUColorComponentFlags = .{},
     // Whether blending is enabled for the color target.
-    enable_blend: bool,
+    enable_blend: bool = false,
     /// Whether the color write mask is enabled.
-    enable_color_write_mask: bool,
+    enable_color_write_mask: bool = false,
     _padding1: u8 = undefined,
     _padding2: u8 = undefined,
 };
@@ -1885,21 +1885,21 @@ pub const SDL_GPUTransferBufferCreateInfo = extern struct {
 /// \sa SDL_GPUGraphicsPipelineCreateInfo
 pub const SDL_GPURasterizerState = extern struct {
     /// Whether polygons will be filled in or drawn as lines.
-    fill_mode: SDL_GPUFillMode,
+    fill_mode: SDL_GPUFillMode = .fill,
     /// The facing direction in which triangles will be culled.
-    cull_mode: SDL_GPUCullMode,
+    cull_mode: SDL_GPUCullMode = .none,
     /// The vertex winding that will cause a triangle to be determined as front-facing.
-    front_face: SDL_GPUFrontFace,
+    front_face: SDL_GPUFrontFace = .counter_clockwise,
     /// A scalar factor controlling the depth value added to each fragment.
-    depth_bias_constant_factor: f32,
+    depth_bias_constant_factor: f32 = 0,
     /// The maximum depth bias of a fragment.
-    depth_bias_clamp: f32,
+    depth_bias_clamp: f32 = 0,
     /// A scalar factor applied to a fragment's slope in depth calculations.
-    depth_bias_slope_factor: f32,
+    depth_bias_slope_factor: f32 = 0,
     /// true to bias fragment depth values.
-    enable_depth_bias: bool,
+    enable_depth_bias: bool = false,
     /// true to enable depth clip, false to enable depth clamp.
-    enable_depth_clip: bool,
+    enable_depth_clip: bool = false,
     _padding1: u8 = undefined,
     _padding2: u8 = undefined,
 };
@@ -1912,13 +1912,13 @@ pub const SDL_GPURasterizerState = extern struct {
 /// \sa SDL_GPUGraphicsPipelineCreateInfo
 pub const SDL_GPUMultisampleState = extern struct {
     /// The number of samples to be used in rasterization.
-    sample_count: SDL_GPUSampleCount,
+    sample_count: SDL_GPUSampleCount = .samplecount_1,
     /// Reserved for future use. Must be set to 0.
-    sample_mask: u32,
+    sample_mask: u32 = 0,
     /// Reserved for future use. Must be set to false.
-    enable_mask: bool,
+    enable_mask: bool = false,
     /// true enables the alpha-to-coverage feature.
-    enable_alpha_to_coverage: bool,
+    enable_alpha_to_coverage: bool = false,
     _padding2: u8 = undefined,
     _padding3: u8 = undefined,
 };
@@ -1931,21 +1931,21 @@ pub const SDL_GPUMultisampleState = extern struct {
 /// \sa SDL_GPUGraphicsPipelineCreateInfo
 pub const SDL_GPUDepthStencilState = extern struct {
     /// The comparison operator used for depth testing.
-    compare_op: SDL_GPUCompareOp,
+    compare_op: SDL_GPUCompareOp = .invalid,
     /// The stencil op state for back-facing triangles.
-    back_stencil_state: SDL_GPUStencilOpState,
+    back_stencil_state: SDL_GPUStencilOpState = .{},
     /// The stencil op state for front-facing triangles.
-    front_stencil_state: SDL_GPUStencilOpState,
+    front_stencil_state: SDL_GPUStencilOpState = .{},
     /// Selects the bits of the stencil values participating in the stencil test.
-    compare_mask: u8,
+    compare_mask: u8 = 0,
     /// Selects the bits of the stencil values updated by the stencil test.
-    write_mask: u8,
+    write_mask: u8 = 0,
     /// true enables the depth test.
-    enable_depth_test: bool,
+    enable_depth_test: bool = false,
     /// true enables depth writes. Depth writes are always disabled when enable_depth_test is false.
-    enable_depth_write: bool,
+    enable_depth_write: bool = false,
     /// true enables the stencil test.
-    enable_stencil_test: bool,
+    enable_stencil_test: bool = false,
     _padding1: u8 = undefined,
     _padding2: u8 = undefined,
     _padding3: u8 = undefined,
@@ -1959,9 +1959,9 @@ pub const SDL_GPUDepthStencilState = extern struct {
 /// \sa SDL_GPUGraphicsPipelineTargetInfo
 pub const SDL_GPUColorTargetDescription = extern struct {
     /// The pixel format of the texture to be used as a color target.
-    format: SDL_GPUTextureFormat,
+    format: SDL_GPUTextureFormat = .invalid,
     /// The blend state to be used for the color target.
-    blend_state: SDL_GPUColorTargetBlendState,
+    blend_state: SDL_GPUColorTargetBlendState = .{},
 };
 
 /// A structure specifying the descriptions of render targets used in a
@@ -1974,13 +1974,13 @@ pub const SDL_GPUColorTargetDescription = extern struct {
 /// \sa SDL_GPUTextureFormat
 pub const SDL_GPUGraphicsPipelineTargetInfo = extern struct {
     /// A pointer to an array of color target descriptions.
-    color_target_descriptions: [*]const SDL_GPUColorTargetDescription,
+    color_target_descriptions: ?[*]const SDL_GPUColorTargetDescription = null,
     /// The number of color target descriptions in the above array.
-    num_color_targets: u32,
+    num_color_targets: u32 = 0,
     /// The pixel format of the depth-stencil target. Ignored if has_depth_stencil_target is false.
-    depth_stencil_format: SDL_GPUTextureFormat,
+    depth_stencil_format: SDL_GPUTextureFormat = .invalid,
     /// true specifies that the pipeline uses a depth-stencil target.
-    has_depth_stencil_target: bool,
+    has_depth_stencil_target: bool = false,
     _padding1: u8 = undefined,
     _padding2: u8 = undefined,
     _padding3: u8 = undefined,
@@ -2004,19 +2004,19 @@ pub const SDL_GPUGraphicsPipelineCreateInfo = extern struct {
     /// The fragment shader used by the graphics pipeline.
     fragment_shader: *SDL_GPUShader,
     /// The vertex layout of the graphics pipeline.
-    vertex_input_state: SDL_GPUVertexInputState,
+    vertex_input_state: SDL_GPUVertexInputState = .{},
     /// The primitive topology of the graphics pipeline.
-    primitive_type: SDL_GPUPrimitiveType,
+    primitive_type: SDL_GPUPrimitiveType = .trianglelist,
     /// The rasterizer state of the graphics pipeline.
-    rasterizer_state: SDL_GPURasterizerState,
+    rasterizer_state: SDL_GPURasterizerState = .{},
     /// The multisample state of the graphics pipeline.
-    multisample_state: SDL_GPUMultisampleState,
+    multisample_state: SDL_GPUMultisampleState = .{},
     /// The depth-stencil state of the graphics pipeline.
-    depth_stencil_state: SDL_GPUDepthStencilState,
+    depth_stencil_state: SDL_GPUDepthStencilState = .{},
     /// Formats and blend modes for the render targets of the graphics pipeline.
-    target_info: SDL_GPUGraphicsPipelineTargetInfo,
+    target_info: SDL_GPUGraphicsPipelineTargetInfo = .{},
     /// A properties ID for extensions. Should be 0 if no extensions are needed.
-    props: properties.SDL_PropertiesID,
+    props: properties.SDL_PropertiesID = 0,
 };
 
 /// A structure specifying the parameters of a compute pipeline state.
@@ -2095,32 +2095,32 @@ pub const SDL_GPUColorTargetInfo = extern struct {
     /// The texture that will be used as a color target by a render pass.
     texture: *SDL_GPUTexture,
     /// The mip level to use as a color target.
-    mip_level: u32,
+    mip_level: u32 = 0,
     /// The layer index or depth plane to use as a color target. This value is
     /// treated as a layer index on 2D array and cube textures, and as a depth
     /// plane on 3D textures.
-    layer_or_depth_plane: u32,
+    layer_or_depth_plane: u32 = 0,
     /// The color to clear the color target to at the start of the render pass.
     /// Ignored if SDL_GPULoadOp.clear is not used.
-    clear_color: pixels.SDL_FColor,
+    clear_color: pixels.SDL_FColor = .{},
     /// What is done with the contents of the color target at the beginning of the render pass.
-    load_op: SDL_GPULoadOp,
+    load_op: SDL_GPULoadOp = .load,
     /// What is done with the results of the render pass.
-    store_op: SDL_GPUStoreOp,
+    store_op: SDL_GPUStoreOp = .store,
     /// The texture that will receive the results of a multisample resolve
     /// operation. Ignored if a RESOLVE* store_op is not used.
-    resolve_texture: ?*SDL_GPUTexture,
+    resolve_texture: ?*SDL_GPUTexture = null,
     /// The mip level of the resolve texture to use for the resolve operation.
     /// Ignored if a RESOLVE* store_op is not used.
-    resolve_mip_level: u32,
+    resolve_mip_level: u32 = 0,
     /// The layer index of the resolve texture to use for the resolve
     /// operation. Ignored if a RESOLVE* store_op is not used.
-    resolve_layer: u32,
+    resolve_layer: u32 = 0,
     /// true cycles the texture if the texture is bound and load_op is not LOAD
-    cycle: bool,
+    cycle: bool = false,
     /// true cycles the resolve texture if the resolve texture is bound.
     /// Ignored if a RESOLVE* store_op is not used.
-    cycle_resolve_texture: bool,
+    cycle_resolve_texture: bool = false,
     _padding1: u8 = undefined,
     _padding2: u8 = undefined,
 };
