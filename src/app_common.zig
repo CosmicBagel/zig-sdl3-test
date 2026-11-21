@@ -6,6 +6,10 @@ pub const AppContext = struct {
     device: ?*sdl.gpu.SDL_GPUDevice = null,
     window: ?*sdl.video.SDL_Window = null,
     last_time: u64 = 0,
+    left_pressed: bool = false,
+    right_pressed: bool = false,
+    up_pressed: bool = false,
+    down_pressed: bool = false,
 };
 
 pub const AppError = error{
@@ -192,4 +196,31 @@ pub fn loadShader(
     sdl.log.SDL_LogInfo(.application, "Loaded shader %s", shader_rel_path.ptr);
 
     return shader;
+}
+
+pub fn commonHandleEvent(event: *sdl.events.SDL_Event, app_context: *AppContext) bool {
+    app_context.left_pressed = false;
+    app_context.right_pressed = false;
+    app_context.down_pressed = false;
+    app_context.up_pressed = false;
+
+    switch (event.event_type) {
+        .quit => {
+            return false;
+        },
+        .key_down => {
+            switch (event.key.key) {
+                .left => app_context.left_pressed = true,
+                .right => app_context.right_pressed = true,
+                .up => app_context.up_pressed = true,
+                .down => app_context.down_pressed = true,
+                .q => return false,
+                .escape => return false,
+                else => {},
+            }
+        },
+        else => {},
+    }
+
+    return true;
 }
